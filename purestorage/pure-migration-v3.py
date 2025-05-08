@@ -201,6 +201,26 @@ def Get_Session_Token(api_token, mgt_ip):
         print()
         return None
     
+# GET filesystem as a json object
+def Get_FS_Json(filesystem, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print()
+        return response.json()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
+
 
 ########################
 ### POST API Section ###
