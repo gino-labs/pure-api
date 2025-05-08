@@ -223,10 +223,37 @@ def Get_FS_Json(filesystem, auth_token, mgt_ip):
         return None
 
 
-
 ########################
 ### POST API Section ###
 ########################
+
+# Create a new filesystem
+def Post_FS(filesystem, auth_token, mgt_ip, size, nfs=False, smb=False, write=True, hard_limit=True, rules=None, export_policy=None, client_policy=None, share_policy=None):
+    base_url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+    
+    if nfs and smb:
+        url = base_url + "&default_exports=nfs,smb"
+    elif nfs:
+        url = base_url + "&default_exports=nfs"
+    elif smb:
+        url = base_url + "&default_exports=smb"
+    else:
+        print("Please set either NFS or SMB to true.")
+        print()
+        return None
+
+    payload = {
+        "writable": write,
+        "hard_limit_enabled": hard_limit,
+        "provisioned": size,
+    }
+    
+    # TODO 
 
 
 
