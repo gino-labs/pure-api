@@ -270,7 +270,7 @@ def Mkdir_Mount_NFS(filesystem, src_ip=PB1, dest_ip=PB2):
             ]
         )
     else:
-        Print("Already Mounted.")
+        print("Already Mounted.")
 
 
 # Unmount and remove directory
