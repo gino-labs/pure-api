@@ -214,7 +214,9 @@ def Get_FS_Json(filesystem, auth_token, mgt_ip):
 
     if response.status_code == 200:
         print()
-        return response.json()
+        data = response.json()
+        fs_data = data["items"][0]
+        return fs_data
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
