@@ -113,8 +113,8 @@ def Rmdir2(filesystem):
         print(f"No directory {dest_path} : Doing nothing.")
         print()
 
-# Pcopy Function from source to destination points
-def Pcopy(filesystem, verbose=False, sparse=False):
+# Pcopy from source to destination points
+def Pcopy(filesystem, sparse=False, verbose=False):
     src_path = f"/mnt/pure_migration/{filesystem}_source/"
     dest_path = f"/mnt/pure_migration/{filesystem}_destination/"
 
@@ -139,8 +139,34 @@ def Pcopy(filesystem, verbose=False, sparse=False):
         if dest_rc != 0:
             print(f"{dest_path} isn't mounted, skipping pcopy.")
         print()
-        
-        
+
+# Rsync from source to destination points
+def Rsync(filesystem, verbose=False, sparse=False):
+    src_path = f"/mnt/pure_migration/{filesystem}_source/"
+    dest_path = f"/mnt/pure_migration/{filesystem}_destination/"
+
+    # Verify if mounted first as a double check
+    src_rc = subprocess.run(["mountpoint", "-q", src_path]).returncode
+    dest_rc = subprocess.run(["mountpoint", "-q", src_path]).returncode
+
+    if (src_rc == 0) and (dest_rc == 0):
+        print("Starting rsync...")
+        print()
+        if sparse and verbose:
+            subprocess.run(["rsync", "-havH", "--sparse", "--progress", src_path, dest_path])
+        elif verbose:
+            subprocess.run(["rsync", "-havH", "--progress", src_path, dest_path])
+        elif sparse:
+            subprocess.run(["rsync", "-havH", "--sparse", src_path, dest_path])
+        else:
+            subprocess.run(["rsync", "-havH", src_path, dest_path])
+    else:
+        if src_rc != 0:
+            print(f"{src_path} isn't mounted, skipping rsync.")
+        if dest_rc != 0:
+            print(f"{dest_path} isn't mounted, skipping rsync.")
+        print()
+
 
 #######################
 ### GET API Section ###
