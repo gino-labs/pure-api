@@ -130,7 +130,7 @@ def Update_Export_Policy(filesystem, auth_token, mgt_ip=PB2_MGT, policy=MIGRATIO
                 url, headers=headers, json=update_data, verify=False
             )
             if response.status_code == 200:
-                print(f"Updated with {rule}")
+                print(f"Updated with {policy_check}")
         else:
             print(f"Policy: {policy}, already exists")
 

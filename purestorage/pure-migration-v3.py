@@ -78,9 +78,40 @@ def Mount2(filesystem, src_ip=PB1, dest_ip=PB2):
         subprocess.run(
             ["mount", "-t", "nfs", dest_export, dest_path]
         )
+
+# Unmount nfs filesystems
+def Unmount2(filesystem):
+    src_path = f"/mnt/pure_migration/{filesystem}_source/"
+    dest_path = f"/mnt/pure_migration/{filesystem}_destination/"
+
+    if subprocess.run(["mountpoint", "-q", src_path]).returncode == 0:
+        subprocess.run(["umount", src_path])
+    else:
+        print(f"{src_path} is not a mountpoint")
+        print()
+
+    if subprocess.run(["mountpoint", "-q", dest_path]).returncode == 0:
+        subprocess.run(["umount", dest_path])
+    else:
+        print(f"{dest_path} is not a mountpoint")
+        print()
+
+# Remove directories used for mountpoints
+def Rmdir2(filesystem):
+    src_path = f"/mnt/pure_migration/{filesystem}_source/"
+    dest_path = f"/mnt/pure_migration/{filesystem}_destination/"
     
+    if os.path.isdir(src_path):
+        os.rmdir(src_path)
+    else: 
+        print(f"No directory {src_path} : Doing nothing. ")
+        print()
 
-
+    if os.path.isdir(dest_path):
+        os.rmdir(dest_path)
+    else: 
+        print(f"No directory {dest_path} : Doing nothing. ")
+        print()
 
 
 #######################
