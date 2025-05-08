@@ -228,32 +228,43 @@ def Get_FS_Json(filesystem, auth_token, mgt_ip):
 ########################
 
 # Create a new filesystem
-def Post_FS(filesystem, auth_token, mgt_ip, size, nfs=False, smb=False, write=True, hard_limit=True, rules=None, export_policy=None, client_policy=None, share_policy=None):
-    base_url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+def Post_FS_NFS(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=None, write=True, hard_limit=True):
+    if (rules is None) and (export_policy is None):
+        print("You didn't pass any rules or export policy. Exiting...")
+        print()
+        return None
+    
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}&default_exports=nfs"
 
     headers = {
         "x-auth-token": auth_token,
         "Content-Type": "application/json"
     }
-    
-    if nfs and smb:
-        url = base_url + "&default_exports=nfs,smb"
-    elif nfs:
-        url = base_url + "&default_exports=nfs"
-    elif smb:
-        url = base_url + "&default_exports=smb"
-    else:
-        print("Please set either NFS or SMB to true.")
-        print()
-        return None
 
     payload = {
         "writable": write,
         "hard_limit_enabled": hard_limit,
         "provisioned": size,
+        "nfs" : {
+            "v3_enabled": True,
+            "v4_1_enabled": True,
+        }
     }
+
+    if rules is not None:
+        payload["nfs"]["rules"] = rules
+    if export_policy is not None:
+        payload["nfs"]["export_policy"] = {"name": export_policy}
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"Successful fileystem creation: {filesystem}")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
     
-    # TODO 
 
 
 
