@@ -104,15 +104,43 @@ def Rmdir2(filesystem):
     if os.path.isdir(src_path):
         os.rmdir(src_path)
     else: 
-        print(f"No directory {src_path} : Doing nothing. ")
+        print(f"No directory {src_path} : Doing nothing.")
         print()
 
     if os.path.isdir(dest_path):
         os.rmdir(dest_path)
     else: 
-        print(f"No directory {dest_path} : Doing nothing. ")
+        print(f"No directory {dest_path} : Doing nothing.")
         print()
 
+# Pcopy Function from source to destination points
+def Pcopy(filesystem, verbose=False, sparse=False):
+    src_path = f"/mnt/pure_migration/{filesystem}_source/"
+    dest_path = f"/mnt/pure_migration/{filesystem}_destination/"
+
+    # Verify if mounted first as a double check
+    src_rc = subprocess.run(["mountpoint", "-q", src_path]).returncode
+    dest_rc = subprocess.run(["mountpoint", "-q", src_path]).returncode
+
+    if (src_rc == 0) and (dest_rc == 0):
+        print("Starting pcopy...")
+        print()
+        if sparse and verbose:
+            subprocess.run(["pcopy", "-prv", "--sparse=always", src_path, dest_path])
+        elif sparse:
+            subprocess.run(["pcopy", "-pr", "--sparse=always", src_path, dest_path])
+        elif verbose:
+            subprocess.run(["pcopy", "-prv", src_path, dest_path])
+        else:
+            subprocess.run(["pcopy", "-pr", src_path, dest_path])
+    else:
+        if src_rc != 0:
+            print(f"{src_path} isn't mounted, skipping pcopy.")
+        if dest_rc != 0:
+            print(f"{dest_path} isn't mounted, skipping pcopy.")
+        print()
+        
+        
 
 #######################
 ### GET API Section ###
