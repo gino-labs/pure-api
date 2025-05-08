@@ -33,11 +33,22 @@ def Parse_FS_Args():
         description="Python Script to migrate filesystems using pcopy and rsync",
     )
 
-    parser.add_argument("filesystems", nargs="+", help="One or more filesystem names")
+    parser.add_argument("filesystems", nargs="*", help="One or more filesystem names")
+    parser.add_argument("--file", help="Path to a filesystem")
 
     args = parser.parse_args()
 
-    return args.filesystems
+    if args.file:
+        cwd = os.getcwd()
+        fs_file = f"{cwd}/(args.file)"
+        if os.path.isfile(fs_file):
+            with open("fs_file", "r") as f:
+                lines = f.read().splitlines()
+                return lines
+        else:
+            print(f"{fs_file} is not a file.")
+    else:
+        return args.filesystems
 
 
 # Exchage API token for a session token
@@ -258,7 +269,7 @@ def Pcopy_Rsync(filesystem, pcopy=True, rsync=True):
     if pcopy:
         print(f"\nBegin Pcopying {filesystem}...")
         time.sleep(1)
-        subprocess.run(["pcopy", "-prP", "--sparse=always", src + "/.", dest])
+        subprocess.run(["pcopy", "-pr", "--sparse=always", src + "/.", dest])
     else:
         print(f"Skipping pcopy for {filesystem}...")
     
@@ -273,22 +284,28 @@ def Pcopy_Rsync(filesystem, pcopy=True, rsync=True):
 
 
 # Calculate difference in bytes between two mounts
-def Get_Byte_Diff(filesystem):
-    base_path = f"/mnt/pure_migration/{filesystem}"
-    src_stats = os.statvfs(base_path + "_source")
-    dest_stats = os.statvfs(base_path + "_migration")
+def Get_FS_Virtual_Size(filesystem, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
 
-    src_used = (src_stats.f_blocks - src_stats.f_bfree) * src_stats.f_frsize
-    dest_used = (dest_stats.f_blocks - dest_stats.f_bfree) * dest_stats.f_frsize
+    response = requests.get(url, headers={"x-auth-token": auth_token}, verify=False)
 
-    return dest_used - src_used
+    if response.status_code == 200:
+        data = response.json()
+        virt_size = data["items"][0]["space"]["virtual"]
+        return virt_size 
+    
+    
 
 # Write to migration log as filesystems complete
-def Write_Migration_Log(filesystem, byte_diff, log_file="pure_migration.log"):
+def Write_Migration_Log(filesystem, byte_diff, failure=False, log_file="pure_migration.log"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with open(log_file, "a") as log:
-        log.write(f"- `{filesystem}` migrated to s200 [{timestamp}] Byte difference: {byte_diff}\n")
-
+    if failure:
+        with open(log_file, "a") as log:
+            log.write(f"- `{filesystem} failed to migrate [{timestamp}]`")
+    else:
+        with open(log_file, "a") as log:
+            log.write(f"- `{filesystem}` migrated to s200 [{timestamp}]} Virtual Byte Diff: {byte_diff}\n")
+    
 
 #######################
 #### MAIN Function ####
@@ -342,12 +359,15 @@ def Main():
                 Rmdir_Umount_NFS(fs, rmdir=False)
         
             # Writing Migration log to pure_migration.log
-            byte_diff = Get_Byte_Diff(fs)
+            src_virt = Get_FS_Virt_Size(fs, auth_token, PB1_MGT)
+            dest_virt = Get_FS_Virt_Size(fs, auth_token_s200, PB2_MGT)
+            byte_diff = dest_virt - srv_virt
             Write_Migration_Log(fs, byte_diff)
         else:
             print(
                 f"This filesystem does not exist: {fs}, moving on to next filesystem."
             )
+            Write_Migration_Log(fs, failure=True)
             time.sleep(2)
 
 
