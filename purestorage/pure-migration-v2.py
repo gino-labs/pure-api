@@ -40,9 +40,9 @@ def Parse_FS_Args():
 
     if args.file:
         cwd = os.getcwd()
-        fs_file = f"{cwd}/(args.file)"
+        fs_file = f"{cwd}/{args.file}"
         if os.path.isfile(fs_file):
-            with open("fs_file", "r") as f:
+            with open(fs_file, "r") as f:
                 lines = f.read().splitlines()
                 return lines
         else:
@@ -62,7 +62,7 @@ def Get_Session_Token(api_token, mgt_ip):
     if login_response.status_code == 200:
         return login_response.headers.get("x-auth-token")
     else:
-        print(f"{login_response.status_code}", file=sys.stderr)
+        print(f"{login_response.status_code}\n{login_response.text}", file=sys.stderr)
         sys.exit(1)
 
 
@@ -82,12 +82,12 @@ def Check_FS_Exists(filesystem, auth_token, mgt_ip=PB1_MGT):
 
 
 # Add export rule to filesystem to include localhost
-def Update_Export_Rule(filesystem, auth_token, mgt_ip=PB1_MGT, local_ip=LOCAL_IP):
+def Update_Export_Rule(filesystem, auth_token, mgt_ip=PB1_MGT, write_rule="ro", local_ip=LOCAL_IP):
     url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
 
     headers = {"x-auth-token": auth_token, "Content-Type": "application/json"}
 
-    rule = f"{LOCAL_IP}(ro,no_root_squash)"
+    rule = f"{LOCAL_IP}({write_rule},no_root_squash)"
 
     update_data = {"nfs": {"v3_enabled": True, "v4_1_enabled": True, "add_rules": rule}}
 
@@ -109,6 +109,35 @@ def Update_Export_Rule(filesystem, auth_token, mgt_ip=PB1_MGT, local_ip=LOCAL_IP
             print(f"Patch Status Code: {response.status_code}")
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
+
+
+# Add Export Policy
+def Update_Export_Policy(filesystem, auth_token, mgt_ip=PB2_MGT, policy=MIGRATION_POLICY):
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+
+    headers = {"x-auth-token": auth_token, "Content-Type": "application/json"}
+
+    update_data = {"nfs": {"export_policy": {"name": policy}}}
+
+    # Check if already exists
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        data = response.json()
+        policy_check = data["items"][0]["nfs"]["export_policy"]["name"]
+        if policy not in policy_check:
+            response = requests.patch(
+                url, headers=headers, json=update_data, verify=False
+            )
+            if response.status_code == 200:
+                print(f"Updated with {rule}")
+        else:
+            print(f"Policy: {policy}, already exists")
+
+            print(f"Patch Status Code: {response.status_code}")
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+
 
 
 # Get filesystem provision size in bytes
@@ -223,7 +252,7 @@ def Mkdir_Mount_NFS(filesystem, src_ip=PB1, dest_ip=PB2):
             ]
         )
     else:
-        Print("Already Mounted.")
+        print("Already Mounted.")
 
     if (
         subprocess.run(
@@ -297,14 +326,14 @@ def Get_FS_Virtual_Size(filesystem, auth_token, mgt_ip):
     
 
 # Write to migration log as filesystems complete
-def Write_Migration_Log(filesystem, byte_diff, failure=False, log_file="pure_migration.log"):
+def Write_Migration_Log(filesystem, failure=False, log_file="pure_migration.log"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if failure:
         with open(log_file, "a") as log:
-            log.write(f"- `{filesystem} failed to migrate [{timestamp}]`")
+            log.write(f"- `{filesystem}` failed to rsync [{timestamp}]\n")
     else:
         with open(log_file, "a") as log:
-            log.write(f"- `{filesystem}` migrated to s200 [{timestamp}]} Virtual Byte Diff: {byte_diff}\n")
+            log.write(f"- `{filesystem}` rsynced to s200 [{timestamp}]\n")
     
 
 #######################
@@ -316,12 +345,11 @@ def Main():
     # Parse arguments
     filesystems = Parse_FS_Args()
 
-    # Get session tokens
-    auth_token = Get_Session_Token(API_TOKEN, PB1_MGT)
-    auth_token_s200 = Get_Session_Token(API_TOKEN_S200, PB2_MGT)
-
     # Loop through one or more filesystems passed
     for fs in filesystems:
+        # Get session tokens
+        auth_token = Get_Session_Token(API_TOKEN, PB1_MGT)
+        auth_token_s200 = Get_Session_Token(API_TOKEN_S200, PB2_MGT)
         if Check_FS_Exists(fs, auth_token):
             print(f"Filesystem does exist: {fs}\nContinuing with script...")
             time.sleep(1)
@@ -331,14 +359,16 @@ def Main():
             Update_Export_Rule(fs, auth_token)
             # Create new filesystem on S200
             if not Post_FS(fs, auth_token_s200, size):
-                print(f"{fs} already exists on {PB2_MGT}")
-                continue
+                print(f"{fs} exists on {PB2_MGT}")
+#                continue
+            Update_Export_Policy(fs, auth_token_s200)
             # Run mkdir and mount
             try:
                 Mkdir_Mount_NFS(fs)
+                time.sleep(2)
                 # Run pcopy and rsync
-                Pcopy_Rsync(fs)
-                time.sleep(3)
+                Pcopy_Rsync(fs, pcopy=False)
+                time.sleep(2)
             except Exception as e:
                 print(f"Error occurred: {e}")
                 Rmdir_Umount_NFS(fs)
@@ -357,12 +387,10 @@ def Main():
             else:
                 print(f"Unmounting {fs}")
                 Rmdir_Umount_NFS(fs, rmdir=False)
+                time.sleep(2)
         
             # Writing Migration log to pure_migration.log
-            src_virt = Get_FS_Virt_Size(fs, auth_token, PB1_MGT)
-            dest_virt = Get_FS_Virt_Size(fs, auth_token_s200, PB2_MGT)
-            byte_diff = dest_virt - srv_virt
-            Write_Migration_Log(fs, byte_diff)
+            Write_Migration_Log(fs)
         else:
             print(
                 f"This filesystem does not exist: {fs}, moving on to next filesystem."
