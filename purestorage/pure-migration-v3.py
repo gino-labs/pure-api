@@ -47,8 +47,40 @@ def Parse_FS_Args():
                 return lines
         else:
             print(f"{fs_file} is not a file.")
+            print()
     else:
         return args.filesystems
+
+# Make directory for mounting
+def Mkdir2(filesystem):
+    os.makedirs(f"/mnt/pure_migration/{filesystem}_source", exist_ok=True)
+    os.makedirs(f"/mnt/pure_migration/{filesystem}_migration", exist_ok=True)
+
+# Mount Filesystem to directory mountpoint
+def Mount2(filesystem, src_ip=PB1, dest_ip=PB2):
+    src_path = f"/mnt/pure_migration/{filesystem}_source/"
+    src_export = f"{src_ip}:/{filesystem}"
+    dest_path = f"/mnt/pure_migration/{filesystem}_destination/"
+    dest_export = f"{dest_ip}:/{filesystem}"
+
+    if subprocess.run(["mountpoint", "-q", src_path]).returncode == 0:
+        print(f"{src_path} : Already Mounted.")
+        print()
+    else:
+        subprocess.run(
+            ["mount", "-t", "nfs", src_export, src_path]
+        )
+
+    if subprocess.run(["mountpoint", "-q", dest_path]).returncode == 0:
+        print(f"{dest_path} : Already Mounted.")
+        print()
+    else:
+        subprocess.run(
+            ["mount", "-t", "nfs", dest_export, dest_path]
+        )
+    
+
+
 
 
 #######################
