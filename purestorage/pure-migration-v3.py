@@ -167,6 +167,16 @@ def Rsync(filesystem, verbose=False, sparse=False):
             print(f"{dest_path} isn't mounted, skipping rsync.")
         print()
 
+# Write to migration log
+def Write_Migration_Log(filesystem, passed=True, log_file="pure_migration.log"):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    if passed:
+        with open(log_file, "a") as log:
+            log.write(f"- `{filesystem}` : successfully copied [{timestamp}]\n")
+    else:
+        with open(log_file, "a") as log:
+            log.write(f"- `{filesystem}` : failed to copy [{timestamp}]\n")
+
 
 #######################
 ### GET API Section ###
