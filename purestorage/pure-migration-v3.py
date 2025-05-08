@@ -182,10 +182,30 @@ def Write_Migration_Log(filesystem, passed=True, log_file="pure_migration.log"):
 ### GET API Section ###
 #######################
 
+# Retrieve session token using POST request with api token. Only excpetion to sections.
+def Get_Session_Token(api_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/login"
+
+    headers = {
+        "api-token": api_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print()
+        return response.headers.get("x-auth-token")
+    else:
+        print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+    
 
 ########################
 ### POST API Section ###
 ########################
+
 
 
 #########################
@@ -193,12 +213,17 @@ def Write_Migration_Log(filesystem, passed=True, log_file="pure_migration.log"):
 #########################
 
 
+
 ##########################
 ### DELETE API Section ###
 ##########################
 
 
+
+#####################
 ### Main Function ###
+#####################
+
 def Main():
     print("TODO")
 
