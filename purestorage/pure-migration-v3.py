@@ -307,6 +307,63 @@ def Post_Fs_Smb(filesystem, auth_token, mgt_ip, size, client_policy=None, share_
 ### PATCH API Section ###
 #########################
 
+# Show patch payload example options
+def Show_Json_Patch_Options():
+    example = {
+  "name": "string",
+  "default_group_quota": 0,
+  "default_user_quota": 0,
+  "destroyed": true,
+  "fast_remove_directory_enabled": true,
+  "hard_limit_enabled": true,
+  "http": {
+    "enabled": true
+  },
+  "multi_protocol": {
+    "access_control_style": "string",
+    "safeguard_acls": true
+  },
+  "nfs": {
+    "v3_enabled": true,
+    "v4_1_enabled": true,
+    "rules": "1.0.0.0/8(rw,no_root_squash) fd01:abcd::/64(ro,secure,root_squash,anongid=16000) @netgrp(rw,all_squash,anonuid=99,fileid_32bit) 1.41.8.32(rw,no_all_squash,sec=krb5:krb5i:krp5p) my-hostname(rw,no_root_squash) host.exampledomain.com(rw,no_root_squash) host?(rw,no_root_squash) host?.example*domain.com(rw,no_root_squash) host.*(rw,no_root_squash)",
+    "add_rules": "string",
+    "remove_rules": "string",
+    "after": "string",
+    "export_policy": {
+      "id": "string",
+      "name": "string",
+      "resource_type": "string"
+    }
+  },
+  "provisioned": 1048576,
+  "requested_promotion_state": "string",
+  "smb": {
+    "enabled": true,
+    "client_policy": {
+      "id": "string",
+      "name": "string",
+      "resource_type": "string"
+    },
+    "share_policy": {
+      "id": "string",
+      "name": "string",
+      "resource_type": "string"
+    },
+        "continuous_availability_enabled": true
+        },
+        "snapshot_directory_enabled": true,
+        "space": {},
+        "writable": true,
+        "group_ownership": "string",
+        "storage_class": {
+            "name": "string"
+        }
+    }
+
+    print(json.dumps(example, indent=4)
+    print()
+
 # Add filesystem with a json payload passed into function
 def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
     url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
