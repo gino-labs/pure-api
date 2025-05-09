@@ -227,10 +227,10 @@ def Get_FS_Json(filesystem, auth_token, mgt_ip):
 ### POST API Section ###
 ########################
 
-# Create a new filesystem
+# Create a new NFS filesystem
 def Post_FS_NFS(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=None, write=True, hard_limit=True):
     if (rules is None) and (export_policy is None):
-        print("You didn't pass any rules or export policy. Exiting...")
+        print("You didn't pass in any rules or export policies. Exiting...")
         print()
         return None
     
@@ -259,11 +259,52 @@ def Post_FS_NFS(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=
     response = requests.post(url, headers=headers, json=payload, verify=False)
 
     if response.status_code == 200:
-        print(f"Successful fileystem creation: {filesystem}")
+        print(f"Successful NFS fileystem creation: {filesystem}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
+        return None
+    
+# Create a new SMB filesystem
+def POST_FS_SMB(filesystem, auth_token, mgt_ip, size, client_policy=None, share_policy=None, write=True, hard_limit=True):
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}&default_exports=smb"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "writable": write,
+        "hard_limit_enabled": hard_limit,
+        "provisioned": size,
+        "smb" : {
+            "enabled": True,
+        }
+    }
+
+    if client_policy is not None:
+        payload["smb"]["client_policy"] = {"name": client_policy}
+    if share_policy is not None:
+        payload["smb"]["share_policy"] = {"name": share_policy}
+    if (client_policy is None) and (share_policy is None):
+        print("You didn't specify client or share policy. Using defaults...")
+        print()
+    
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"Successful SMB fileystem creation: {filesystem}")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+        
+    
+
+
     
 
 
