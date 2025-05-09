@@ -202,7 +202,7 @@ def Get_Session_Token(api_token, mgt_ip):
         return None
     
 # GET filesystem as a json object
-def Get_FS_Json(filesystem, auth_token, mgt_ip):
+def Get_Fs_Json(filesystem, auth_token, mgt_ip):
     url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
 
     headers = {
@@ -228,7 +228,7 @@ def Get_FS_Json(filesystem, auth_token, mgt_ip):
 ########################
 
 # Create a new NFS filesystem
-def Post_FS_NFS(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=None, write=True, hard_limit=True):
+def Post_Fs_Nfs(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=None, write=True, hard_limit=True):
     if (rules is None) and (export_policy is None):
         print("You didn't pass in any rules or export policies. Exiting...")
         print()
@@ -267,7 +267,7 @@ def Post_FS_NFS(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=
         return None
     
 # Create a new SMB filesystem
-def POST_FS_SMB(filesystem, auth_token, mgt_ip, size, client_policy=None, share_policy=None, write=True, hard_limit=True):
+def Post_Fs_Smb(filesystem, auth_token, mgt_ip, size, client_policy=None, share_policy=None, write=True, hard_limit=True):
     url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}&default_exports=smb"
 
     headers = {
@@ -300,18 +300,27 @@ def POST_FS_SMB(filesystem, auth_token, mgt_ip, size, client_policy=None, share_
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
-        return None
-        
+        return None        
     
-
-
-    
-
-
 
 #########################
 ### PATCH API Section ###
 #########################
+
+# Add filesystem with a json payload passed into function
+def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.patch(url, headers=headers, json=payload, verify=False)
+    
+    if response.status_code == 200:
+        print(f"")
+
 
 
 
