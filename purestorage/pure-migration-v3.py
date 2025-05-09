@@ -327,13 +327,39 @@ def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
         return None
 
 
-
-
 ##########################
 ### DELETE API Section ###
 ##########################
 
+# Delete a filesystem. Note: Will need to mark a filesystem as 'destroyed' first to work. Use Patch_FS()
+def Delete_Fs(filesystem, auth_token, mgt_ip, confirm=True):
+    if confirm:
+        confirmation = input(f"Are you sure you want to delete '{filesystem} from {mgt_ip}'? (y/n) ").strip().lower()
 
+        if confirmation == 'y':
+            print(f"Proceeding to delete {filesystem} in 5 seconds...")
+            time.sleep(5.5)
+        else:
+            print(f"Skipping Deletion...")
+            print()
+            return None
+    
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.delete(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"Filesystem {filesystem} was deleted from {mgt_ip}.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 #####################
 ### Main Function ###
