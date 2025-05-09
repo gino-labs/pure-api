@@ -319,7 +319,12 @@ def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
     response = requests.patch(url, headers=headers, json=payload, verify=False)
     
     if response.status_code == 200:
-        print(f"")
+        print(f"Update Successful.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 
 
