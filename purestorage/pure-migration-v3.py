@@ -36,20 +36,7 @@ def Parse_FS_Args():
     parser.add_argument("filesystems", nargs="*", help="One or more filesystem names")
     parser.add_argument("--file", help="Path to a filesystem")
 
-    args = parser.parse_args()
-
-    if args.file:
-        cwd = os.getcwd()
-        fs_file = f"{cwd}/{args.file}"
-        if os.path.isfile(fs_file):
-            with open(fs_file, "r") as f:
-                lines = f.read().splitlines()
-                return lines
-        else:
-            print(f"{fs_file} is not a file.")
-            print()
-    else:
-        return args.filesystems
+    return parser.parse_args()
 
 # Make directory for mounting
 def Mkdir2(filesystem):
@@ -366,6 +353,9 @@ def Delete_Fs(filesystem, auth_token, mgt_ip, confirm=True):
 #####################
 
 def Main():
+    # Parse CLI Arguments
+    args = Parse_FS_Args()
+    # Add logic to use parser namespace (filesystems, file)
     print("TODO")
 
 ### Run Script ###
