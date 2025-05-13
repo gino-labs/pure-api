@@ -222,19 +222,43 @@ def Get_Fs_List(auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"")
+        print("GET filesystems success")
+        print()
 
         data = response.json()
         items = data["items"]
-        fs_json_list = []
 
-        for item in items:
-            fs_json_list.append(item)
-        return fs_json_list        
+        return items   
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None     
 
-# Get object store accounts json (List) TODO
+# Get object store accounts json (List)
+def Get_Obj_Store_Accounts(auth_token, mgt_ip):
+    url = f"http://{mgt_ip}/api/2.12/object-store-accounts"
 
-# Get object store access keys json (name + user name) TODO
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print("Get object store accounts success.")
+        print()
+
+        data = response.json()
+        items = data["items"]
+
+        return items
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+        
+# Get object store access keys json (name + user name)
 
 # Get object store bucket json TODO
 
