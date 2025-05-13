@@ -236,7 +236,7 @@ def Get_Fs_List(auth_token, mgt_ip):
 
 # Get object store accounts json (List)
 def Get_Obj_Store_Accounts(auth_token, mgt_ip):
-    url = f"http://{mgt_ip}/api/2.12/object-store-accounts"
+    url = f"http://{mgt_ip}/api/2.latest/object-store-accounts"
 
     headers = {
         "x-auth-token": auth_token,
@@ -260,7 +260,7 @@ def Get_Obj_Store_Accounts(auth_token, mgt_ip):
         
 # Get object store access keys json (name + user name)
 def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
-    url = f"http://{mgt_ip}/api/2.12/object-store-access-keys"
+    url = f"http://{mgt_ip}/api/2.latest/object-store-access-keys"
 
     headers = {
         "x-auth-token": auth_token,
@@ -284,7 +284,27 @@ def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
 
 # Get object store bucket json
 def Get_Buckets_Json(auth_token, mgt_ip):
-    
+    url = f"http://{mgt_ip}/api/2.latest/buckets"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print("Get buckets success.")
+        print()
+
+        data = response.json()
+        items = data["items"]
+
+        return items
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 
 ########################
