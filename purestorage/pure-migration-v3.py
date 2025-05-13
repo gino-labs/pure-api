@@ -226,11 +226,11 @@ def Get_Fs_List(auth_token, mgt_ip):
 
         data = response.json()
         items = data["items"]
-        fs_list = []
+        fs_json_list = []
 
         for item in items:
-            fs_list.append(item["name"])
-        return fs_list        
+            fs_json_list.append(item)
+        return fs_json_list        
 
 # Get object store accounts json (List) TODO
 
