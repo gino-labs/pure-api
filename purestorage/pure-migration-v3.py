@@ -200,6 +200,7 @@ def Get_Fs_Json(filesystem, auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
+        print(f"Retreived {filesystem} successfully.")
         print()
         data = response.json()
         fs_data = data["items"][0]
@@ -208,6 +209,34 @@ def Get_Fs_Json(filesystem, auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+
+# Get Filesystems json (List) TODO
+def Get_Fs_List(auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-systems"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"")
+
+        data = response.json()
+        items = data["items"]
+        fs_list = []
+
+        for item in items:
+            fs_list.append(item["name"])
+        return fs_list        
+
+# Get object store accounts json (List) TODO
+
+# Get object store access keys json (name + user name) TODO
+
+# Get object store bucket json TODO
 
 
 ########################
