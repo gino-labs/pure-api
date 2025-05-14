@@ -31,7 +31,7 @@ def Obj_Account_Migration():
         post_check = pv3.Post_Obj_Store_Account(auth_token_s200, pv3.PB2_MGT, acct_name, payload)
 
         if post_check is None:
-            print(f"Post failed for {acct}")
+            print(f"Post failed for {acct_name}")
             print()
     print("Done")
 
