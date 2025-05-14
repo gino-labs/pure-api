@@ -86,10 +86,17 @@ def Bucket_Migration():
 def Store_Access_Key_Migration():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 
-    store_keys = pv3.Get_Obj_Store_Access_Keys(auth_token, pv3.PB1_MGT)
-    #Debugging
-    import json
-    print(json.dumps())
+    store_keys = pv3.Get_Obj_Access_Keys(auth_token, pv3.PB1_MGT)
+
+    # Debugging
+    name = "gxc-test"
+    payload = {
+        "user": {
+            "name": name
+        }
+    }
+
+    pv3.Post_Access_Key(auth_token, pv3.PB1_MGT, name, payload)
 
 ### main ###
 if __name__ == "__main__":
