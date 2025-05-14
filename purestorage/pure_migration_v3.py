@@ -451,6 +451,25 @@ def Post_Obj_Store_Account(auth_token, mgt_ip, name, payload):
         print()
         return None        
     
+# Create bucket
+def Post_Bucket(auth_token, mgt_ip, name, payload):
+    url = f"https://{mgt_ip}/api/2.latest/buckets?names={name}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for object store account: {name}")
+        print()    
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None     
+    
 
 
 #########################

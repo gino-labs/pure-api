@@ -39,7 +39,8 @@ def Obj_Account_Migration():
 
         post_check = pv3.Post_Obj_Store_Account(auth_token_s200, pv3.PB2_MGT, acct_name, payload)
 
-    print("Done")
+    print("Object store accounts done.")
+    print()
 
 # Migrate buckets
 def Bucket_Migration():
@@ -53,14 +54,39 @@ def Bucket_Migration():
 
         bucket_name = bucket["name"]
 
-        bucket_chceck = pv3.Get_Single_Bucket(bucket_name, auth_token_s200, pv3.PB2_MGT)
+        bucket_check = pv3.Get_Single_Bucket(bucket_name, auth_token_s200, pv3.PB2_MGT)
 
-        
+        if bucket_check is not None:
+            print(f"Bucket already exists. {bucket_check["name"]}")
+            print()
+            continue
 
+        # Develop post payload from existing bucket
+        if bucket["quota_limit"] is not None:
+            bucket["quota_limit"] = str(bucket["quota_limit"])
+        if bucket["object_lock_config"]["default_retention"] is not None:
+            bucket["object_lock_config"]["default_retention"] = str(bucket["object_lock_config"]["default_retention"])
+
+        payload = {
+            "account": {
+                "name": bucket["account"]["name"]
+            },
+            "bucket_type": bucket["bucket_type"],
+            "hard_limit_enabled": bucket["hard_limit_enabled"],
+            "object_lock_config": bucket["object_lock_config"],
+            "quota_limit": bucket["quota_limit"],
+            "retention_lock": bucket["retention_lock"]
+        }
+
+        post_check = pv3.Post_Bucket(auth_token_s200, pv3.PB2_MGT, bucket_name, payload)
+
+    print("Buckets done.")
+    print()
 
 ### main ###
 if __name__ == "__main__":
     Obj_Account_Migration()
+    Bucket_Migration()
 
 
 
