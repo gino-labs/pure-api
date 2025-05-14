@@ -352,6 +352,28 @@ def Get_Single_Bucket(bucket, auth_token, mgt_ip):
         print()
         return None
 
+# Get existing account access key
+def Get_Account_Access_Key(key_name, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/2.latest/object-store-access-keys?names={key_name}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for object store account: {bucket}.")
+        print()
+
+        data = response.json()
+
+        return data["items"][0]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 ########################
 ### POST API Section ###
