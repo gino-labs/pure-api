@@ -25,7 +25,7 @@ def Obj_Account_Migration():
         payload = {
             "bucket_defaults": {
                 "hard_limit_enabled": acct["bucket_defaults"]["hard_limit_enabled"],
-                "quota_limit": str(acct["bucket_defaults"]["quota_limit"])
+                "quota_limit": acct["bucket_defaults"]["quota_limit"]
             },
             "hard_limit_enabled": acct["hard_limit_enabled"],
             "quota_limit": str(acct["quota_limit"])
@@ -33,9 +33,6 @@ def Obj_Account_Migration():
 
         post_check = pv3.Post_Obj_Store_Account(auth_token_s200, pv3.PB2_MGT, acct_name, payload)
 
-        if post_check is None:
-            print(f"Post failed for {acct_name}")
-            print()
     print("Done")
 
 
