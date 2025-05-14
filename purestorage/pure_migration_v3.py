@@ -259,8 +259,8 @@ def Get_Obj_Store_Accounts(auth_token, mgt_ip):
         return None
     
 # Get single object store account by name
-def Get_Single_Obj_Account(obj, auth_token, mgt_ip):
-    url = f"https://{mgt_ip}/api/2.latest/object-store-accounts?names={obj}"
+def Get_Single_Obj_Account(account, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-accounts?names={account}"
 
     headers = {
         "x-auth-token": auth_token,
@@ -270,7 +270,7 @@ def Get_Single_Obj_Account(obj, auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"GET success for object store account: {obj}.")
+        print(f"GET success for object store account: {account}.")
         print()
 
         data = response.json()
