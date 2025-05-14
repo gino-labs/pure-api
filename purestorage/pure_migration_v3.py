@@ -275,7 +275,7 @@ def Get_Single_Obj_Account(account, auth_token, mgt_ip):
 
         data = response.json()
 
-        return data["items"]
+        return data["items"][0]
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
