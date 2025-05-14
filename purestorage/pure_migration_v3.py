@@ -493,8 +493,8 @@ def Post_Bucket(auth_token, mgt_ip, name, payload):
         return None
 
 # Create access key + user (TEST can I save secret key?)
-def Post_Access_Key(auth_token, mgt_ip, name, payload):
-    url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys?names={name}"
+def Post_Access_Key(auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys"
 
     headers = {
         "x-auth-token": auth_token,

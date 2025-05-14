@@ -96,7 +96,7 @@ def Store_Access_Key_Migration():
         }
     }
 
-    pv3.Post_Access_Key(auth_token, pv3.PB1_MGT, name, payload)
+    pv3.Post_Access_Key(auth_token, pv3.PB1_MGT, payload)
 
 ### main ###
 if __name__ == "__main__":
