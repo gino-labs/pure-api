@@ -83,10 +83,19 @@ def Bucket_Migration():
     print("Buckets done.")
     print()
 
+def Store_Access_Key_Migration():
+    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+
+    store_keys = pv3.Get_Obj_Store_Access_Keys(auth_token, pv3.PB1_MGT)
+    #Debugging
+    import json
+    print(json.dumps())
+
 ### main ###
 if __name__ == "__main__":
-    Obj_Account_Migration()
-    Bucket_Migration()
+    #Obj_Account_Migration()
+    #Bucket_Migration()
+    Store_Access_Key_Migration()
 
 
 

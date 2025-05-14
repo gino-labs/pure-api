@@ -235,7 +235,7 @@ def Get_Fs_List(auth_token, mgt_ip):
         return None     
 
 # Get object store accounts json (List)
-def Get_Obj_Store_Accounts(auth_token, mgt_ip):
+def Get_Obj_Accounts(auth_token, mgt_ip):
     url = f"https://{mgt_ip}/api/2.latest/object-store-accounts"
 
     headers = {
@@ -282,7 +282,7 @@ def Get_Single_Obj_Account(account, auth_token, mgt_ip):
         return None
 
 # Get object store bucket json
-def Get_Buckets_Json(auth_token, mgt_ip):
+def Get_Buckets(auth_token, mgt_ip):
     url = f"https://{mgt_ip}/api/2.latest/buckets"
 
     headers = {
@@ -329,7 +329,7 @@ def Get_Single_Bucket(bucket, auth_token, mgt_ip):
         return None
          
 # Get object store access keys json (name + user name)
-def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
+def Get_Obj_Access_Keys(auth_token, mgt_ip):
     url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys"
 
     headers = {
@@ -353,7 +353,7 @@ def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
         return None
 
 # Get existing account access key
-def Get_Single_Object_Store_Access_Key(key_name, auth_token, mgt_ip):
+def Get_Single_Obj_Access_Key(key_name, auth_token, mgt_ip):
     url = f"https://{mgt_ip}/2.latest/object-store-access-keys?names={key_name}"
 
     headers = {
@@ -455,7 +455,7 @@ def Post_Fs_Smb(filesystem, auth_token, mgt_ip, size, client_policy=None, share_
         return None        
     
 # Create object store account
-def Post_Obj_Store_Account(auth_token, mgt_ip, name, payload):
+def Post_Obj_Account(auth_token, mgt_ip, name, payload):
     url = f"https://{mgt_ip}/api/2.latest/object-store-accounts?names={name}"
 
     headers = {
@@ -490,8 +490,31 @@ def Post_Bucket(auth_token, mgt_ip, name, payload):
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
-        return None     
-    
+        return None
+
+# Create access key + user (TEST can I save secret key?)
+def Post_Access_Key(auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for access key")
+        print()   
+
+        data = response.json()
+
+        print(data["items"][0]["secret_access_key"])
+
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 
 #########################
