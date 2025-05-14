@@ -18,7 +18,7 @@ def Obj_Account_Migration():
         acct_check = pv3.Get_Single_Obj_Account(acct_name, auth_token_s200, pv3.PB2_MGT)
 
         if acct_check is not None:
-            print(f"Object store account already exists. {acct_check}")
+            print(f"Object store account already exists: {acct_check['name']}")
             print()
             continue
 
@@ -57,7 +57,7 @@ def Bucket_Migration():
         bucket_check = pv3.Get_Single_Bucket(bucket_name, auth_token_s200, pv3.PB2_MGT)
 
         if bucket_check is not None:
-            print(f"Bucket already exists. {bucket_check["name"]}")
+            print(f"Bucket already exists: {bucket_check['name']}")
             print()
             continue
 
