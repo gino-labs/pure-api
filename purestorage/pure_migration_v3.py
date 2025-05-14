@@ -13,14 +13,14 @@ from datetime import datetime
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 ################# GLOBAL VARIABLES #################
-PB1 = ""                                           #
-PB2 = ""                                           #
-PB1_MGT = ""                                       #
-PB2_MGT = ""                                       #
-LOCAL_IP = ""                                      #
-API_TOKEN = ""                                     #
-API_TOKEN_S200 = ""                                #
-MIGRATION_POLICY = ""                              #
+PB1 = os.getenv("PB1")                             #
+PB2 = os.getenv("PB2")                             #
+PB1_MGT = os.getenv("PB1_MGT")                     #
+PB2_MGT = os.getenv("PB2_MGT")                     #
+LOCAL_IP = os.getenv("LOCAL_IP")                   #
+API_TOKEN = os.getenv("API_TOKEN")                 #
+API_TOKEN_S200 = os.getenv("API_TOKEN_S200")       #
+MIGRATION_POLICY = os.getenv("MIGRATION_POLICY")   #
 ####################################################
 
 #######################
