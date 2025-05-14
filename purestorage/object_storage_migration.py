@@ -3,6 +3,7 @@ import pure_migration_v3 as pv3
 
 # Script for migrating object storage related components #
 
+# Migrate object store accounts
 def Obj_Account_Migration():
     # Get list of object accounts
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
@@ -40,6 +41,21 @@ def Obj_Account_Migration():
 
     print("Done")
 
+# Migrate buckets
+def Bucket_Migration():
+    # Get list of object accounts
+    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+
+    bucket_list = pv3.Get_Buckets_Json(auth_token, pv3.PB1_MGT)
+
+    for bucket in bucket_list:
+        auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+
+        bucket_name = bucket["name"]
+
+        bucket_chceck = pv3.Get_Single_Bucket(bucket_name, auth_token_s200, pv3.PB2_MGT)
+
+        
 
 
 ### main ###
