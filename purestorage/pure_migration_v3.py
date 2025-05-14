@@ -364,7 +364,7 @@ def Get_Account_Access_Key(key_name, auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"GET success for object store account: {bucket}.")
+        print(f"GET success for account access key: {key_name}.")
         print()
 
         data = response.json()
