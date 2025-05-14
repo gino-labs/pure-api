@@ -280,30 +280,6 @@ def Get_Single_Obj_Account(account, auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
-        
-# Get object store access keys json (name + user name)
-def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
-    url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys"
-
-    headers = {
-        "x-auth-token": auth_token,
-        "Content-Type": "application/json"
-    }
-
-    response = requests.get(url, headers=headers, verify=False)
-
-    if response.status_code == 200:
-        print("GET object store access keys success.")
-        print()
-
-        data = response.json()
-        items = data["items"]
-
-        return items
-    else:
-        print(f"Error Status Code: {response.status_code}\n{response.text}")
-        print()
-        return None
 
 # Get object store bucket json
 def Get_Buckets_Json(auth_token, mgt_ip):
@@ -351,9 +327,33 @@ def Get_Single_Bucket(bucket, auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+         
+# Get object store access keys json (name + user name)
+def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print("GET object store access keys success.")
+        print()
+
+        data = response.json()
+        items = data["items"]
+
+        return items
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 # Get existing account access key
-def Get_Account_Access_Key(key_name, auth_token, mgt_ip):
+def Get_Single_Object_Store_Access_Key(key_name, auth_token, mgt_ip):
     url = f"https://{mgt_ip}/2.latest/object-store-access-keys?names={key_name}"
 
     headers = {
