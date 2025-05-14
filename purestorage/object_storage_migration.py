@@ -33,7 +33,13 @@ def Obj_Account_Migration():
         if post_check is None:
             print(f"Post failed for {acct}")
             print()
+    print("Done")
 
+
+
+### main ###
+if __name__ == "__main__":
+    Obj_Account_Migration()
 
 
 
