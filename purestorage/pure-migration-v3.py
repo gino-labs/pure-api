@@ -222,7 +222,7 @@ def Get_Fs_List(auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print("Get filesystems success")
+        print("GET success for filesystems.")
         print()
 
         data = response.json()
@@ -236,7 +236,7 @@ def Get_Fs_List(auth_token, mgt_ip):
 
 # Get object store accounts json (List)
 def Get_Obj_Store_Accounts(auth_token, mgt_ip):
-    url = f"http://{mgt_ip}/api/2.latest/object-store-accounts"
+    url = f"https://{mgt_ip}/api/2.latest/object-store-accounts"
 
     headers = {
         "x-auth-token": auth_token,
@@ -246,7 +246,7 @@ def Get_Obj_Store_Accounts(auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print("Get object store accounts success.")
+        print("GET success for object store accounts list.")
         print()
 
         data = response.json()
@@ -260,7 +260,7 @@ def Get_Obj_Store_Accounts(auth_token, mgt_ip):
     
 # Get single object store account by name
 def Get_Single_Obj_Account(obj, auth_token, mgt_ip):
-    url = f"http://{mgt_ip}/api/2.latest/object-store-accounts?names={obj}"
+    url = f"https://{mgt_ip}/api/2.latest/object-store-accounts?names={obj}"
 
     headers = {
         "x-auth-token": auth_token,
@@ -270,7 +270,7 @@ def Get_Single_Obj_Account(obj, auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"Successfullly retrieved bbject store account {obj}.")
+        print(f"GET success for object store account: {obj}.")
         print()
 
         data = response.json()
@@ -283,7 +283,7 @@ def Get_Single_Obj_Account(obj, auth_token, mgt_ip):
         
 # Get object store access keys json (name + user name)
 def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
-    url = f"http://{mgt_ip}/api/2.latest/object-store-access-keys"
+    url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys"
 
     headers = {
         "x-auth-token": auth_token,
@@ -293,7 +293,7 @@ def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print("Get object store access keys success.")
+        print("GET object store access keys success.")
         print()
 
         data = response.json()
@@ -307,7 +307,7 @@ def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
 
 # Get object store bucket json
 def Get_Buckets_Json(auth_token, mgt_ip):
-    url = f"http://{mgt_ip}/api/2.latest/buckets"
+    url = f"https://{mgt_ip}/api/2.latest/buckets"
 
     headers = {
         "x-auth-token": auth_token,
@@ -317,7 +317,7 @@ def Get_Buckets_Json(auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print("Get buckets success.")
+        print("GET success for buckets.")
         print()
 
         data = response.json()
@@ -366,7 +366,7 @@ def Post_Fs_Nfs(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=
     response = requests.post(url, headers=headers, json=payload, verify=False)
 
     if response.status_code == 200:
-        print(f"Successful NFS fileystem creation: {filesystem}")
+        print(f"POST success for NFS fileystem: {filesystem}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
@@ -402,13 +402,33 @@ def Post_Fs_Smb(filesystem, auth_token, mgt_ip, size, client_policy=None, share_
     response = requests.post(url, headers=headers, json=payload, verify=False)
 
     if response.status_code == 200:
-        print(f"Successful SMB fileystem creation: {filesystem}")
+        print(f"POST success for SMB fileystem: {filesystem}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None        
     
+# Create object store account
+def Post_Obj_Store_Account(auth_token, mgt_ip, name, payload):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-accounts?names={name}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for object store account: {name}")
+        print()    
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None        
+    
+
 
 #########################
 ### PATCH API Section ###
