@@ -257,6 +257,29 @@ def Get_Obj_Store_Accounts(auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Get single object store account by name
+def Get_Single_Obj_Account(obj, auth_token, mgt_ip):
+    url = f"http://{mgt_ip}/api/2.latest/object-store-accounts?names={obj}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"Successfullly retrieved bbject store account {obj}.")
+        print()
+
+        data = response.json()
+
+        return data["items"]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
         
 # Get object store access keys json (name + user name)
 def Get_Obj_Store_Access_Keys(auth_token, mgt_ip):
