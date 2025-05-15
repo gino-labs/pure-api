@@ -96,7 +96,7 @@ def Obj_Users_Migration():
 
         user_check = pv3.Get_Single_Obj_User(name, auth_token_s200, pv3.PB2_MGT)
 
-        if user_check is None:
+        if user_check is not None:
             print(f"User already exists: {user_check['name']}")
             print()
             continue
