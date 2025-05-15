@@ -364,7 +364,7 @@ def Get_Single_Obj_Access_Key(key_name, auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"GET success for account access key: {key_name}.")
+        print(f"GET success for object store access key: {key_name}.")
         print()
 
         data = response.json()
@@ -374,6 +374,45 @@ def Get_Single_Obj_Access_Key(key_name, auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+
+# Get list of object store users
+def Get_Obj_Users(auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-users"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for object users.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
+# Get single object store user
+def Get_Single_Obj_User(user, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-users?names={user}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for object user: {user}")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
 
 ########################
 ### POST API Section ###
