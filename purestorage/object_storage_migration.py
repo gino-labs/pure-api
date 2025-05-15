@@ -109,7 +109,7 @@ def Obj_Users_Migration():
             }
         }
 
-        post_check = pv3.Post_Obj_User(auth_token_s200, pv3.API_TOKEN_S200, name, payload)
+        post_check = pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, name, payload)
     
     print("Done.")
     print()
