@@ -87,7 +87,7 @@ def Bucket_Migration():
 def Obj_Users_Migration():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 
-    users = pv3.Get_Obj_Users(auth_token, pv3.PB2_MGT)
+    users = pv3.Get_Obj_Users(auth_token, pv3.PB1_MGT)
 
     for user in users:
         auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
