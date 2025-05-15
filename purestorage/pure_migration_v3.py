@@ -389,6 +389,10 @@ def Get_Obj_Users(auth_token, mgt_ip):
     if response.status_code == 200:
         print(f"GET success for object users.")
         print()
+
+        data = response.json()
+        return data["items"]
+    
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
@@ -408,6 +412,10 @@ def Get_Single_Obj_User(user, auth_token, mgt_ip):
     if response.status_code == 200:
         print(f"GET success for object user: {user}")
         print()
+        
+        data = response.json()
+        return data["items"][0]
+    
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()

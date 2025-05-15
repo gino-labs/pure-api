@@ -83,6 +83,40 @@ def Bucket_Migration():
     print("Buckets done.")
     print()
 
+# Migrate object store account users
+def Obj_Users_Migration():
+    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+
+    users = pv3.Get_Obj_Users(auth_token, pv3.API_TOKEN)
+
+    for user in users:
+        auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+
+        name = user["name"]
+
+        user_check = pv3.Get_Single_Obj_User(name, auth_token_s200, pv3.PB2_MGT)
+
+        if user_check is None:
+            print(f"User already exists: {user_check['name']}")
+            print()
+            continue
+        # Develop Post payload
+
+        payload = {
+            "name": name,
+            "account": {
+                "name": user["account"]["name"]
+            }
+        }
+
+        post_check = pv3.Post_Obj_User(auth_token_s200, pv3.API_TOKEN_S200, name, payload)
+    
+    print("Done.")
+    print()
+
+
+
+# TODO Access keys generation
 def Store_Access_Key_Migration():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 
@@ -102,7 +136,7 @@ def Store_Access_Key_Migration():
 if __name__ == "__main__":
     #Obj_Account_Migration()
     #Bucket_Migration()
-    Store_Access_Key_Migration()
+    Obj_Users_Migration()
 
 
 
