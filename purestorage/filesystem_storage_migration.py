@@ -30,3 +30,8 @@ def Migrate_Filesystems():
     
     print("Filesystems done.")
     print()
+
+
+### Script ###
+if __name__ == "__main__":
+    Migrate_Filesystems()
