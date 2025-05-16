@@ -189,7 +189,7 @@ def Get_Session_Token(api_token, mgt_ip):
         return None
     
 # GET filesystem as a json object
-def Get_Fs_Json(filesystem, auth_token, mgt_ip):
+def Get_Single_Filesystem(filesystem, auth_token, mgt_ip):
     url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
 
     headers = {
@@ -211,7 +211,7 @@ def Get_Fs_Json(filesystem, auth_token, mgt_ip):
         return None
 
 # Get Filesystems json (List) TODO
-def Get_Fs_List(auth_token, mgt_ip):
+def Get_Filesystems(auth_token, mgt_ip):
     url = f"https://{mgt_ip}/api/2.latest/file-systems"
 
     headers = {
@@ -425,6 +425,31 @@ def Get_Single_Obj_User(user, auth_token, mgt_ip):
 ########################
 ### POST API Section ###
 ########################
+
+# Create filesystem with a json payload
+def Post_Filesystem(auth_token, mgt_ip, name, payload, migration_policy=True):
+    # Add migration policy on top of existing filesystem
+    if migration_policy:
+        payload["nfs"]["export_policy"]["name"] = MIGRATION_POLICY
+
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={name}&default_exports=nfs"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for NFS fileystem: {name}")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
+
 
 # Create a new NFS filesystem
 def Post_Fs_Nfs(filesystem, auth_token, mgt_ip, size, rules=None, export_policy=None, write=True, hard_limit=True):
