@@ -115,28 +115,26 @@ def Obj_Users_Migration():
     print()
 
 
+# Create temp user for account and grant secret key
+# Testing / Debugging
+def Test_Create_Temp_User_Key():
+    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+    pv3.Post_Temp_Obj_User(auth_token_s200, pv3.PB2_MGT, "gitlab-dev-ee-test")
 
-# TODO Access keys generation
-def Store_Access_Key_Migration():
-    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
-
-    store_keys = pv3.Get_Obj_Access_Keys(auth_token, pv3.PB1_MGT)
-
-    # Debugging
-    name = "gxc-test"
     payload = {
         "user": {
-            "name": name
+            "name": "tempuser_gitlab-dev-ee-test"
         }
     }
-
-    pv3.Post_Access_Key(auth_token, pv3.PB1_MGT, payload)
+    pv3.Post_Access_Key(auth_token_s200, pv3.PB2_MGT, payload)
 
 ### main ###
 if __name__ == "__main__":
     #Obj_Account_Migration()
     #Bucket_Migration()
-    Obj_Users_Migration()
+    #Obj_Users_Migration()
+    Test_Create_Temp_User_Key()
+
 
 
 
