@@ -585,7 +585,7 @@ def Post_Obj_User(auth_token, mgt_ip, user, payload):
 
 # Post a temporary object store user
 def Post_Temp_Obj_User(auth_token, mgt_ip, acct_name):
-    tempuser = f"tempuser_{acct_name}"
+    tempuser = f"{acct_name}/tempuser"
     
     url = f"https://{mgt_ip}/api/2.latest/object-store-users?names={tempuser}&full_access=true"
 
@@ -606,6 +606,7 @@ def Post_Temp_Obj_User(auth_token, mgt_ip, acct_name):
     if response.status_code == 200:
         print(f"POST success for temporary object store user: {tempuser}")
         print()
+        return tempuser
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()

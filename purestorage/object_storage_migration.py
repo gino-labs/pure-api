@@ -116,14 +116,17 @@ def Obj_Users_Migration():
 
 
 # Create temp user for account and grant secret key
-# Testing / Debugging
+# account / user
 def Test_Create_Temp_User_Key():
     auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
-    pv3.Post_Temp_Obj_User(auth_token_s200, pv3.PB2_MGT, "gitlab-dev-ee-test")
-
+    
+    # TODO add loop for all accounts
+    account = ""
+    tempuser = pv3.Post_Temp_Obj_User(auth_token_s200, pv3.PB2_MGT, account)
+    
     payload = {
         "user": {
-            "name": "tempuser_gitlab-dev-ee-test"
+            "name": tempuser
         }
     }
     pv3.Post_Access_Key(auth_token_s200, pv3.PB2_MGT, payload)
