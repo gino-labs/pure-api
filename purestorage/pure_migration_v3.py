@@ -585,14 +585,14 @@ def Post_Obj_User(auth_token, mgt_ip, user, payload):
 
 # Post a temporary object store user
 def Post_Temp_Obj_User(auth_token, mgt_ip, acct_name):
-    url = f"https://{mgt_ip}/api/2.latest/object-store-users?names={user}&full_access=true"
+    tempuser = f"tempuser_{acct_name}"
+    
+    url = f"https://{mgt_ip}/api/2.latest/object-store-users?names={tempuser}&full_access=true"
 
     headers = {
         "x-auth-token": auth_token,
         "Content-Type": "application/json"
     }
-
-    tempuser = f"tempuser_{acct_name}"
 
     payload = {
         "name": tempuser,
