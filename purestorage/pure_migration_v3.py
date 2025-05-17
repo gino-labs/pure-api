@@ -583,6 +583,35 @@ def Post_Obj_User(auth_token, mgt_ip, user, payload):
         print()
         return None
 
+# Post a temporary object store user
+def Post_Temp_Obj_User(auth_token, mgt_ip, acct_name):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-users?names={user}&full_access=true"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    tempuser = f"tempuser_{acct_name}"
+
+    payload = {
+        "name": tempuser,
+        "account": {
+            "name": acct_name
+        }
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for temporary object store user: {tempuser}")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
+
 # Create access key (TEST can I save secret key?)
 def Post_Access_Key(auth_token, mgt_ip, payload):
     url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys"
