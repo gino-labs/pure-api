@@ -12,8 +12,6 @@ def Migrate_Filesystems():
 
     # Let the loop begin to POST
     for fs in filesystems:
-        # Check date created to determine if replication or pcopy/rsync
-
         # Get S200 auth token
         auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
@@ -26,6 +24,13 @@ def Migrate_Filesystems():
             print(f"Filesystem already exists: {fs_check['name']}")
             print()
             continue
+
+        # Check date, if 2024 and up create a replica link for replication
+        jan_01_2024 = 1704067200000
+        if fs["created"] > jan_01_2024:
+            print("TODO") #FIXME
+            # API 4 posts to start replication
+            # connection key -> array connection -> target -> replica link
 
         # FS check is None so develop payload and POST the filesystm
         post_check = pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, fs_name, fs)
