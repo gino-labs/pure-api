@@ -12,6 +12,8 @@ def Migrate_Filesystems():
 
     # Let the loop begin to POST
     for fs in filesystems:
+        # Check date created to determine if replication or pcopy/rsync
+
         # Get S200 auth token
         auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
