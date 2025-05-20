@@ -30,7 +30,7 @@ def Migrate_Filesystems():
         if fs["created"] > jan_01_2024:
             # TODO
             print(f"Skipping {fs_name}, replication handling logic coming soon")
-            # API 4 posts to start replication
+            # API 4 posts to start replication, considering separate script
             # connection key -> array connection -> target -> replica link
             continue
 
