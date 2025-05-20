@@ -29,7 +29,7 @@ def Migrate_Filesystems():
         jan_01_2024 = 1704067200000
         if fs["created"] > jan_01_2024:
             # TODO
-            print(f"Skipping {fs}, replication handling logic coming soon")
+            print(f"Skipping {fs_name}, replication handling logic coming soon")
             # API 4 posts to start replication
             # connection key -> array connection -> target -> replica link
             continue
@@ -38,7 +38,28 @@ def Migrate_Filesystems():
         post_check = pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, fs_name, fs)
         
         if post_check == 200:
-            
+            try:
+                # Begin pcopy and rsync prep
+                pv3.Patch_Export_Rule(fs_name, auth_token, pv3.PB1_MGT)
+                
+                # Mkdir
+                pv3.Mkdir2(fs_name)
+
+                # Mount
+                pv3.Mount2(fs_name)
+
+                # Pcopy
+                pv3.Pcopy(fs_name, sparse=True)
+
+                # Rsync
+                pv3.Rsync(fs_name, sparse=True)
+
+                # Umount
+                pv3.Unmount2(fs_name)
+            except Exception as e:
+                print(f"Exception occured, skipping {fs_name}\n{e}")
+                print()
+                continue
 
     print("Filesystems done.")
     print()
