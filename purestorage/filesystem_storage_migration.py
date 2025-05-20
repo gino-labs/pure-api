@@ -28,13 +28,18 @@ def Migrate_Filesystems():
         # Check date, if 2024 and up create a replica link for replication
         jan_01_2024 = 1704067200000
         if fs["created"] > jan_01_2024:
-            print("TODO") #FIXME
+            # TODO
+            print(f"Skipping {fs}, replication handling logic coming soon")
             # API 4 posts to start replication
             # connection key -> array connection -> target -> replica link
+            continue
 
         # FS check is None so develop payload and POST the filesystm
         post_check = pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, fs_name, fs)
-    
+        
+        if post_check == 200:
+            
+
     print("Filesystems done.")
     print()
 

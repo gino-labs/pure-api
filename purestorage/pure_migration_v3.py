@@ -203,8 +203,8 @@ def Get_Single_Filesystem(filesystem, auth_token, mgt_ip):
         print(f"Retreived {filesystem} successfully.")
         print()
         data = response.json()
-        fs_data = data["items"][0]
-        return fs_data
+        
+        return data["items"][0]
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
@@ -444,6 +444,7 @@ def Post_Filesystem(auth_token, mgt_ip, name, payload, migration_policy=True):
     if response.status_code == 200:
         print(f"POST success for NFS fileystem: {name}")
         print()
+        return response.status_code
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
@@ -654,7 +655,50 @@ def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
     response = requests.patch(url, headers=headers, json=payload, verify=False)
     
     if response.status_code == 200:
-        print(f"Update Successful.")
+        print(f"PATCH success for {filesystem}.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+    
+# Add export rule for localhost to mount if it doesn't exist
+def Patch_Export_Rule(filesystem, auth_token, mgt_ip, local_ip=LOCAL_IP):
+    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    # Check if rule already exists
+    fs = Get_Single_Filesystem(filesystem, auth_token, mgt_ip)
+
+    if fs is None:
+        print(f"Filesystem {fs} doesn't exist. Skipping PATCH...")
+        print()
+        return None
+    
+    rule = f"{local_ip}(ro,no_root_squash)"
+    rules = fs["nfs"]["rules"]
+
+    if rule in rules:
+        print(f"Rule: {rule} already in rules.")
+        print()
+        return None
+    
+    payload = {
+        "nfs": {
+            "v3_enabled": True,
+            "v4_1_enabled": True,
+            "add_rules": rule
+        }
+    }
+
+    response = requests.patch(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"PATCH success for export rule: {rule}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
