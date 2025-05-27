@@ -27,7 +27,6 @@ def Rsync_Incremental_Migration():
             post_check = pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, fs_name, fs)
 
         # Check cutoff date and skip replication filesystems
-        rsync_list = []
         cutoff_date = pv3.REPLICATION_CUTOFF
         if fs["created"] > cutoff_date:
             # TODO
@@ -36,6 +35,7 @@ def Rsync_Incremental_Migration():
             # connection key -> array connection -> target -> replica link
             continue
 
+        rsync_list = []
         # Mount and Migrate with RSYNC
         try:
             # Begin pcopy and rsync prep
