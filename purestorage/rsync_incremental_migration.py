@@ -27,7 +27,7 @@ def Rsync_Incremental_Migration():
             post_check = pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, fs_name, fs)
 
         # Check cutoff date and skip replication filesystems
-        cutoff_date = pv3.REPLICATION_CUTOFF
+        cutoff_date = int(pv3.REPLICATION_CUTOFF)
         if fs["created"] > cutoff_date:
             # TODO
             print(f"Skipping rsync for {fs_name}, handled by replication")
