@@ -67,6 +67,9 @@ def Rsync_Incremental_Migration():
             print(f"Exception occured, skipping {fs_name}\n{e}")
             print()
             continue
+        print("----------------")
+        print()
+        time.sleep(2)
 
 
     print("Filesystems Rsynced")
