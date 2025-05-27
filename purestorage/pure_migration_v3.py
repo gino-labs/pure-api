@@ -141,13 +141,13 @@ def Rsync(filesystem, verbose=False, sparse=False):
         print("Starting rsync...")
         print()
         if sparse and verbose:
-            subprocess.run(["rsync", "-havH", "--sparse", "--progress", src_path, dest_path])
+            subprocess.run(["rsync", "-havH", "--sparse", "--progress", "--exclude", ".snapshot/", src_path, dest_path])
         elif verbose:
-            subprocess.run(["rsync", "-havH", "--progress", src_path, dest_path])
+            subprocess.run(["rsync", "-havH", "--progress", "--exclude", ".snapshot/", src_path, dest_path])
         elif sparse:
-            subprocess.run(["rsync", "-havH", "--sparse", src_path, dest_path])
+            subprocess.run(["rsync", "-havH", "--sparse", "--exclude", ".snapshot/", src_path, dest_path])
         else:
-            subprocess.run(["rsync", "-havH", src_path, dest_path])
+            subprocess.run(["rsync", "-havH", "--exclude", ".snapshot/", src_path, dest_path])
     else:
         if src_rc != 0:
             print(f"{src_path} isn't mounted, skipping rsync.")
