@@ -20,7 +20,7 @@ def Rsync_Incremental_Migration():
         fs_check = pv3.Get_Single_Filesystem(fs_name, auth_token_s200, pv3.PB2_MGT)
 
         # Skip Anaconda
-        if fs_name == "ananconda_linux_tucson":
+        if fs_name == "anaconda_linux_tucson":
             print(f"Skipping {fs_name}\nAnaconda has been discontinued...")
             print()
             time.sleep(5)
