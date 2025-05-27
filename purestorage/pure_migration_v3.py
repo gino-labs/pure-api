@@ -42,7 +42,7 @@ def Parse_FS_Args():
 # Make directory for mounting
 def Mkdir2(filesystem):
     os.makedirs(f"/mnt/pure_migration/{filesystem}_source", exist_ok=True)
-    os.makedirs(f"/mnt/pure_migration/{filesystem}_migration", exist_ok=True)
+    os.makedirs(f"/mnt/pure_migration/{filesystem}_destination", exist_ok=True)
 
 # Mount Filesystem to directory mountpoint
 def Mount2(filesystem, src_ip=PB1, dest_ip=PB2):

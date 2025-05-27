@@ -7,7 +7,7 @@ def Rsync_Incremental_Migration():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 
     # Get filesystem list
-    filesystems = pv3.Get_Filesystems(pv3.API_TOKEN, pv3.PB1_MGT)
+    filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
 
     # Let the loop begin to POST
     for fs in filesystems:
