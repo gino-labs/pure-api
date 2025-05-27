@@ -26,8 +26,8 @@ def Migrate_Filesystems():
             continue
 
         # Check date, if 2024 and up create a replica link for replication
-        jan_01_2024 = 1704067200000
-        if fs["created"] > jan_01_2024:
+        cutoff_date = pv3.REPLICATION_CUTOFF
+        if fs["created"] > cutoff_date:
             # TODO
             print(f"Skipping {fs_name}, replication handling logic coming soon")
             # API 4 posts to start replication, considering separate script
