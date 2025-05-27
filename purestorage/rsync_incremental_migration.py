@@ -39,8 +39,10 @@ def Rsync_Incremental_Migration():
         if fs["created"] > cutoff_date:
             # TODO
             print(f"Skipping rsync for {fs_name}, handled by replication")
+            print()
             # API 4 posts to start replication, considering separate script
             # connection key -> array connection -> target -> replica link
+            time.sleep(5)
             continue
 
         rsync_list = []
