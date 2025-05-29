@@ -39,5 +39,8 @@ def Migrate_Subnets():
             "Unsuccessful subnet creation"
         time.sleep(3)
 
+def Migrate_Interfaces():
+    print("TODO")
+
 if __name__ == "__main__":
     Migrate_Subnets()
