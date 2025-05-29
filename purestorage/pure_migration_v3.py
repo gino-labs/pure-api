@@ -156,7 +156,7 @@ def Rsync(filesystem, verbose=False, sparse=False):
         print()
 
 # Write to migration log
-def Write_Migration_Log(filesystem, passed=True, log_file="pure_migration.log"):
+def Write_Migration_Log(filesystem, passed=True, log_file="/mnt/pure_migration/pure_migration.log"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     if passed:
         with open(log_file, "a") as log:
@@ -165,6 +165,11 @@ def Write_Migration_Log(filesystem, passed=True, log_file="pure_migration.log"):
         with open(log_file, "a") as log:
             log.write(f"- `{filesystem}` : failed to copy [{timestamp}]\n")
 
+# Write message to log
+def Write_Message_Log(message, log_file="/mnt/pure_migration/pure_migration.log"):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(log_file, "a") as log:
+        log.write(f"{timestamp} - {message}")
 
 #######################
 ### GET API Section ###
