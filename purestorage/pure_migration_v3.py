@@ -688,6 +688,27 @@ def Post_Access_Key(auth_token, mgt_ip, payload):
         return None
 
 
+# Add subnet with json payload to pureblade endpoint
+def Post_Subnet(subnet, auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/subnets?names={subnet}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for subnet: {subnet}")
+        print()
+        return 200
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
+
 #########################
 ### PATCH API Section ###
 #########################
@@ -706,6 +727,7 @@ def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
     if response.status_code == 200:
         print(f"PATCH success for {filesystem}.")
         print()
+        return 200
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
