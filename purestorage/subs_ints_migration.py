@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import pure_migration_v3 as pv3
+import time
 
 def Migrate_Subnets():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
@@ -22,6 +23,21 @@ def Migrate_Subnets():
             continue
 
         # Develop payload with sub
+        payload = {
+            "gateway": sub["gateway"],
+            "link_aggregation_group": sub["link_aggregation_group"],
+            "mtu": sub["mtu"],
+            "prefix": sub["prefix"],
+            "vlan": sub["vlan"],
+        }
+
+        post_check = pv3.Post_Subnet(sub["name"], auth_token_s200, pv3.PB2_MGT, payload)
+
+        if post_check == 200:
+            "Successful subnet creation."
+        else:
+            "Unsuccessful subnet creation"
+        time.sleep(3)
 
 if __name__ == "__main__":
-    print("TODO")
+    Migrate_Subnets()
