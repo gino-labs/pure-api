@@ -614,8 +614,8 @@ def Post_Bucket(auth_token, mgt_ip, name, payload):
         print()
         return None
 
-# Create object store user
-def Post_Obj_User(auth_token, mgt_ip, user, payload):
+# Create object store user # Removed payload
+def Post_Obj_User(auth_token, mgt_ip, user):
     url = f"https://{mgt_ip}/api/2.latest/object-store-users?names={user}&full_access=true"
 
     headers = {
@@ -623,7 +623,7 @@ def Post_Obj_User(auth_token, mgt_ip, user, payload):
         "Content-Type": "application/json"
     }
 
-    response = requests.post(url, headers=headers, json=payload, verify=False)
+    response = requests.post(url, headers=headers, verify=False)
 
     if response.status_code == 200:
         print(f"POST success for object store user: {user}")

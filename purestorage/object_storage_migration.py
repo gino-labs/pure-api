@@ -102,17 +102,28 @@ def Obj_Users_Migration():
             continue
         # Develop Post payload
 
-        payload = {
-            "name": name,
-            "account": {
-                "name": user["account"]["name"]
-            }
-        }
+        # payload = {
+        #     "name": name,
+        #     "account": {
+        #         "name": user["account"]["name"]
+        #     }
+        # }
 
-        post_check = pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, name, payload)
+        post_check = pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, name) #Removed payload
     
     print("Done.")
     print()
+
+
+# Migrate Objects with temp users and temp keys
+def Migrate_Objects():
+    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+
+    accounts = pv3.Get_Obj_Accounts(auth_token, pv3.PB1_MGT)
+
+    for acct in accounts:
+        pv3.Post_Obj_User()
+
 
 
 # Create temp user for account and grant secret key
