@@ -2,7 +2,7 @@
 
 ## Pure Storage
 
-Alright so these are some scripts to help out with pure storage migrations to the new s200 appliances. It ain't the prettiest code, but it's been helping me get the job done vs. tedious data entry. Alot of the code I edited, changed, and commented while using them for migration. 
+Alright so these are some scripts to help out with pure storage migrations to the new s200 appliances. It ain't the prettiest code, but it's been helping me get the job done vs. tedious data entry. Alot of the code I edited, changed, and commented on the fly while using them for migration. Double check __name__ == "__main__" at the bottom of the scripts.
 
 Empahsized data protection of the source blade to be `read-only` whenever possible.
 
