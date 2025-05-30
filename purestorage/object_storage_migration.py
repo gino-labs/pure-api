@@ -144,10 +144,10 @@ def Test_Create_Temp_User_Key():
 
 ### main ###
 if __name__ == "__main__":
-    #Obj_Account_Migration()
-    #Bucket_Migration()
-    #Obj_Users_Migration()
-    Test_Create_Temp_User_Key()
+    Obj_Account_Migration()
+    Bucket_Migration()
+    Obj_Users_Migration()
+    #Test_Create_Temp_User_Key()
 
 
 
