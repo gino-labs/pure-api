@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+export PB1=''
+export PB2=''
+export PB1_MGT=''
+export PB2_MGT=''
+export LOCAL_IP=''
+export API_TOKEN=''
+export API_TOKEN_S200=''
+export REPLICATION_CUTOFF=''
