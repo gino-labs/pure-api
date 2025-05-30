@@ -104,16 +104,8 @@ def Obj_Users_Migration():
             print(f"User already exists: {user_check['name']}")
             print()
             continue
-        # Develop Post payload
 
-        # payload = {
-        #     "name": name,
-        #     "account": {
-        #         "name": user["account"]["name"]
-        #     }
-        # }
-
-        post_check = pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, name) #Removed payload
+        post_check = pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, name) 
     
     print("Done.")
     print()
@@ -215,9 +207,9 @@ def Test():
 
 ### main ###
 if __name__ == "__main__":
-    #Obj_Account_Migration()
-    #Bucket_Migration()
-    #Obj_Users_Migration()
+    Obj_Account_Migration()
+    Bucket_Migration()
+    Obj_Users_Migration()
     Migrate_Objects()
 
 
