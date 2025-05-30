@@ -37,7 +37,7 @@ def Obj_Account_Migration():
             "quota_limit": acct["quota_limit"]
         }
 
-        post_check = pv3.Post_Obj_Store_Account(auth_token_s200, pv3.PB2_MGT, acct_name, payload)
+        post_check = pv3.Post_Obj_Account(auth_token_s200, pv3.PB2_MGT, acct_name, payload)
 
     print("Object store accounts done.")
     print()
@@ -47,7 +47,7 @@ def Bucket_Migration():
     # Get list of object accounts
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 
-    bucket_list = pv3.Get_Buckets_Json(auth_token, pv3.PB1_MGT)
+    bucket_list = pv3.Get_Buckets(auth_token, pv3.PB1_MGT)
 
     for bucket in bucket_list:
         auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
