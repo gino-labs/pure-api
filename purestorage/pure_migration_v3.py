@@ -468,8 +468,49 @@ def Get_Single_Subnet(subnet, auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Get interfaces
+def Get_Interfaces(auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/network-interfaces"
 
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
 
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for interfaces")
+        print()
+        data = response.json()
+        return data["items"]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+    
+# Get single interface
+def Get_Single_Interface(interface, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/network-interfaces?names={interface}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for interface: {interface}")
+        print()
+        data = response.json()
+        return data["items"][0]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+    
 
 ########################
 ### POST API Section ###
@@ -707,6 +748,27 @@ def Post_Subnet(subnet, auth_token, mgt_ip, payload):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Add network interface tied to a subnet
+def Post_Interface(interface, auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/network-interfaces?names={interface}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for interface: {interface}")
+        print()
+        return 200
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
 
 
 #########################
