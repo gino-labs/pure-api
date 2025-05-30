@@ -8,7 +8,7 @@ def Obj_Account_Migration():
     # Get list of object accounts
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 
-    acct_json_list = pv3.Get_Obj_Store_Accounts(auth_token, pv3.PB1_MGT)
+    acct_json_list = pv3.Get_Obj_Accounts(auth_token, pv3.PB1_MGT)
 
     for acct in acct_json_list:
         auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
