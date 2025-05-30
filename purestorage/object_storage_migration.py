@@ -183,7 +183,7 @@ def Migrate_Objects():
             
         # Rclone subprocess
         try:
-            subprocess.run(["rclone", "copy", f"srcfb:{buck}", f"destfb:{buck}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certifcate"])
+            subprocess.run(["rclone", "copy", f"srcfb:{buck}", f"destfb:{buck}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"])
             print(f"Successful rclone of {acct_name} and {buck}")
             print()
             time.sleep(3)
