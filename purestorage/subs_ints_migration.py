@@ -34,13 +34,54 @@ def Migrate_Subnets():
         post_check = pv3.Post_Subnet(sub["name"], auth_token_s200, pv3.PB2_MGT, payload)
 
         if post_check == 200:
-            "Successful subnet creation."
+            print(f"POST success for subnet: {sub['name']}")
+            print()
         else:
-            "Unsuccessful subnet creation"
+            print(f"Failed to POST: {sub['name']}")
+            print()
         time.sleep(3)
+    
+    print("Subnets migrated.")
+    print()
 
 def Migrate_Interfaces():
-    print("TODO")
+    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+
+    interfaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
+
+    ip_ints = []
+    for iface in interfaces:
+        ip_ints.append(iface["address"])
+
+    for iface in interfaces:
+        auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+        auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+        
+        iface_name = iface["name"]
+        iface_check = pv3.Get_Single_Interface(iface_name, auth_token_s200, pv3.PB2_MGT)
+
+        if iface_check["address"] in ip_ints:
+            print(f"Interface with {iface_check['address']} already exists: {iface_name}")
+            print()
+            continue
+
+        payload = {
+            "address": iface["address"],
+            "services": iface["services"],
+        }
+
+        post_check = pv3.Post_Interface(iface_name, auth_token_s200, pv3.PB2_MGT, payload)
+
+        if post_check == 200:
+            print(f"POST success for interface: {iface_name}.")
+            print()
+        else:
+            print(f"Failed to POST: {iface_name}")
+            print()
+        time.sleep(3)
+
+    print("Network Interfaces migrated.")
+    print()
 
 if __name__ == "__main__":
     Migrate_Subnets()
