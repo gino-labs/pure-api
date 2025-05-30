@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 import pure_migration_v3 as pv3
+from jinja2 import Environment, FileSystemLoader
+import subprocess
+import time
+import os
 
 # Script for migrating object storage related components #
 
@@ -151,6 +155,45 @@ def Migrate_Objects():
         pv3.Save_Key_Info(dest_user, dest_access, dest_secret, pv3.PB2_MGT)
 
         # Start rclone process
+        env = Environment(loader=FileSystemLoader('.'))
+        template = env.get_template('rclone.conf.j2')
+
+        config_data = {
+            "access_key": src_access,
+            "secret_key": src_secret,
+            "data_ip": pv3.PB1,
+            "access_key2": dest_access,
+            "secret_key2": dest_secret,
+            "data_ip2": pv3.PB2
+        }
+
+        rendered_output = template.render(config_data)
+
+        with open("rclone.conf", "w") as config:
+            config.write(rendered_output)
+
+        buckets = pv3.Get_Buckets(auth_token_s200, pv3.PB2_MGT)
+        
+        acct_name = acct["name"]
+
+        for bucket in buckets:
+            if bucket["account"]["name"] == acct_name:
+                buck = bucket["name"]
+                break
+            
+        # Rclone subprocess
+        try:
+            subprocess.run(["rclone", "copy", f"srcfb:{buck}", f"destfb:{buck}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certifcate"])
+            print(f"Successful rclone of {acct_name} and {buck}")
+            print()
+            time.sleep(3)
+        except Exception as e:
+            print(f"Exception occured: {e}")
+
+    os.remove("rclone.conf")
+    print("Object migration finished.")
+    print()
+    time.sleep(3)
         
 
 # account / user
@@ -163,8 +206,8 @@ if __name__ == "__main__":
     #Obj_Account_Migration()
     #Bucket_Migration()
     #Obj_Users_Migration()
-    #Migrate_Objects()
-    Test()
+    Migrate_Objects()
+
 
 
 
