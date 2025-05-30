@@ -721,7 +721,7 @@ def Post_Access_Key(auth_token, mgt_ip, payload):
 
         data = response.json()
 
-        print(data["items"][0]["secret_access_key"])
+        return data["items"][0]
 
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")

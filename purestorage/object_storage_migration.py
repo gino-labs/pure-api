@@ -122,32 +122,38 @@ def Migrate_Objects():
     accounts = pv3.Get_Obj_Accounts(auth_token, pv3.PB1_MGT)
 
     for acct in accounts:
-        pv3.Post_Obj_User()
+        auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+        auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
+        user = f"{acct['name']}/migration"
+        pv3.Post_Obj_User(auth_token, pv3.PB1_MGT, user)
+        pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, user)
+
+        payload = {
+            "user": {
+                "name": user
+            }
+        }
+
+        pv3.Post_Access_Key(auth_token, pv3.PB1_MGT, payload)
+        pv3.Post_Access_Key(auth_token_s200, pv3.PB2_MGT, payload)
+
+        # Returns a json body contain access key and secret key
 
 
 # Create temp user for account and grant secret key
 # account / user
-def Test_Create_Temp_User_Key():
-    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
-    
-    # TODO add loop for all accounts
-    account = ""
-    tempuser = pv3.Post_Temp_Obj_User(auth_token_s200, pv3.PB2_MGT, account)
-    
-    payload = {
-        "user": {
-            "name": tempuser
-        }
-    }
-    pv3.Post_Access_Key(auth_token_s200, pv3.PB2_MGT, payload)
+def Test():
+    print("Test Keys")
+
 
 ### main ###
 if __name__ == "__main__":
-    Obj_Account_Migration()
-    Bucket_Migration()
-    Obj_Users_Migration()
-    #Test_Create_Temp_User_Key()
+    #Obj_Account_Migration()
+    #Bucket_Migration()
+    #Obj_Users_Migration()
+    #Migrate_Objects()
+    Test()
 
 
 
