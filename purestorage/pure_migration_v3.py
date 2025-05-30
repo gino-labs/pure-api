@@ -171,6 +171,20 @@ def Write_Message_Log(message, log_file="/mnt/pure_migration/pure_migration.log"
     with open(log_file, "a") as log:
         log.write(f"{timestamp} - {message}")
 
+# Write Keys + Users related to store accounts for buckets
+def Save_Key_Info(user, access_key, secret_key, fb):
+
+    data = {
+        "flashblade": fb,
+        "user": user,
+        "access_key": access_key,
+        "secret_key": secret_key,
+    }
+
+    with open("keys.jsonl", "a") as keyfile:
+        json.dump(data, keyfile)
+        keyfile.write("\n")
+
 #######################
 ### GET API Section ###
 #######################
@@ -872,6 +886,46 @@ def Delete_Fs(filesystem, auth_token, mgt_ip, confirm=True):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Delete an Object Store Access Key 
+def Delete_Access_Key(name, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-access-keys?names={name}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.delete(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"DELETE success for access key: {name}.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
+
+# Delete and Object Store User
+def Delete_Obj_User(name, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/object-store-users?names={name}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.delete(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"DELETE success for object store user: {name}.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
 
 #####################
 ### Main Function ###

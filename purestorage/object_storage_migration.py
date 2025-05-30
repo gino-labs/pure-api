@@ -135,13 +135,24 @@ def Migrate_Objects():
             }
         }
 
-        pv3.Post_Access_Key(auth_token, pv3.PB1_MGT, payload)
-        pv3.Post_Access_Key(auth_token_s200, pv3.PB2_MGT, payload)
+        # Returns a json body containing access key and secret key
+        src_data = pv3.Post_Access_Key(auth_token, pv3.PB1_MGT, payload)
+        dest_data = pv3.Post_Access_Key(auth_token_s200, pv3.PB2_MGT, payload)
 
-        # Returns a json body contain access key and secret key
+        src_access = src_data["name"]
+        src_secret = src_data["secret_access_key"]
+        src_user = src_data["user"]["name"]
 
+        dest_access = dest_data["name"]
+        dest_secret = dest_data["secret_access_key"]
+        dest_user = dest_data["user"]["name"]
 
-# Create temp user for account and grant secret key
+        pv3.Save_Key_Info(src_user, src_access, src_secret, pv3.PB1_MGT)
+        pv3.Save_Key_Info(dest_user, dest_access, dest_secret, pv3.PB2_MGT)
+
+        # Start rclone process
+        
+
 # account / user
 def Test():
     print("Test Keys")

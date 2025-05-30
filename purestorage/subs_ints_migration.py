@@ -85,3 +85,4 @@ def Migrate_Interfaces():
 
 if __name__ == "__main__":
     Migrate_Subnets()
+    # Don't migrate interfaces to avoid duplicate IPs!
