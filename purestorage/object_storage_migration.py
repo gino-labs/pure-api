@@ -133,6 +133,18 @@ def Migrate_Objects():
         pv3.Post_Obj_User(auth_token, pv3.PB1_MGT, user)
         pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, user)
 
+        existing_keys = pv3.Get_Obj_Access_Keys(auth_token, pv3.PB1_MGT)
+        existing_keys_s200 = pv3.Get_Obj_Access_Keys(auth_token_s200, pv3.PB2_MGT)
+
+        # Delete old migration keys if they exist
+        for key in existing_keys:
+            if "migration" in key["user"]["name"]:
+                pv3.Delete_Access_Key(key["name"], auth_token, pv3.PB1_MGT)
+
+        for key in existing_keys_s200:
+            if "migration" in key["user"]["name"]:
+                pv3.Delete_Access_Key(key["name"], auth_token_s200, pv3.PB2_MGT)
+
         payload = {
             "user": {
                 "name": user
