@@ -190,7 +190,7 @@ def Migrate_Objects():
         # Rclone subprocess
         for buck in bucket_matches:
             try:
-                subprocess.run(["rclone", "copy", f"srcfb:{buck}", f"destfb:{buck}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"])
+                subprocess.run(["rclone", "sync", f"srcfb:{buck}", f"destfb:{buck}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"])
                 print(f"Successful rclone of {acct_name} and {buck}")
                 print()
                 time.sleep(3)
