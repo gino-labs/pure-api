@@ -225,8 +225,9 @@ if __name__ == "__main__":
     Obj_Account_Migration()
     Bucket_Migration()
     Obj_Users_Migration()
+    Delete_Migration_Keys_Users()
     Migrate_Objects()
-
+    Delete_Migration_Keys_Users()
 
 
 
