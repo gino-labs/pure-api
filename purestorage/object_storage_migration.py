@@ -180,19 +180,21 @@ def Migrate_Objects():
         
         acct_name = acct["name"]
 
+        bucket_matches = []
         for bucket in buckets:
             if bucket["account"]["name"] == acct_name:
-                buck = bucket["name"]
-                break
+                bucket_matches.append(bucket["name"])
+                
             
         # Rclone subprocess
-        try:
-            subprocess.run(["rclone", "copy", f"srcfb:{buck}", f"destfb:{buck}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"])
-            print(f"Successful rclone of {acct_name} and {buck}")
-            print()
-            time.sleep(3)
-        except Exception as e:
-            print(f"Exception occured: {e}")
+        for buck in bucket_matches:
+            try:
+                subprocess.run(["rclone", "copy", f"srcfb:{buck}", f"destfb:{buck}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"])
+                print(f"Successful rclone of {acct_name} and {buck}")
+                print()
+                time.sleep(3)
+            except Exception as e:
+                print(f"Exception occured: {e}")
 
     os.remove("rclone.conf")
     print("Object migration finished.")
