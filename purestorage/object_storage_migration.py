@@ -114,6 +114,19 @@ def Obj_Users_Migration():
 # Migrate Objects with temp users and temp keys
 def Migrate_Objects():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+
+    # Delete old migration keys if they exist
+    existing_keys = pv3.Get_Obj_Access_Keys(auth_token, pv3.PB1_MGT)
+    existing_keys_s200 = pv3.Get_Obj_Access_Keys(auth_token_s200, pv3.PB2_MGT)
+
+    for key in existing_keys:
+        if "migration" in key["user"]["name"]:
+            pv3.Delete_Access_Key(key["name"], auth_token, pv3.PB1_MGT)
+
+    for key in existing_keys_s200:
+        if "migration" in key["user"]["name"]:
+            pv3.Delete_Access_Key(key["name"], auth_token_s200, pv3.PB2_MGT)
 
     accounts = pv3.Get_Obj_Accounts(auth_token, pv3.PB1_MGT)
 
@@ -124,18 +137,6 @@ def Migrate_Objects():
         user = f"{acct['name']}/migration"
         pv3.Post_Obj_User(auth_token, pv3.PB1_MGT, user)
         pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, user)
-
-        existing_keys = pv3.Get_Obj_Access_Keys(auth_token, pv3.PB1_MGT)
-        existing_keys_s200 = pv3.Get_Obj_Access_Keys(auth_token_s200, pv3.PB2_MGT)
-
-        # Delete old migration keys if they exist
-        for key in existing_keys:
-            if "migration" in key["user"]["name"]:
-                pv3.Delete_Access_Key(key["name"], auth_token, pv3.PB1_MGT)
-
-        for key in existing_keys_s200:
-            if "migration" in key["user"]["name"]:
-                pv3.Delete_Access_Key(key["name"], auth_token_s200, pv3.PB2_MGT)
 
         payload = {
             "user": {
