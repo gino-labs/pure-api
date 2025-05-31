@@ -114,19 +114,6 @@ def Obj_Users_Migration():
 # Migrate Objects with temp users and temp keys
 def Migrate_Objects():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
-    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
-
-    # Delete old migration keys if they exist
-    existing_keys = pv3.Get_Obj_Access_Keys(auth_token, pv3.PB1_MGT)
-    existing_keys_s200 = pv3.Get_Obj_Access_Keys(auth_token_s200, pv3.PB2_MGT)
-
-    for key in existing_keys:
-        if "migration" in key["user"]["name"]:
-            pv3.Delete_Access_Key(key["name"], auth_token, pv3.PB1_MGT)
-
-    for key in existing_keys_s200:
-        if "migration" in key["user"]["name"]:
-            pv3.Delete_Access_Key(key["name"], auth_token_s200, pv3.PB2_MGT)
 
     accounts = pv3.Get_Obj_Accounts(auth_token, pv3.PB1_MGT)
 
@@ -202,6 +189,31 @@ def Migrate_Objects():
     print()
     time.sleep(3)
         
+def Delete_Migration_Keys_Users():
+    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+
+    # Delete old migration keys if they exist
+    existing_keys = pv3.Get_Obj_Access_Keys(auth_token, pv3.PB1_MGT)
+    existing_keys_s200 = pv3.Get_Obj_Access_Keys(auth_token_s200, pv3.PB2_MGT)
+    existing_users = pv3.Get_Obj_Users(auth_token, pv3.PB1_MGT)
+    existing_users_s200 = pv3.Get_Obj_Users(auth_token_s200, pv3.PB2_MGT)
+
+    for key in existing_keys:
+        if "migration" in key["user"]["name"]:
+            pv3.Delete_Access_Key(key["name"], auth_token, pv3.PB1_MGT)
+
+    for key in existing_keys_s200:
+        if "migration" in key["user"]["name"]:
+            pv3.Delete_Access_Key(key["name"], auth_token_s200, pv3.PB2_MGT)
+
+    for user in existing_users:
+        if "migration" in user["name"]:
+            pv3.Delete_Obj_User(user["name"], auth_token, pv3.PB1_MGT)
+    
+    for user in existing_users_s200:
+        if "migration" in user["name"]:
+            pv3.Delete_Access_Key(key["name"], auth_token_s200, pv3.PB2_MGT)
 
 # account / user
 def Test():
