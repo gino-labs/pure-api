@@ -1,0 +1,4 @@
+# Pure Migration via API
+requests
+urllib3
+jinja2
