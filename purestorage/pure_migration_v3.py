@@ -189,6 +189,25 @@ def Save_Key_Info(user, access_key, secret_key, fb):
 ### GET API Section ###
 #######################
 
+# Get API versions
+def Get_API_Versions(auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/api_versions"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(response.text)
+        print()
+    else:
+        print(f"Error status code: {response.status_code}")
+        print()
+
+
 # Retrieve session token using POST request with api token. Only excpetion to sections.
 def Get_Session_Token(api_token, mgt_ip):
     url = f"https://{mgt_ip}/api/login"
