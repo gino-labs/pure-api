@@ -1,4 +1,4 @@
-# gxc-scripts
+# gxc-purestorage scripts
 
 ## Pure Storage
 
