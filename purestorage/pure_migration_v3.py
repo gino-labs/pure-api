@@ -191,7 +191,7 @@ def Save_Key_Info(user, access_key, secret_key, fb):
 
 # Get API versions
 def Get_API_Versions(auth_token, mgt_ip):
-    url = f"https://{mgt_ip}/api/api_versions"
+    url = f"https://{mgt_ip}/api/api_version"
 
     headers = {
         "x-auth-token": auth_token,
