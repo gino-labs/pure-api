@@ -204,7 +204,7 @@ def Get_API_Versions(auth_token, mgt_ip):
         print(response.text)
         print()
     else:
-        print(f"Error status code: {response.status_code}")
+        print(f"Error status code: {response.status_code}\n{response.text}")
         print()
 
 
