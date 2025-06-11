@@ -15,7 +15,7 @@ def Migrate_Subnets():
         auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
         auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
-        sub_check = pv3.Get_Single_Subnet(auth_token_s200, pv3.PB2_MGT)
+        sub_check = pv3.Get_Single_Subnet(sub['name'], auth_token_s200, pv3.PB2_MGT)
 
         if sub_check["name"] in sub_names:
             print(f"Subnet already exists on destination: {sub_check['name']}")
