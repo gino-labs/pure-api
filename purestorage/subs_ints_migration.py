@@ -7,9 +7,9 @@ def Migrate_Subnets():
 
     subs = pv3.Get_Subnets(auth_token, pv3.PB1_MGT)
 
-    sub_names = []
+    sub_prefixes = []
     for sub in subs:
-        sub_names.append(sub["name"])
+        sub_prefixes.append(sub["prefix"])
 
     for sub in subs:
         auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
@@ -20,7 +20,7 @@ def Migrate_Subnets():
         if sub_check is None:
             print(f"Creating Filesystem on {sub['name']}")
             print()
-        elif sub_check["name"] in sub_names:
+        elif sub_check["prefix"] in sub_prefixes:
             print(f"Subnet already exists on destination: {sub_check['name']}")
             print()
             continue
