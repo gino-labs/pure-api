@@ -35,14 +35,6 @@ def Migrate_Subnets():
         }
 
         post_check = pv3.Post_Subnet(sub["name"], auth_token_s200, pv3.PB2_MGT, payload)
-
-        if post_check == 200:
-            print(f"POST success for subnet: {sub['name']}")
-            print()
-        else:
-            print(f"Failed to POST: {sub['name']}")
-            print()
-        time.sleep(3)
     
     print("Subnets migrated.")
     print()
