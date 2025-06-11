@@ -4,6 +4,16 @@ import time
 
 def Migrate_Subnets():
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+
+    s200_subs = pv3.Get_Subnets(auth_token_s200, pv3.PB2_MGT)
+
+    s200_sub_names = []
+    s200_sub_prefixes = []
+
+    for s2sub in s200_subs:
+        s200_sub_names.append(s2sub["name"])
+        s200_sub_prefixes.append(s2sub["prefix"])
 
     subs = pv3.Get_Subnets(auth_token, pv3.PB1_MGT)
 
@@ -15,15 +25,18 @@ def Migrate_Subnets():
         auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
         auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
-        sub_check = pv3.Get_Single_Subnet(sub['name'], auth_token_s200, pv3.PB2_MGT)
-
-        if sub_check is None:
-            print(f"Creating Filesystem on {sub['name']}")
-            print()
-        elif sub_check["prefix"] in sub_prefixes:
-            print(f"Subnet already exists on destination: {sub_check['name']}")
+        if (sub["name"] in s200_sub_names) or (sub["prefix"] in s200_sub_prefixes):
+            print(f"Subnet already exists: {sub['name']}, {sub['prefix']}")
             print()
             continue
+
+        # if sub_check is None:
+        #     print(f"Creating Filesystem on {sub['name']}")
+        #     print()
+        # elif sub_check["prefix"] in sub_prefixes:
+        #     print(f"Subnet already exists on destination: {sub_check['name']}")
+        #     print()
+        #     continue
 
         # Develop payload with sub
         payload = {
@@ -40,6 +53,7 @@ def Migrate_Subnets():
     print()
 
 def Migrate_Interfaces():
+
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 
     interfaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
