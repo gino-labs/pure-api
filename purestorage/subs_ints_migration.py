@@ -30,14 +30,6 @@ def Migrate_Subnets():
             print()
             continue
 
-        # if sub_check is None:
-        #     print(f"Creating Filesystem on {sub['name']}")
-        #     print()
-        # elif sub_check["prefix"] in sub_prefixes:
-        #     print(f"Subnet already exists on destination: {sub_check['name']}")
-        #     print()
-        #     continue
-
         # Develop payload with sub
         payload = {
             "gateway": sub["gateway"],
