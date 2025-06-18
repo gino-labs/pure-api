@@ -34,8 +34,19 @@ def Migrate_Filesystems():
             # API 4 posts to start replication, considering separate script
             # connection key -> array connection -> target -> replica link
             continue
-
+        
         # FS check is None so develop payload and POST the filesystm
+        del fs["promotion_status"]
+        del fs["created"]
+        del fs["source"]
+        del fs["id"]
+        del fs["space"]
+        del fs["time_remaining"]
+        del fs["destroyed"]
+        del fs["name"]
+        del fs["requested_promotion_state"]
+        del fs["smb"]
+
         post_check = pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, fs_name, fs)
         
         if post_check == 200:
