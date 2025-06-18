@@ -18,6 +18,7 @@ if __name__ == "__main__":
     #del fs["smb"]["client_policy"]["resource_type"]
     #del fs["smb"]["share_policy"]["resource_type"]
     del fs["source"]["resource_type"]
+    del fs["source"]["location"]
     
     
     print(json.dumps(fs, indent=4))
