@@ -107,7 +107,7 @@ def Obj_Users_Migration():
 
         post_check = pv3.Post_Obj_User(auth_token_s200, pv3.PB2_MGT, name) 
     
-    print("Done.")
+    print("User Access Keys Done.")
     print()
 
 
@@ -213,7 +213,7 @@ def Delete_Migration_Keys_Users():
     
     for user in existing_users_s200:
         if "migration" in user["name"]:
-            pv3.Delete_Access_Key(user["name"], auth_token_s200, pv3.PB2_MGT)
+            pv3.Delete_Obj_User(user["name"], auth_token_s200, pv3.PB2_MGT)
 
 # account / user
 def Test():
