@@ -13,6 +13,7 @@ if __name__ == "__main__":
     fs = pv3.Get_Single_Filesystem("gxc-testing", auth_token, pv3.PB1_MGT)
     
     del fs["promotion_status"]
+    del fs["created"]
 
     print(json.dumps(fs, indent=4))
 
