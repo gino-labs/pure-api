@@ -16,6 +16,7 @@ if __name__ == "__main__":
     del fs["created"]
     del fs["source"]
     del fs["id"]
+    del fs["space"]
     
     
     print(json.dumps(fs, indent=4))
