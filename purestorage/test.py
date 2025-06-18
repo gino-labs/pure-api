@@ -14,7 +14,7 @@ if __name__ == "__main__":
     
     del fs["promotion_status"]
     del fs["created"]
-    del fs["nfs"]["resource_type"]
+    del fs["nfs"]["export_policy"]["resource_type"]
 
     print(json.dumps(fs, indent=4))
 
