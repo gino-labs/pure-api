@@ -14,10 +14,11 @@ if __name__ == "__main__":
     
     del fs["promotion_status"]
     del fs["created"]
-    del fs["nfs"]["export_policy"]["resource_type"]
-    del fs["smb"]["client_policy"]["resource_type"]
-    del fs["smb"]["share_policy"]["resource_type"]
-
+    #del fs["nfs"]["export_policy"]["resource_type"]
+    #del fs["smb"]["client_policy"]["resource_type"]
+    #del fs["smb"]["share_policy"]["resource_type"]
+    del fs["source"]["resource_type"] 
+    
     print(json.dumps(fs, indent=4))
 
     pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, "gxc-testing", fs)
