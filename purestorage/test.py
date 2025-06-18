@@ -9,6 +9,8 @@ if __name__ == "__main__":
 
     pv3.Get_API_Versions(auth_token, pv3.PB1_MGT)
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
+
+    pv3.Get_Single_Filesystem("gxc-testing", auth_token, pv3.PB1_MGT)
     
 
     
