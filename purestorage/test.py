@@ -18,6 +18,7 @@ if __name__ == "__main__":
     del fs["id"]
     del fs["space"]
     del fs["time_remaining"]
+    del fs["destroyed"]
     
     
     print(json.dumps(fs, indent=4))
