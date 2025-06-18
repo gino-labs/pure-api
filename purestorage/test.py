@@ -20,6 +20,7 @@ if __name__ == "__main__":
     del fs["time_remaining"]
     del fs["destroyed"]
     del fs["name"]
+    del fs["requested_promotion_state"]
     
     
     print(json.dumps(fs, indent=4))
