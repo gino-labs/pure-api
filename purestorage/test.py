@@ -11,7 +11,8 @@ if __name__ == "__main__":
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
     payload = {
-        "writable": False
+        "writable": False,
+        "promotion_status": "demoted"
     }
 
     pv3.Patch_Fs("gxc_test", auth_token, pv3.PB1_MGT, payload)
