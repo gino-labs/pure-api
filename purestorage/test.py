@@ -24,9 +24,10 @@ if __name__ == "__main__":
     del fs["smb"]
     '''
     
-    links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
+    #links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
+    link = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
 
-    print(json.dumps(links, indent=4))
+    print(json.dumps(link, indent=4))
 
 
     #pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, "gxc-testing", fs)

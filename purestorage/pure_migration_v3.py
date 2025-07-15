@@ -565,6 +565,27 @@ def Get_Filesystem_Replica_Links(auth_token, mgt_ip):
         print()
         return None
     
+def Get_Single_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?local_file_system_names={local_fs}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for filesystem replica link: {local_fs}.")
+        print()
+        data = response.json()
+        return data["items"][0]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+
+    
 
 ########################
 ### POST API Section ###
