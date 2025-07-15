@@ -989,7 +989,7 @@ def Delete_Obj_User(name, auth_token, mgt_ip):
     
 # Delete a filesystem replica link
 def Delete_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
-    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?names={local_fs}"
+    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?ids={local_fs}"
 
     headers = {
         "x-auth-token": auth_token,
