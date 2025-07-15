@@ -986,6 +986,25 @@ def Delete_Obj_User(name, auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Delete a filesystem replica link
+def Delete_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?local_file_system_names={local_fs}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.delete(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"DELETE success for filesystem replica link: {local_fs}.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 
 #####################
