@@ -1013,7 +1013,7 @@ def Delete_Obj_User(name, auth_token, mgt_ip):
     
 # Delete a filesystem replica link
 def Delete_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
-    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?names={local_fs}&cancel_in_progress_transfers=true"
+    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?ids={local_fs}&cancel_in_progress_transfers=true"
 
     headers = {
         "x-auth-token": auth_token,
@@ -1023,7 +1023,7 @@ def Delete_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
     response = requests.delete(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"DELETE success for filesystem replica link: {local_fs}.")
+        print(f"DELETE success for filesystem replica link with id: {local_fs}.")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
