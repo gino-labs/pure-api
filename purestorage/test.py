@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     payload = {
         "writable": True,
-        
+        "requested_promotion_state": "promoted"
     }
 
     pv3.Patch_Fs("gxc_test", auth_token, pv3.PB1_MGT, payload)
