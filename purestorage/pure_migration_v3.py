@@ -804,8 +804,8 @@ def Post_Access_Key(auth_token, mgt_ip, payload):
         return None
     
 # Create a filesystem replica link
-def Post_Filesystem_Replica_Link(fs_id, fs_name, remote_array, auth_token, mgt_ip, payload):
-    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?ids={fs_id}&local_file_system_names={fs_name}&remote_file_system_names={fs_name}&remote_names={remote_array}"
+def Post_Filesystem_Replica_Link(fs_name, remote_array, auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?names={fs_name}&local_file_system_names={fs_name}&remote_file_system_names={fs_name}&remote_names={remote_array}"
 
     headers = {
         "x-auth-token": auth_token,

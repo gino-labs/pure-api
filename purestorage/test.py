@@ -28,7 +28,13 @@ if __name__ == "__main__":
     # print(json.dumps(fs, indent=4))
     # exit()
 
-    # pv3.Post_Filesystem_Replica_Link()
+    payload = {
+        "policies": {
+            "name": "5_min"
+        }
+    }
+
+    pv3.Post_Filesystem_Replica_Link("gxc_test", "vapureblade", auth_token, pv3.PB1_MGT, payload)
 
     link = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
     print(json.dumps(link, indent=4))
