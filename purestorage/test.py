@@ -29,9 +29,11 @@ if __name__ == "__main__":
     # exit()
 
     payload = {
-        "policies": {
-            "name": "5_min"
-        }
+        "policies": [
+            {
+                "name": "5_min"
+            }
+        ]
     }
 
     pv3.Post_Filesystem_Replica_Link("gxc_test", "vapureblade", auth_token, pv3.PB1_MGT, payload)
