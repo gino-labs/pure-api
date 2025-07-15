@@ -802,6 +802,30 @@ def Post_Access_Key(auth_token, mgt_ip, payload):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Create a filesystem replica link
+def Post_Filesystem_Replica_Link(fs_id, fs_name, remote_array, auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?ids={fs_id}&local_file_system_names={fs_name}&remote_file_system_names={fs_name}&remote_names={remote_array}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for replica link to {fs_name}")
+        print()   
+
+        data = response.json()
+
+        return data["items"][0]
+
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 
 # Add subnet with json payload to pureblade endpoint
