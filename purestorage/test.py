@@ -10,6 +10,10 @@ if __name__ == "__main__":
     pv3.Get_API_Versions(auth_token, pv3.PB1_MGT)
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
+
+    ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
+    print(json.dumps(ifaces, indent=4))
+    '''
     payload = {
         "writable": False,
         "requested_promotion_state": "demoted"
@@ -17,7 +21,6 @@ if __name__ == "__main__":
 
     pv3.Patch_Fs("gxc_test", auth_token, pv3.PB1_MGT, payload)
 
-    '''
     fs = pv3.Get_Single_Filesystem("gxc-testing", auth_token, pv3.PB1_MGT)
     
     del fs["promotion_status"]
