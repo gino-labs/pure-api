@@ -544,6 +544,27 @@ def Get_Single_Interface(interface, auth_token, mgt_ip):
         print()
         return None
     
+# Get filesystem replica links
+def Get_Filesystem_Replica_Links(auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for filesystem replica links.")
+        print()
+        data = response.json()
+        return data["items"]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+    
 
 ########################
 ### POST API Section ###
