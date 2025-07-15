@@ -876,7 +876,10 @@ def Post_Interface(interface, auth_token, mgt_ip, payload):
 
 # Add filesystem with a json payload passed into function
 def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
-    url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
+    if payload["requested_promotion_state"] == "demoted":
+        url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}&discard_non_snapshotted_data=true"
+    else:
+        url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}"
 
     headers = {
         "x-auth-token": auth_token,
