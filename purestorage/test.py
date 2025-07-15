@@ -41,11 +41,11 @@ if __name__ == "__main__":
     link = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
     print(json.dumps(link, indent=4))
 
-    #pv3.Delete_Filesystem_Replica_Link(link["id"], auth_token, pv3.PB1_MGT)
+    pv3.Delete_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
 
-    #link = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
-    #if link is not None:
-    #    print(json.dumps(link, indent=4))
+    link = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
+    if link is not None:
+        print(json.dumps(link, indent=4))
 
 
     #pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, "gxc-testing", fs)
