@@ -22,25 +22,20 @@ filesystems200 = [
     }
 ]
 
-fs_names = []
+fs200_names = []
 for fs in filesystems200:
-    fs_names.append(fs["name"])
+    fs200_names.append(fs["name"])
 
-# For each filesystem disable / demote
+# For each legacy filesystem disable / demote
 demote_payload = {
-    "http": {
-        "enabled": False
-    },
-    "nfs": {
-        "v3_enabled": False,
-        "v4_1enabled": False
-    },
-    "writable": False
+    "writable": False,
+    "requested_promotion_state": "demoted"
 }
 for fs in filesystems:
-### pv3.Patch_Fs(fs["name"], auth_token, pv3.API_TOKEN, payload)
-    print(f"Would patch {fs['name']} with the following json payload...\n")
-    print(json.dumps(demote_payload, indent=4))
+    if fs["name"] in fs200_names:
+        #pv3.Patch_Fs(fs["name"], auth_token, pv3.API_TOKEN, demote_payload)
+        print("FIXME")
+    
 
 # Get list of filesystems to Promote on S200
 
