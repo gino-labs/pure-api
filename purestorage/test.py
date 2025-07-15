@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     pv3.Get_API_Versions(auth_token, pv3.PB1_MGT)
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
-
+    '''
     fs = pv3.Get_Single_Filesystem("gxc-testing", auth_token, pv3.PB1_MGT)
     
     del fs["promotion_status"]
@@ -22,11 +22,14 @@ if __name__ == "__main__":
     del fs["name"]
     del fs["requested_promotion_state"]
     del fs["smb"]
+    '''
     
-    
-    print(json.dumps(fs, indent=4))
+    links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
 
-    pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, "gxc-testing", fs)
+    print(json.dumps(links, indent=4))
+
+
+    #pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, "gxc-testing", fs)
     
     
     
