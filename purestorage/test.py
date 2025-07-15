@@ -9,6 +9,13 @@ if __name__ == "__main__":
 
     pv3.Get_API_Versions(auth_token, pv3.PB1_MGT)
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
+
+    payload = {
+        "writable": False
+    }
+
+    pv3.Patch_Fs("gxc_test", auth_token, pv3.PB1_MGT, payload)
+
     '''
     fs = pv3.Get_Single_Filesystem("gxc-testing", auth_token, pv3.PB1_MGT)
     
@@ -22,11 +29,6 @@ if __name__ == "__main__":
     del fs["name"]
     del fs["requested_promotion_state"]
     del fs["smb"]
-    '''
-    
-    # fs = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
-    # print(json.dumps(fs, indent=4))
-    # exit()
 
     payload = {
         "policies": [
@@ -46,9 +48,7 @@ if __name__ == "__main__":
     link = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
     if link is not None:
         print(json.dumps(link, indent=4))
-
-
-    #pv3.Post_Filesystem(auth_token_s200, pv3.PB2_MGT, "gxc-testing", fs)
+'''
     
     
     
