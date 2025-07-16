@@ -11,9 +11,18 @@ if __name__ == "__main__":
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
 
-    ifaces = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
+    #ifaces = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
+    #print(json.dumps(ifaces, indent=4))
+    
+    payload = {
+        "address": "10.236.31.28",
+        "services": [
+            "data"
+        ],
+    }
 
-    print(json.dumps(ifaces, indent=4))
+    pv3.Post_Interface("intern-data", auth_token_s200, pv3.PB2_MGT, payload)
+
     '''
     payload = {
         "writable": False,
