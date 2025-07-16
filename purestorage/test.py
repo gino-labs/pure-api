@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import time
 import pure_migration_v3 as pv3
 
 
@@ -11,9 +12,19 @@ if __name__ == "__main__":
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
 
-    filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
-    result = json.dumps(filesystems)
-    print(result)
+    filesystems = []
+    gxc = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
+    ana = pv3.Get_Single_Filesystem("anaconda_linux_chantilly", auth_token, pv3.PB1_MGT)
+    filesystems.append(gxc)
+    filesystems.append(ana)
+
+    for fs in filesystems:
+        if fs["promotion_status"] == "promoted":
+            pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+
+    print("\nAllowing 5 seconds for snapshots to settle...\n")
+    time.sleep(5)
+
     
     '''
     payload = {
