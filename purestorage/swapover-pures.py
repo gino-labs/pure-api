@@ -34,7 +34,7 @@ for fs in filesystems:
         rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
 
 
-# Get Interface info from legacy
+# Get Interface info from legacy #
 ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
 data_iface_names = []
 

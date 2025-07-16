@@ -16,14 +16,14 @@ if __name__ == "__main__":
     gxc = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
     filesystems.append(gxc)
 
-    ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
-    data_iface_names = []
-    print(json.dumps(ifaces, indent=4))
+    ifaces_s200 = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
+    data_iface_names_s200 = []  
+    print(json.dumps(ifaces_s200, indent=4))
 
-    for iface in ifaces:
+    for iface in ifaces_s200:
         if "data" in iface["services"]:
-            data_iface_names.append(iface["name"])
-    print(data_iface_names)
+            data_iface_names_s200.append(iface["name"])
+    print(data_iface_names_s200)
     
     '''
     payload = {
