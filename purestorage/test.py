@@ -15,15 +15,14 @@ if __name__ == "__main__":
     #print(json.dumps(ifaces, indent=4))
     
     payload = {
-        "address": "10.236.31.28",
-        "services": [
-            "data"
-        ],
-        "type": "vip"
+        "address": None,
     }
 
-    pv3.Post_Interface("intern-data", auth_token_s200, pv3.PB2_MGT, payload)
+    #pv3.Patch_Interface("intern-data", auth_token_s200, pv3.PB2_MGT, payload)
 
+    _if = pv3.Get_Single_Interface("intern-data", auth_token_s200, pv3.PB2_MGT)
+    print(json.dumps(_if, indent=4))
+    
     '''
     payload = {
         "writable": False,
