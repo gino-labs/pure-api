@@ -826,6 +826,33 @@ def Post_Filesystem_Replica_Link(fs_name, remote_array, auth_token, mgt_ip, payl
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Create a filesystem snapshot
+def Post_Filesystem_Snapshot(fs, auth_token, mgt_ip, suffix, replicate=True):
+    if replicate:
+        url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?source_names={fs}&send=true"
+    else:
+        url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?source_names={fs}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.post(url, headers=headers, json={"suffix": suffix}, verify=False)
+
+    if response.status_code == 200:
+        print(f"POST success for snapshot {suffix} to {fs}")
+        print()   
+
+        data = response.json()
+
+        return data["items"][0]
+
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 
 # Add subnet with json payload to pureblade endpoint

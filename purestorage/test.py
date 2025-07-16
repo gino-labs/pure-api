@@ -11,17 +11,7 @@ if __name__ == "__main__":
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
 
-    #ifaces = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
-    #print(json.dumps(ifaces, indent=4))
-    
-    payload = {
-        "address": None,
-    }
-
-    #pv3.Patch_Interface("intern-data", auth_token_s200, pv3.PB2_MGT, payload)
-
-    _if = pv3.Get_Single_Interface("intern-data", auth_token_s200, pv3.PB2_MGT)
-    print(json.dumps(_if, indent=4))
+    pv3.Post_Filesystem_Snapshot("gxc_test", auth_token, pv3.PB1_MGT, "test_snapshot")
     
     '''
     payload = {
