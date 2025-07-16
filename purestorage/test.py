@@ -16,6 +16,10 @@ if __name__ == "__main__":
     gxc = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
     filesystems.append(gxc)
 
+    for fs in filesystems:
+        if fs["promotion_status"] == "promoted":
+            pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+
     demote_payload = {
         "writable": False,
         "requested_promotion_state": "demoted"
