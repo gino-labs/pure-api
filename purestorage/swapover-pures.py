@@ -8,7 +8,7 @@ auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
 
-# Get List of Filesystems to Demote on Legacy
+# Get List of Filesystems on Legacy
 filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
 
 
@@ -51,14 +51,14 @@ for iface in ifaces_s200:
 # Patch Legacy IPs to s200
 for iface in ifaces:
     if iface["name"] in data_iface_names_s200:
-        payload = { "address": iface["address"]}
+        payload = { "address": iface["address"] }
         pv3.Patch_Interface(iface["name"], auth_token_s200, pv3.PB2_MGT, payload)
 
 
 # Patch s200 IPs to Legacy
 for iface in ifaces_s200:
     if iface["name"] in data_iface_names:
-        payload = { "address": iface["address"]}
+        payload = { "address": iface["address"] }
         pv3.Patch_Interface(iface["name"], auth_token, pv3.PB1_MGT, payload)
 
 
@@ -86,7 +86,7 @@ for fs in filesystems:
                 "v4_1_enabled": fs["nfs"]["v4_1_enabled"]
             },
             "http": {
-                fs["enabled"]["http"]
+                "enabled": fs["http"]["enabled"]
             },
             "writable": True,
             "requested_promotion_state": "promoted"
