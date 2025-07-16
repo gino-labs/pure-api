@@ -21,8 +21,11 @@ if __name__ == "__main__":
         "requested_promotion_state": "demoted"
     }
     for fs in filesystems:
-        pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
-
+        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
+        while rc != 200:
+            print(f"\nTrying again with {fs['name']}.\n")
+            time.sleep(1) 
+            rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
 
     
     '''
