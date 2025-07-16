@@ -11,7 +11,7 @@ if __name__ == "__main__":
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
 
-    print(json.dumps(pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT), indent=4))
+    filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
     
     '''
     payload = {
