@@ -11,12 +11,9 @@ if __name__ == "__main__":
     pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
 
-    ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
-    for _if in ifaces:
-        if "data" in _if["services"]:
-            print(_if["name"])
-            
-    #print(json.dumps(ifaces, indent=4))
+    ifaces = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
+
+    print(json.dumps(ifaces, indent=4))
     '''
     payload = {
         "writable": False,
