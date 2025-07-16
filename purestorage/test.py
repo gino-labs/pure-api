@@ -16,22 +16,14 @@ if __name__ == "__main__":
     gxc = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
     filesystems.append(gxc)
 
-    for fs in filesystems:
-        if fs["promotion_status"] == "promoted":
-            pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
-    time.sleep(20)
+    ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
+    data_iface_names = []
+    print(json.dumps(ifaces, indent=4))
 
-    demote_payload = {
-        "writable": False,
-        "requested_promotion_state": "demoted"
-    }
-    for fs in filesystems:
-        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
-        while rc != 200:
-            time.sleep(2.5) 
-            print(f"\nTrying again with {fs['name']}.\n")
-            rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
-
+    for iface in ifaces:
+        if "data" in iface["services"]:
+            data_iface_names.append(iface["name"])
+    print(data_iface_names)
     
     '''
     payload = {
