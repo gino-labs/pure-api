@@ -12,7 +12,11 @@ if __name__ == "__main__":
 
 
     ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
-    print(json.dumps(ifaces, indent=4))
+    for _if in ifaces:
+        if "data" in _if["services"]:
+            print(_if["name"])
+            
+    #print(json.dumps(ifaces, indent=4))
     '''
     payload = {
         "writable": False,
