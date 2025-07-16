@@ -874,7 +874,7 @@ def Post_Interface(interface, auth_token, mgt_ip, payload):
 ### PATCH API Section ###
 #########################
 
-# Add filesystem with a json payload passed into function
+# Update filesystem with a json payload passed into function
 def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
     if payload["requested_promotion_state"] == "demoted":
         url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}&discard_non_snapshotted_data=true"
@@ -934,6 +934,25 @@ def Patch_Export_Rule(filesystem, auth_token, mgt_ip, local_ip=LOCAL_IP):
 
     if response.status_code == 200:
         print(f"PATCH success for export rule: {rule}")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+    
+# Update a network interface
+def Patch_Interface(iface, auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/network-interfaces?names={iface}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.patch(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"PATCH success for network interface: {iface}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
