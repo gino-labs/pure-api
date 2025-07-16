@@ -19,6 +19,7 @@ if __name__ == "__main__":
         "services": [
             "data"
         ],
+        "type": "vip"
     }
 
     pv3.Post_Interface("intern-data", auth_token_s200, pv3.PB2_MGT, payload)
