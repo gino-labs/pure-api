@@ -12,6 +12,14 @@ auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
 
 
+# Create final snapshots prior to continuing swap
+for fs in filesystems:
+    pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+
+print("\nAllowing 5 seconds for snapshots to settle...\n")
+time.sleep(5)
+
+
 # For each legacy filesystem disable / demote
 demote_payload = {
     "writable": False,
@@ -19,9 +27,6 @@ demote_payload = {
 }
 for fs in filesystems:
     pv3.Patch_Fs(fs["name"], auth_token, pv3.API_TOKEN, demote_payload)
-
-
-# Create snapshot before disabling replica links
 
 
 # Get Interface info from legacy
