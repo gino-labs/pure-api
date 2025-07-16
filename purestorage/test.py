@@ -12,6 +12,8 @@ if __name__ == "__main__":
 
 
     filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
+    result = json.dumps(filesystems)
+    print(result)
     
     '''
     payload = {
