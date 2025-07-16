@@ -17,17 +17,21 @@ for fs in filesystems:
     if fs["promotion_status"] == "promoted":
         pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
 
-print("\nAllowing 5 seconds for snapshots to settle...\n")
-time.sleep(5)
+print("\nAllowing 30 seconds for snapshots to take...\n")
+time.sleep(30)
 
 
-# For each legacy filesystem disable / demote
+# For each legacy filesystem disable / demote #
 demote_payload = {
     "writable": False,
     "requested_promotion_state": "demoted"
 }
 for fs in filesystems:
-    pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
+    rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
+    while rc != 200:
+        time.sleep(2.5) 
+        print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
+        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
 
 
 # Get Interface info from legacy
