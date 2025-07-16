@@ -53,11 +53,26 @@ for fs in filesystems:
 
         pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
 
-# Get IPs from legacy
+# Get Interface info from legacy
 
-# Get IPs from s200
+ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
+data_iface_names = []
+
+for iface in ifaces:
+    if "data" in iface["services"]:
+        data_iface_names.append(iface["name"])
+
+# Get Interface info from s200
+
+ifaces_s200 = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
+data_face_names_s200 = []
+
+for iface in ifaces_s200:
+    if "data" in iface["services"]:
+        data_face_names_s200.append(iface["name"])
 
 # Patch Legacy IPs to s200
+
 
 # Patch s200 IPs to Legacy
 
