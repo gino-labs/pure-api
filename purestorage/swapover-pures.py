@@ -14,7 +14,8 @@ filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
 
 # Create final snapshots prior to continuing swap
 for fs in filesystems:
-    pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+    if fs["promotion_status"] == "promoted":
+        pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
 
 print("\nAllowing 5 seconds for snapshots to settle...\n")
 time.sleep(5)
