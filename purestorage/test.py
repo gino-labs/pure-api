@@ -14,16 +14,15 @@ if __name__ == "__main__":
 
     filesystems = []
     gxc = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
-    ana = pv3.Get_Single_Filesystem("anaconda_linux_chantilly", auth_token, pv3.PB1_MGT)
     filesystems.append(gxc)
-    filesystems.append(ana)
 
+    demote_payload = {
+        "writable": False,
+        "requested_promotion_state": "demoted"
+    }
     for fs in filesystems:
-        if fs["promotion_status"] == "promoted":
-            pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+        pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
 
-    print("\nAllowing 5 seconds for snapshots to settle...\n")
-    time.sleep(5)
 
     
     '''

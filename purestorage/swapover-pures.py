@@ -12,7 +12,7 @@ auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
 
 
-# Create final snapshots prior to continuing swap
+# Create final snapshots prior to continuing swap #
 for fs in filesystems:
     if fs["promotion_status"] == "promoted":
         pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
@@ -27,7 +27,7 @@ demote_payload = {
     "requested_promotion_state": "demoted"
 }
 for fs in filesystems:
-    pv3.Patch_Fs(fs["name"], auth_token, pv3.API_TOKEN, demote_payload)
+    pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
 
 
 # Get Interface info from legacy
