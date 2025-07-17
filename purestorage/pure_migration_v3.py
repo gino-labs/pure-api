@@ -564,7 +564,8 @@ def Get_Filesystem_Replica_Links(auth_token, mgt_ip):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
-    
+
+# Get single replica link by name    
 def Get_Single_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
     url = f"https://{mgt_ip}/api/2.latest/file-system-replica-links?local_file_system_names={local_fs}"
 
@@ -585,6 +586,26 @@ def Get_Single_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
         print()
         return None
 
+# Get list of NFS clients
+def Get_NFS_Clients(auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/arrays/clients/performance"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for NFS clients.")
+        print()
+        data = response.json()
+        return data["items"][0]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
     
 
 ########################
