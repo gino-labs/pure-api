@@ -601,7 +601,7 @@ def Get_NFS_Clients(auth_token, mgt_ip):
         print(f"GET success for NFS clients.")
         print()
         data = response.json()
-        return data["items"][0]
+        return data["items"]
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
