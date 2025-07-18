@@ -11,6 +11,6 @@ if __name__ == "__main__":
     #pv3.Get_API_Versions(auth_token, pv3.PB1_MGT)
     #pv3.Get_API_Versions(auth_token_s200, pv3.PB2_MGT)
 
-    result = pv3.Get_Single_Filesystem_Snapshot("gxc_test.pre-swap", auth_token, pv3.PB1_MGT)
+    result = pv3.Get_Single_Filesystem_Snapshot("pre-swap", auth_token, pv3.PB1_MGT)
 
     print(json.dumps(result, indent=4))
