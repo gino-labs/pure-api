@@ -609,6 +609,27 @@ def Get_NFS_Clients(auth_token, mgt_ip, message=True):
         print()
         return None
     
+# Get a single snapshot by name
+def Get_Single_Filesystem_Snapshot(snapshot, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?names_or_owner_names={snapshot}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.get(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"GET success for snapshot: {snapshot}.")
+        print()
+        data = response.json()
+        return data["items"][0]
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
+    
 
 ########################
 ### POST API Section ###
