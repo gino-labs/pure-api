@@ -86,4 +86,6 @@ if __name__ == "__main__":
 
     # Delete pre swap snapshots
 
+    # Promote Legacy again
+
     # Set up Replica link again

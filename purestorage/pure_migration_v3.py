@@ -1008,6 +1008,25 @@ def Patch_Interface(iface, auth_token, mgt_ip, payload):
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
+    
+# Update a snapshot
+def Patch_Filesystem_Snapshot(snapshot, auth_token, mgt_ip, payload):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?names={snapshot}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.patch(url, headers=headers, json=payload, verify=False)
+
+    if response.status_code == 200:
+        print(f"PATCH success for snapshot: {snapshot}")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 
 ##########################
