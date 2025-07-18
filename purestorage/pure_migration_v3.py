@@ -1031,8 +1031,11 @@ def Patch_Interface(iface, auth_token, mgt_ip, payload):
         return None
     
 # Update a snapshot
-def Patch_Filesystem_Snapshot(snapshot, auth_token, mgt_ip, payload):
-    url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?names={snapshot}"
+def Patch_Filesystem_Snapshot(snapshot, auth_token, mgt_ip, payload, destroy=False):
+    if destroy:
+        url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?names={snapshot}&latest_replica=True"
+    else:
+        url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?names={snapshot}"
 
     headers = {
         "x-auth-token": auth_token,
