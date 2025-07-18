@@ -4,6 +4,15 @@
   become: yes
   gather_facts: yes
   tasks:
-    - name: Show all mounts
-      debug:
-        var: ansible_mounts
+    - name: Get list of systemd mount units using PureStorage
+      shell: |
+        for MOUNT in $(systemctl list-units --type=mount --no-legend | awk '$1 != "-.mount" {print $1}'); do 
+          if systemctl show "$MOUNT" -p Options --no-pager | grep -qE '{{ pure_ips }}'; then
+            systemctl show "$MOUNT" -p Where | cut -d "=" -f 2
+          fi
+        done
+      register: pure_mounts
+
+    - name: Restart the mount units
+      command: umount -l "{{ item }}"
+      loop: "{{ pure_mounts.stdout_lines }}"

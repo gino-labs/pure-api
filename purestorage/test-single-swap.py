@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import json
 import time
+import tempfile
+import subprocess
 import pure_migration_v3 as pv3
 
 
@@ -41,11 +43,18 @@ if __name__ == "__main__":
     test1 = pv3.Get_Single_Interface("testing-link", auth_token, pv3.PB1_MGT)
     ifaces.append(test1)
     data_iface_names = []
+    original_ips = [] # Orignal IPs to check on NFS clients
 
     for iface in ifaces:
         if "data" in iface["services"]:
             data_iface_names.append(iface["name"])
+            original_ips.append(iface["address"])
         
+    if len(original_ips) > 1:
+        pure_ips = "|".join(original_ips)
+    else:
+        pure_ips = original_ips[0]
+    
     # Get Interface info from s200 #
     ifaces_s200 = []
     test2 = pv3.Get_Single_Interface("testing-link", auth_token_s200, pv3.PB2_MGT)
@@ -55,6 +64,28 @@ if __name__ == "__main__":
     for iface in ifaces_s200:
         if "data" in iface["services"]:
             data_iface_names_s200.append(iface["name"])
+
+    # Get NFS clients before swapping IPs
+    clients = pv3.Get_NFS_Clients(auth_token, pv3.PB1_MGT, message=False)
+
+    hosts = []
+    for client in clients:
+        host = client["name"]
+        if "172.20.0." not in host:
+            host = host.split(":")[0]
+            hosts.append(host)
+
+    inventory = {
+        "all": {
+            "hosts": hosts
+        }
+    }
+
+    # Create temporary inventory file
+    with tempfile.NamedTemporaryFile(mode='w+', suffix='.json', delete=False) as f:
+        json.dump(inventory, f)
+        f.flush()
+        nfs_client_inventory = f.name
 
     # Patch Legacy IPs to s200
     for iface in ifaces:
@@ -102,3 +133,14 @@ if __name__ == "__main__":
             }
 
             pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
+
+    # Run Ansible playbook on nfs clients that need mounts fixed
+    subprocess.run(["ansible-playbook", "-i", f"{nfs_client_inventory}", "-e", f"pure_ips={pure_ips}", "--limit", "172.16.203.133", "-k", "remount-pure.yml"])
+    
+    # Clean up
+    os.remove(nfs_client_inventory)
+
+
+
+
+
