@@ -209,7 +209,7 @@ def Get_API_Versions(auth_token, mgt_ip):
 
 
 # Retrieve session token using POST request with api token. Only excpetion to sections.
-def Get_Session_Token(api_token, mgt_ip):
+def Get_Session_Token(api_token, mgt_ip, message=True):
     url = f"https://{mgt_ip}/api/login"
 
     headers = {
@@ -220,7 +220,8 @@ def Get_Session_Token(api_token, mgt_ip):
     response = requests.post(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print()
+        if message:
+            print()
         return response.headers.get("x-auth-token")
     else:
         print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
@@ -587,7 +588,7 @@ def Get_Single_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
         return None
 
 # Get list of NFS clients
-def Get_NFS_Clients(auth_token, mgt_ip):
+def Get_NFS_Clients(auth_token, mgt_ip, message=True):
     url = f"https://{mgt_ip}/api/2.latest/arrays/clients/performance"
 
     headers = {
@@ -598,8 +599,9 @@ def Get_NFS_Clients(auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"GET success for NFS clients.")
-        print()
+        if message:
+            print(f"GET success for NFS clients.")
+            print()
         data = response.json()
         return data["items"]
     else:
