@@ -1121,6 +1121,24 @@ def Delete_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
         print()
         return None
 
+# Delete a snapshot
+def Delete_Filesystem_Snapshot(snapshot, auth_token, mgt_ip):
+    url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?names={snapshot}"
+
+    headers = {
+        "x-auth-token": auth_token,
+        "Content-Type": "application/json"
+    }
+
+    response = requests.delete(url, headers=headers, verify=False)
+
+    if response.status_code == 200:
+        print(f"DELETE success for filesystem snapshot: {snapshot}.")
+        print()
+    else:
+        print(f"Error Status Code: {response.status_code}\n{response.text}")
+        print()
+        return None
 
 #####################
 ### Main Function ###
