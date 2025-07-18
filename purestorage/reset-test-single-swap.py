@@ -106,3 +106,11 @@ if __name__ == "__main__":
             rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
 
     # Set up Replica link again
+    payload = {
+        "policies": [
+            {
+                "name": "5_min",
+            }
+        ]
+    }
+    pv3.Post_Filesystem_Replica_Link("gxc_test", "vapureblade", auth_token, pv3.PB1_MGT, payload)
