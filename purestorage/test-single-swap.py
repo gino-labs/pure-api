@@ -67,6 +67,8 @@ if __name__ == "__main__":
             data_iface_names_s200.append(iface["name"])
 
     # Get NFS clients before swapping IPs
+    print("Getting list of active NFS clients to the pure...")
+    print()
     clients = pv3.Get_NFS_Clients(auth_token, pv3.PB1_MGT, message=False)
 
     hosts = []
