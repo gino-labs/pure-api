@@ -85,7 +85,14 @@ if __name__ == "__main__":
             pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, promote_payload)
 
     # Delete pre swap snapshots
+    payload = {
+        "destroyed": True
+    }
+    pv3.Patch_Filesystem_Snapshot("pre-swap", auth_token, pv3.PB1_MGT, payload)
+    pv3.Patch_Filesystem_Snapshot("pre-swap", auth_token_s200, pv3.PB2_MGT, payload)
+    pv3.Delete_Filesystem_Snapshot("pre-swap", auth_token, pv3.PB1_MGT)
+    pv3.Delete_Filesystem_Snapshot("pre-swap", auth_token_s200, pv3.PB2_MGT)
 
-    # Promote Legacy again
+    # Demote s200 again
 
     # Set up Replica link again
