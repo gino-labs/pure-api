@@ -113,4 +113,5 @@ if __name__ == "__main__":
             }
         ]
     }
-    pv3.Post_Filesystem_Replica_Link("gxc_test", "vapureblade", auth_token, pv3.PB1_MGT, payload)
+    array = pv3.PB2_MGT.split("-")[0]
+    pv3.Post_Filesystem_Replica_Link("gxc_test", array, auth_token, pv3.PB1_MGT, payload)
