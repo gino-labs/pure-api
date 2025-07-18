@@ -94,5 +94,15 @@ if __name__ == "__main__":
     pv3.Delete_Filesystem_Snapshot("pre-swap", auth_token_s200, pv3.PB2_MGT)
 
     # Demote s200 again
+    demote_payload = {
+        "writable": False,
+        "requested_promotion_state": "demoted"
+    }
+    for fs in filesystems200:
+        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
+        while rc != 200:
+            time.sleep(2.5) 
+            print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
+            rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
 
     # Set up Replica link again
