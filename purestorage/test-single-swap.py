@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import json
 import time
 import tempfile
@@ -77,7 +78,7 @@ if __name__ == "__main__":
 
     inventory = {
         "all": {
-            "hosts": hosts
+            "hosts": {host: None for host in hosts}
         }
     }
 
