@@ -59,6 +59,25 @@ for iface in ifaces_s200:
         data_iface_names_s200.append(iface["name"])
 
 
+# Get NFS clients before swapping IPs #
+print("Getting list of active NFS clients to the pure...")
+print()
+clients = pv3.Get_NFS_Clients(auth_token, pv3.PB1_MGT, message=False)
+
+hosts = []
+for client in clients:
+    host = client["name"]
+    if "172.20.0." not in host:
+        host = host.split(":")[0]
+        hosts.append(host)
+
+inventory = {
+    "all": {
+        "hosts": {host: None for host in hosts}
+    }
+}
+
+
 # Patch Legacy IPs to s200
 for iface in ifaces:
     if iface["name"] in data_iface_names_s200:
