@@ -88,8 +88,8 @@ if __name__ == "__main__":
     payload = {
         "destroyed": True
     }
-    pv3.Patch_Filesystem_Snapshot("gxc_test.pre-swap", auth_token, pv3.PB1_MGT, payload)
-    pv3.Patch_Filesystem_Snapshot("gxc_test.replica.pre-swap", auth_token_s200, pv3.PB2_MGT, payload)
+    pv3.Patch_Filesystem_Snapshot("gxc_test.pre-swap", auth_token, pv3.PB1_MGT, payload, destroy=True)
+    pv3.Patch_Filesystem_Snapshot("gxc_test.replica.pre-swap", auth_token_s200, pv3.PB2_MGT, payload, destroy=True)
     pv3.Delete_Filesystem_Snapshot("gxc_test.pre-swap", auth_token, pv3.PB1_MGT)
     pv3.Delete_Filesystem_Snapshot("gxc_test.replica.pre-swap", auth_token_s200, pv3.PB2_MGT)
 
