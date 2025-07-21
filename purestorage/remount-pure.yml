@@ -2,7 +2,7 @@
 - name: Play to remount nfs mounts from purestorage
   hosts: all
   become: yes
-  gather_facts: yes
+  gather_facts: no
   tasks:
     - name: Get list of systemd mount units using PureStorage
       shell: |
