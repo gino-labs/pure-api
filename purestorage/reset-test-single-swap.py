@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-import os
-import json
 import time
-import tempfile
-import subprocess
 import pure_migration_v3 as pv3
 
 if __name__ == "__main__":
