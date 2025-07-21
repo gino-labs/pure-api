@@ -89,7 +89,8 @@ if __name__ == "__main__":
         if fs["promotion_status"] == "promoted":
             pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
 
-    print("\nAllowing 30 seconds for snapshots to take...\n")
+    print("Allowing 30 seconds for snapshots to take...")
+    print()
     time.sleep(30)
     
     # For each legacy filesystem disable / demote #
