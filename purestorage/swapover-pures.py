@@ -136,6 +136,7 @@ for fs in filesystems:
 
 
 # Run Ansible playbook on nfs clients that need mounts fixed #
+print("Enter root password for ansible playbook.")
 subprocess.run(["ansible-playbook", "-i", f"{nfs_client_inventory}", "-e", f"pure_ips={pure_ips}", "-k", "remount-pure.yml"])
 
 # Clean up #

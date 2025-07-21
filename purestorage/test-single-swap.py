@@ -138,6 +138,7 @@ if __name__ == "__main__":
             pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
 
     # Run Ansible playbook on nfs clients that need mounts fixed #
+    print("Enter root password for ansible playbook.")
     subprocess.run(["ansible-playbook", "-i", f"{nfs_client_inventory}", "-e", f"pure_ips={pure_ips}", "--limit", "172.16.203.133", "-k", "remount-pure.yml"])
     
     # Clean up #
