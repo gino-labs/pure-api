@@ -37,10 +37,17 @@ for fs in filesystems:
 # Get Interface info from legacy #
 ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
 data_iface_names = []
+original_ips = [] # Orignal IPs to check on NFS clients #
 
 for iface in ifaces:
     if "data" in iface["services"]:
         data_iface_names.append(iface["name"])
+        original_ips.append(iface["address"])
+
+if len(original_ips) > 1:
+    pure_ips = "|".join(original_ips)
+else:
+    pure_ips = original_ips[0]
 
 
 # Get Interface info from s200 #
