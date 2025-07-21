@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import pure_migration_v3 as pv3
+import subprocess
 import tempfile
 import time
 import json
@@ -132,6 +133,10 @@ for fs in filesystems:
         }
 
         pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
+
+
+# Run Ansible playbook on nfs clients that need mounts fixed #
+subprocess.run(["ansible-playbook", "-i", f"{nfs_client_inventory}", "-e", f"pure_ips={pure_ips}", "-k", "remount-pure.yml"])
 
 # Clean up #
 os.remove(nfs_client_inventory)
