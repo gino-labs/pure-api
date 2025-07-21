@@ -98,7 +98,7 @@ if __name__ == "__main__":
         "requested_promotion_state": "demoted"
     }
     for fs in filesystems:
-        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
+        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED legacy filesystem")
         while rc != 200:
             time.sleep(2.5) 
             print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
@@ -108,13 +108,13 @@ if __name__ == "__main__":
     for iface in ifaces:
         if iface["name"] in data_iface_names_s200:
             payload = { "address": iface["address"] }
-            pv3.Patch_Interface(iface["name"], auth_token_s200, pv3.PB2_MGT, payload)
+            pv3.Patch_Interface(iface["name"], auth_token_s200, pv3.PB2_MGT, payload, message=f"s200: {iface['name']} assigned {iface['address']}")
 
     # Patch s200 IPs to Legacy #
     for iface in ifaces_s200:
         if iface["name"] in data_iface_names:
             payload = { "address": iface["address"] }
-            pv3.Patch_Interface(iface["name"], auth_token, pv3.PB1_MGT, payload)
+            pv3.Patch_Interface(iface["name"], auth_token, pv3.PB1_MGT, payload, message=f"legacy: {iface['name']} assigned {iface['address']}")
    
     # Disable replica links on Legacy #
     for link in links:
@@ -136,7 +136,7 @@ if __name__ == "__main__":
                 "requested_promotion_state": "promoted"
             }
 
-            pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
+            pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload, message="PROMOTED s200 filesystem")
 
     # Run Ansible playbook on nfs clients that need mounts fixed #
     print("Enter root password for ansible playbook.")
