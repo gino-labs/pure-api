@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import pure_migration_v3 as pv3
+import tempfile
 import time
 import json
+import os
 
 # Get auth tokens #
 auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
@@ -78,6 +80,13 @@ inventory = {
 }
 
 
+# Create temporary inventory file #
+with tempfile.NamedTemporaryFile(mode='w+', suffix='.json', delete=False) as f:
+    json.dump(inventory, f)
+    f.flush()
+    nfs_client_inventory = f.name
+
+
 # Patch Legacy IPs to s200
 for iface in ifaces:
     if iface["name"] in data_iface_names_s200:
@@ -123,3 +132,6 @@ for fs in filesystems:
         }
 
         pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
+
+# Clean up #
+os.remove(nfs_client_inventory)
