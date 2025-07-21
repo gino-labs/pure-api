@@ -19,26 +19,15 @@ if __name__ == "__main__":
     gxc = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
     filesystems.append(gxc)
 
-    # Create final snapshots prior to continuing swap #
-    for fs in filesystems:
-        if fs["promotion_status"] == "promoted":
-            pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+    # Get list of filesystems to Promote on S200 #
+    filesystems200 = []
+    gxc2 = pv3.Get_Single_Filesystem("gxc_test", auth_token_s200, pv3.PB2_MGT)
+    filesystems200.append(gxc2)
 
-    print("\nAllowing 30 seconds for snapshots to take...\n")
-    time.sleep(30)
-    
-    # For each legacy filesystem disable / demote #
-    demote_payload = {
-        "writable": False,
-        "requested_promotion_state": "demoted"
-    }
-    for fs in filesystems:
-        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
-        while rc != 200:
-            time.sleep(2.5) 
-            print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
-            rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
-    
+    fs200_names = []
+    for fs in filesystems200:
+        fs200_names.append(fs["name"])
+
     # Get Interface info from legacy #
     ifaces = []
     test1 = pv3.Get_Single_Interface("testing-link", auth_token, pv3.PB1_MGT)
@@ -90,6 +79,27 @@ if __name__ == "__main__":
         f.flush()
         nfs_client_inventory = f.name
 
+    # Create final snapshots prior to continuing swap #
+    for fs in filesystems:
+        if fs["promotion_status"] == "promoted":
+            pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+
+    print("\nAllowing 30 seconds for snapshots to take...\n")
+    time.sleep(30)
+    
+    # For each legacy filesystem disable / demote #
+    demote_payload = {
+        "writable": False,
+        "requested_promotion_state": "demoted"
+    }
+    for fs in filesystems:
+        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
+        while rc != 200:
+            time.sleep(2.5) 
+            print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
+            rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
+    
+
     # Patch Legacy IPs to s200 #
     for iface in ifaces:
         if iface["name"] in data_iface_names_s200:
@@ -111,16 +121,8 @@ if __name__ == "__main__":
     for link in links:
         pv3.Delete_Filesystem_Replica_Link(link["id"], auth_token, pv3.PB1_MGT)
 
-    # Get list of filesystems to Promote on S200 #
-    filesystems200 = []
-    gxc2 = pv3.Get_Single_Filesystem("gxc_test", auth_token_s200, pv3.PB2_MGT)
-    filesystems200.append(gxc2)
 
-    fs200_names = []
-    for fs in filesystems200:
-        fs200_names.append(fs["name"])
-
-    # For each filesystem enable / promote #
+    # For each s200 filesystem that is also in legacy enable / promote #
     for fs in filesystems:
         if fs["name"] in fs200_names:
             promote_payload = {
