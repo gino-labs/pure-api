@@ -240,7 +240,7 @@ def Get_Single_Filesystem(filesystem, auth_token, mgt_ip):
     response = requests.get(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"Retreived {filesystem} successfully.")
+        print(f"GET success for filesystem: {filesystem}")
         print()
         data = response.json()
         
