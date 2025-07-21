@@ -55,6 +55,11 @@ if __name__ == "__main__":
         if "data" in iface["services"]:
             data_iface_names_s200.append(iface["name"])
 
+    # Get Replica links from legacy
+    links = []
+    test3 = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
+    links.append(test3)
+
     # Get NFS clients before swapping IPs #
     print("Getting list of active NFS clients to the pure...")
     print()
@@ -99,28 +104,21 @@ if __name__ == "__main__":
             print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
             rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
     
-
     # Patch Legacy IPs to s200 #
     for iface in ifaces:
         if iface["name"] in data_iface_names_s200:
             payload = { "address": iface["address"] }
             pv3.Patch_Interface(iface["name"], auth_token_s200, pv3.PB2_MGT, payload)
 
-
     # Patch s200 IPs to Legacy #
     for iface in ifaces_s200:
         if iface["name"] in data_iface_names:
             payload = { "address": iface["address"] }
             pv3.Patch_Interface(iface["name"], auth_token, pv3.PB1_MGT, payload)
-
+   
     # Disable replica links on Legacy #
-    links = []
-    test3 = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
-    links.append(test3)
-
     for link in links:
         pv3.Delete_Filesystem_Replica_Link(link["id"], auth_token, pv3.PB1_MGT)
-
 
     # For each s200 filesystem that is also in legacy enable / promote #
     for fs in filesystems:
