@@ -946,7 +946,7 @@ def Post_Interface(interface, auth_token, mgt_ip, payload):
 #########################
 
 # Update filesystem with a json payload passed into function
-def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
+def Patch_Fs(filesystem, auth_token, mgt_ip, payload, message=None):
     if payload["requested_promotion_state"] == "demoted":
         url = f"https://{mgt_ip}/api/2.latest/file-systems?names={filesystem}&discard_non_snapshotted_data=true"
     else:
@@ -960,7 +960,10 @@ def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
     response = requests.patch(url, headers=headers, json=payload, verify=False)
     
     if response.status_code == 200:
-        print(f"PATCH success for filesystem: {filesystem}")
+        if message:
+            print(f"PATCH success for filesystem: {filesystem} ({str(message)})")
+        else:
+            print(f"PATCH success for filesystem: {filesystem}")
         print()
         return 200
     else:
@@ -1006,13 +1009,14 @@ def Patch_Export_Rule(filesystem, auth_token, mgt_ip, local_ip=LOCAL_IP):
     if response.status_code == 200:
         print(f"PATCH success for export rule: {rule}")
         print()
+        return 200
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
     
 # Update a network interface
-def Patch_Interface(iface, auth_token, mgt_ip, payload):
+def Patch_Interface(iface, auth_token, mgt_ip, payload, message=None):
     url = f"https://{mgt_ip}/api/2.latest/network-interfaces?names={iface}"
 
     headers = {
@@ -1023,15 +1027,19 @@ def Patch_Interface(iface, auth_token, mgt_ip, payload):
     response = requests.patch(url, headers=headers, json=payload, verify=False)
 
     if response.status_code == 200:
-        print(f"PATCH success for network interface: {iface}")
+        if message:
+            print(f"PATCH success for network interface: {iface} ({str(message)})")
+        else:
+            print(f"PATCH success for network interface: {iface}")
         print()
+        return 200
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
         return None
     
 # Update a snapshot
-def Patch_Filesystem_Snapshot(snapshot, auth_token, mgt_ip, payload, destroy=False):
+def Patch_Filesystem_Snapshot(snapshot, auth_token, mgt_ip, payload, destroy=False, message=None):
     if destroy:
         url = f"https://{mgt_ip}/api/2.latest/file-system-snapshots?names={snapshot}&latest_replica=True"
     else:
@@ -1045,8 +1053,12 @@ def Patch_Filesystem_Snapshot(snapshot, auth_token, mgt_ip, payload, destroy=Fal
     response = requests.patch(url, headers=headers, json=payload, verify=False)
 
     if response.status_code == 200:
-        print(f"PATCH success for snapshot: {snapshot}")
+        if message:
+            print(f"PATCH success for snapshot: {snapshot} ({str(message)})")
+        else:
+            print(f"PATCH success for snapshot: {snapshot}")
         print()
+        return 200
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
         print()
