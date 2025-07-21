@@ -960,7 +960,7 @@ def Patch_Fs(filesystem, auth_token, mgt_ip, payload):
     response = requests.patch(url, headers=headers, json=payload, verify=False)
     
     if response.status_code == 200:
-        print(f"PATCH success for {filesystem}.")
+        print(f"PATCH success for filesystem: {filesystem}")
         print()
         return 200
     else:
@@ -1080,7 +1080,7 @@ def Delete_Fs(filesystem, auth_token, mgt_ip, confirm=True):
     response = requests.delete(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"Filesystem {filesystem} was deleted from {mgt_ip}.")
+        print(f"Filesystem {filesystem} was deleted from {mgt_ip}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
@@ -1099,7 +1099,7 @@ def Delete_Access_Key(name, auth_token, mgt_ip):
     response = requests.delete(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"DELETE success for access key: {name}.")
+        print(f"DELETE success for access key: {name}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
@@ -1119,7 +1119,7 @@ def Delete_Obj_User(name, auth_token, mgt_ip):
     response = requests.delete(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"DELETE success for object store user: {name}.")
+        print(f"DELETE success for object store user: {name}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
@@ -1138,7 +1138,7 @@ def Delete_Filesystem_Replica_Link(local_fs, auth_token, mgt_ip):
     response = requests.delete(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"DELETE success for filesystem replica link with id: {local_fs}.")
+        print(f"DELETE success for filesystem replica link with id: {local_fs}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
@@ -1157,7 +1157,7 @@ def Delete_Filesystem_Snapshot(snapshot, auth_token, mgt_ip):
     response = requests.delete(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        print(f"DELETE success for filesystem snapshot: {snapshot}.")
+        print(f"DELETE success for filesystem snapshot: {snapshot}")
         print()
     else:
         print(f"Error Status Code: {response.status_code}\n{response.text}")
