@@ -126,7 +126,8 @@ if __name__ == "__main__":
             promote_payload = {
                 "nfs": {
                     "v3_enabled": fs["nfs"]["v3_enabled"],
-                    "v4_1_enabled": fs["nfs"]["v4_1_enabled"]
+                    "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
+                    "rules": fs["nfs"]["rules"]
                 },
                 "http": {
                     "enabled": fs["http"]["enabled"]
