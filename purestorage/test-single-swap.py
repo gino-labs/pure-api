@@ -44,7 +44,7 @@ if __name__ == "__main__":
     test1 = pv3.Get_Single_Interface("testing-link", auth_token, pv3.PB1_MGT)
     ifaces.append(test1)
     data_iface_names = []
-    original_ips = [] # Orignal IPs to check on NFS clients
+    original_ips = [] # Orignal IPs to check on NFS clients #
 
     for iface in ifaces:
         if "data" in iface["services"]:
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         if "data" in iface["services"]:
             data_iface_names_s200.append(iface["name"])
 
-    # Get NFS clients before swapping IPs
+    # Get NFS clients before swapping IPs #
     print("Getting list of active NFS clients to the pure...")
     print()
     clients = pv3.Get_NFS_Clients(auth_token, pv3.PB1_MGT, message=False)
@@ -84,26 +84,26 @@ if __name__ == "__main__":
         }
     }
 
-    # Create temporary inventory file
+    # Create temporary inventory file #
     with tempfile.NamedTemporaryFile(mode='w+', suffix='.json', delete=False) as f:
         json.dump(inventory, f)
         f.flush()
         nfs_client_inventory = f.name
 
-    # Patch Legacy IPs to s200
+    # Patch Legacy IPs to s200 #
     for iface in ifaces:
         if iface["name"] in data_iface_names_s200:
             payload = { "address": iface["address"] }
             pv3.Patch_Interface(iface["name"], auth_token_s200, pv3.PB2_MGT, payload)
 
 
-    # Patch s200 IPs to Legacy
+    # Patch s200 IPs to Legacy #
     for iface in ifaces_s200:
         if iface["name"] in data_iface_names:
             payload = { "address": iface["address"] }
             pv3.Patch_Interface(iface["name"], auth_token, pv3.PB1_MGT, payload)
 
-    # Disable replica links on Legacy
+    # Disable replica links on Legacy #
     links = []
     test3 = pv3.Get_Single_Filesystem_Replica_Link("gxc_test", auth_token, pv3.PB1_MGT)
     links.append(test3)
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     for link in links:
         pv3.Delete_Filesystem_Replica_Link(link["id"], auth_token, pv3.PB1_MGT)
 
-    # Get list of filesystems to Promote on S200
+    # Get list of filesystems to Promote on S200 #
     filesystems200 = []
     gxc2 = pv3.Get_Single_Filesystem("gxc_test", auth_token_s200, pv3.PB2_MGT)
     filesystems200.append(gxc2)
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     for fs in filesystems200:
         fs200_names.append(fs["name"])
 
-    # For each filesystem enable / promote
+    # For each filesystem enable / promote #
     for fs in filesystems:
         if fs["name"] in fs200_names:
             promote_payload = {
@@ -137,10 +137,10 @@ if __name__ == "__main__":
 
             pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
 
-    # Run Ansible playbook on nfs clients that need mounts fixed
+    # Run Ansible playbook on nfs clients that need mounts fixed #
     subprocess.run(["ansible-playbook", "-i", f"{nfs_client_inventory}", "-e", f"pure_ips={pure_ips}", "--limit", "172.16.203.133", "-k", "remount-pure.yml"])
     
-    # Clean up
+    # Clean up #
     os.remove(nfs_client_inventory)
 
 
