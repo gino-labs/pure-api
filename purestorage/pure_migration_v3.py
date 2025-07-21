@@ -209,7 +209,7 @@ def Get_API_Versions(auth_token, mgt_ip):
 
 
 # Retrieve session token using POST request with api token. Only excpetion to sections.
-def Get_Session_Token(api_token, mgt_ip, message=True):
+def Get_Session_Token(api_token, mgt_ip):
     url = f"https://{mgt_ip}/api/login"
 
     headers = {
@@ -220,8 +220,6 @@ def Get_Session_Token(api_token, mgt_ip, message=True):
     response = requests.post(url, headers=headers, verify=False)
 
     if response.status_code == 200:
-        if message:
-            print()
         return response.headers.get("x-auth-token")
     else:
         print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
