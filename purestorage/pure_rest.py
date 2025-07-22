@@ -115,3 +115,21 @@ class FlashBladeAPI():
 
         if data is not None:
             return data["items"]
+        
+    # Get single bucket by name
+    def get_single_bucket(self, bucket):
+        url = self.baseurl + f"buckets?names={bucket}"
+        msg = f"bucket: {bucket}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+        
+    # Get buckets
+    def get_buckets(self):
+        url = self.baseurl + "buckets"
+        msg = "buckets"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
