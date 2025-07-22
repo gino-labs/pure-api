@@ -10,32 +10,15 @@ import os
 auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
 auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
-
 # Get List of Filesystems on Legacy #
 filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
 
+# Get list of filesystems to Promote on S200
+filesystems200 = pv3.Get_Filesystems(auth_token_s200, pv3.PB2_MGT)
 
-# Create final snapshots prior to continuing swap #
-for fs in filesystems:
-    if fs["promotion_status"] == "promoted":
-        pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
-
-print("\nAllowing 30 seconds for snapshots to take...\n")
-time.sleep(30)
-
-
-# For each legacy filesystem disable / demote #
-demote_payload = {
-    "writable": False,
-    "requested_promotion_state": "demoted"
-}
-for fs in filesystems:
-    rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
-    while rc != 200:
-        time.sleep(2.5) 
-        print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
-        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload)
-
+fs200_names = []
+for fs in filesystems200:
+    fs200_names.append(fs["name"])
 
 # Get Interface info from legacy #
 ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
@@ -52,7 +35,6 @@ if len(original_ips) > 1:
 else:
     pure_ips = original_ips[0]
 
-
 # Get Interface info from s200 #
 ifaces_s200 = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
 data_iface_names_s200 = []
@@ -61,6 +43,8 @@ for iface in ifaces_s200:
     if "data" in iface["services"]:
         data_iface_names_s200.append(iface["name"])
 
+# Get filesystem replica links
+links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
 
 # Get NFS clients before swapping IPs #
 print("Getting list of active NFS clients to the pure...")
@@ -80,42 +64,47 @@ inventory = {
     }
 }
 
-
 # Create temporary inventory file #
 with tempfile.NamedTemporaryFile(mode='w+', suffix='.json', delete=False) as f:
     json.dump(inventory, f)
     f.flush()
     nfs_client_inventory = f.name
 
+# Create final snapshots prior to continuing swap #
+for fs in filesystems:
+    if fs["promotion_status"] == "promoted":
+        pv3.Post_Filesystem_Snapshot(fs["name"], auth_token, pv3.PB1_MGT, "pre-swap")
+
+print("\nAllowing 30 seconds for snapshots to take...\n")
+time.sleep(30)
+
+# For each legacy filesystem disable / demote #
+demote_payload = {
+    "writable": False,
+    "requested_promotion_state": "demoted"
+}
+for fs in filesystems:
+    rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED on legacy")
+    while rc != 200:
+        time.sleep(2.5) 
+        print(f"\nTrying again with {fs['name']} until snapshot settles.\n")
+        rc = pv3.Patch_Fs(fs["name"], auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED on legacy")
 
 # Patch Legacy IPs to s200
 for iface in ifaces:
     if iface["name"] in data_iface_names_s200:
         payload = { "address": iface["address"] }
-        pv3.Patch_Interface(iface["name"], auth_token_s200, pv3.PB2_MGT, payload)
-
+        pv3.Patch_Interface(iface["name"], auth_token_s200, pv3.PB2_MGT, payload, message=f"s200:{iface['name']} assigned {iface['address']}")
 
 # Patch s200 IPs to Legacy
 for iface in ifaces_s200:
     if iface["name"] in data_iface_names:
         payload = { "address": iface["address"] }
-        pv3.Patch_Interface(iface["name"], auth_token, pv3.PB1_MGT, payload)
-
+        pv3.Patch_Interface(iface["name"], auth_token, pv3.PB1_MGT, payload, message=f"legacy:{iface['name']} assigned {iface['address']}")
 
 # Disable replica links on Legacy
-links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
-
 for link in links:
     pv3.Delete_Filesystem_Replica_Link(link["id"], auth_token, pv3.PB1_MGT)
-
-
-# Get list of filesystems to Promote on S200
-filesystems200 = pv3.Get_Filesystems(auth_token_s200, pv3.PB2_MGT)
-
-fs200_names = []
-for fs in filesystems200:
-    fs200_names.append(fs["name"])
-
 
 # For each filesystem enable / promote
 for fs in filesystems:
@@ -133,8 +122,7 @@ for fs in filesystems:
             "requested_promotion_state": "promoted"
         }
 
-        pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload)
-
+        pv3.Patch_Fs(fs["name"], auth_token_s200, pv3.PB2_MGT, promote_payload, message="PROMOTED on s200")
 
 # Run Ansible playbook on nfs clients that need mounts fixed #
 print("Enter root password for ansible playbook.")
