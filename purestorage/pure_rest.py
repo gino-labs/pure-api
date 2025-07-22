@@ -80,13 +80,38 @@ class FlashBladeAPI():
     ### GET API Section ###
     #######################
 
-    # GET single filesystem by name
+    # Get single filesystem by name
     def get_single_filesystem(self, filesystem):
         url = self.baseurl + f"file-systems?names={filesystem}"
-        data = self.REST_Request("get", url, f"filesystem: {filesystem}")
+        msg = f"filesystem: {filesystem}"
+        data = self.REST_Request("get", url, msg)
 
         if data is not None:
             return data["items"][0]
             
+    # Get Filesystems
+    def get_filesystems(self):
+        url = self.baseurl + "file-systems"
+        msg = "filesystems"
+        data = self.REST_Request("get", url, msg)
 
+        if data is not None:
+            return data["items"]
         
+    # Get single object store account by name
+    def get_single_object_account(self, account):
+        url = self.baseurl + f"object-store-accounts?names={account}"
+        msg = f"object store account: {account}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+        
+    # Get object store accounts
+    def get_object_accounts(self):
+        url = self.baseurl + "object-store-accounts"
+        msg = "object store accounts"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
