@@ -30,6 +30,7 @@ class FlashBladeAPI():
         self.auth_token = self.Get_Session_Token()
         self.auth_headers = self.Set_Auth_Headers()
 
+    # Get session token
     def Get_Session_Token(self):
         url = f"https://{self.mgt_ip}/api/login"
 
@@ -45,10 +46,47 @@ class FlashBladeAPI():
             print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
             print()
             return None
-        
+    
+    # Set auth headers with method
     def Set_Auth_Headers(self):
         headers = {
             "x-auth-token": self.auth_token,
             "Content-Type": "application/json"
         }
         return headers
+    
+    # Make a api request
+    def REST_Request(self, method, url, message):
+        method = str(method).lower()
+        if method == "get":
+            response = requests.get(url, header=self.auth_headers, verify=False)
+        elif method == "post":
+            response = requests.post(url, header=self.auth_headers, verify=False)
+        elif method == "patch":
+             response = requests.patch(url, header=self.auth_headers, verify=False)
+        elif method == "delete":
+            response = requests.post(url, header=self.auth_headers, verify=False)
+        
+        if response.status_code == 200:
+            print(f"{method.upper()} success for {message}")
+            print()
+            return response.json()
+        else:
+            print(f"Error Status Code: {response.status_code}\n{response.text}")
+            print()
+            return None
+    
+    #######################
+    ### GET API Section ###
+    #######################
+
+    # GET single filesystem by name
+    def get_single_filesystem(self, filesystem):
+        url = self.baseurl + f"file-systems?names={filesystem}"
+        data = self.REST_Request("get", url, f"filesystem: {filesystem}")
+
+        if data is not None:
+            return data["items"][0]
+            
+
+        
