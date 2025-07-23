@@ -56,14 +56,14 @@ class FlashBladeAPI():
         return headers
     
     # Make a api request
-    def REST_Request(self, method, url, message):
+    def REST_Request(self, method, url, message, payload={}):
         method = str(method).lower()
         if method == "get":
             response = requests.get(url, header=self.auth_headers, verify=False)
         elif method == "post":
-            response = requests.post(url, header=self.auth_headers, verify=False)
+            response = requests.post(url, header=self.auth_headers, json=payload, verify=False)
         elif method == "patch":
-             response = requests.patch(url, header=self.auth_headers, verify=False)
+             response = requests.patch(url, header=self.auth_headers, json=payload, verify=False)
         elif method == "delete":
             response = requests.post(url, header=self.auth_headers, verify=False)
         
@@ -76,9 +76,11 @@ class FlashBladeAPI():
             print()
             return None
     
+
     #######################
     ### GET API Section ###
     #######################
+
 
     # Get single filesystem by name
     def get_single_filesystem(self, filesystem):
@@ -252,7 +254,16 @@ class FlashBladeAPI():
             return data["items"]
         
         
+    ########################
+    ### POST API Section ###
+    ########################
 
 
+    # Post a filesystem (default NFS)
+    def post_filesystem(self, filesystem, payload):
+        url = self.baseurl + f"file-systems?names={filesystem}&default_exports=nfs"
+        msg = "filesystem"
+        data = self.REST_Request("post", url, msg, payload=payload)
 
-
+        if data is not None:
+            return data["items"][0]
