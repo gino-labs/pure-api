@@ -134,14 +134,14 @@ class FlashBladeAPI():
         if data is not None:
             return data["items"]
         
-    # Get single object store user
+    # Get single object store user by name
     def get_single_object_store_user(self, user):
         url = self.baseurl + f"object-store-users?names={user}"
         msg = f"object store user: {user}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
-            return data["items"]
+            return data["items"][0]
         
     # Get object store users
     def get_object_store_users(self):
@@ -151,4 +151,22 @@ class FlashBladeAPI():
 
         if data is not None:
             return data["items"]
+        
+    # Get single object store access key by name
+    def get_single_object_store_access_key(self, key):
+        url = self.baseurl + f"object-store-access-keys?names={key}"
+        msg = f"object store access key: {key}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+
+    # Get object store access keys
+    def get_object_store_access_keys(self):
+        url = self.baseurl + f"object-store-access-keys"
+        msg = f"object store access keys"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
         
