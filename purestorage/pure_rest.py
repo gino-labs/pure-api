@@ -56,7 +56,7 @@ class FlashBladeAPI():
         return headers
     
     # Make a api request
-    def REST_Request(self, method, url, message, payload={}):
+    def REST_Request(self, method, url, message, payload=None):
         method = str(method).lower()
         if method == "get":
             response = requests.get(url, header=self.auth_headers, verify=False)
@@ -262,8 +262,46 @@ class FlashBladeAPI():
     # Post a filesystem (default NFS)
     def post_filesystem(self, filesystem, payload):
         url = self.baseurl + f"file-systems?names={filesystem}&default_exports=nfs"
-        msg = "filesystem"
+        msg = f"filesystem: {filesystem}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
         if data is not None:
             return data["items"][0]
+        
+    # Post an object store account
+    def post_object_store_account(self, account, payload):
+        url = self.baseurl + f"object-store-accounts?names={account}"
+        msg = f"object store account: {account}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+
+    # Post a bucket
+    def post_bucket(self, bucket, payload):
+        url = self.baseurl + f"buckets?names={bucket}"
+        msg = f"bucket: {bucket}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+        
+    # Post an object store user
+    def post_object_store_user(self, user):
+        url = self.baseurl + f"object-store-users?names={user}&full_access=true"
+        msg = f"object store user: {user}"
+        data = self.REST_Request("post", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+        
+    # Post an object store access key (Secret key shown once in response)
+    def post_object_store_access_key(self, user, payload):
+        url = self.baseurl + "object-store-access-keys"
+        msg = f"object store access key: {user}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+
+
