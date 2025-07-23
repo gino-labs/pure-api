@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 import os
-import time
 import json
 import urllib3
 import requests
-from datetime import datetime
 
 # Disabling Insecure Requests Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
