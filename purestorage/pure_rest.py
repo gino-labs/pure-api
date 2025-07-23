@@ -303,5 +303,46 @@ class FlashBladeAPI():
 
         if data is not None:
             return data["items"][0]
+        
+    # Post a subnet
+    def post_subnet(self, subnet, paylaod):
+        url = self.baseurl + f"subnets?names={subnet}"
+        msg = f"subnet: {subnet}"
+        data = self.REST_Request("post", url, msg, payload=paylaod)
+
+        if data is not None:
+            return data["items"][0]
+
+    # Post a network interface
+    def post_interface(self, interface, payload):
+        url = self.baseurl + f"network-interfaces?names={interface}"
+        msg = f"network interface: {interface}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+
+    # Post a filesystem replica link #TODO TEST endpoint#
+    def post_filesystem_replica_link(self, filesystem, payload):
+        url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}"
+        msg = f"filesystem replica link: {filesystem}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+        
+    # Post a filesystem snapshot
+    def post_filesystem_snapshot(self, filesystem, snapshot, replicate=True):
+        if replicate:
+            url = self.baseurl + f"file-system-snapshots?source_names={filesystem}&send=true"
+        else:
+            url = self.baseurl + f"file-system-snapshots?source_names={filesystem}"
+        msg = f"filesytem snapshot: {snapshot} for {filesystem}"
+        data = self.REST_Request("post", url, msg, payload={"suffix":snapshot})
+
+        if data is not None:
+            return data["items"][0]
+        
+        
 
 
