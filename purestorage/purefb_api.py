@@ -57,13 +57,13 @@ class FlashBladeAPI():
     def REST_Request(self, method, url, message, payload=None):
         method = str(method).lower()
         if method == "get":
-            response = requests.get(url, header=self.auth_headers, verify=False)
+            response = requests.get(url, headers=self.auth_headers, verify=False)
         elif method == "post":
-            response = requests.post(url, header=self.auth_headers, json=payload, verify=False)
+            response = requests.post(url, headers=self.auth_headers, json=payload, verify=False)
         elif method == "patch":
-             response = requests.patch(url, header=self.auth_headers, json=payload, verify=False)
+             response = requests.patch(url, headers=self.auth_headers, json=payload, verify=False)
         elif method == "delete":
-            response = requests.delete(url, header=self.auth_headers, verify=False)
+            response = requests.delete(url, headers=self.auth_headers, verify=False)
         
         if response.status_code == 200:
             print(f"{method.upper()} success for {message}")

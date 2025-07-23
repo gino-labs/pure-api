@@ -10,3 +10,4 @@ if __name__ == "__main__":
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
     legacy.get_single_filesystem("gxc_test", dumpjson=True)
+    
