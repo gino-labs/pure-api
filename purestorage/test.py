@@ -11,3 +11,8 @@ if __name__ == "__main__":
 
     test = legacy.get_snapshot_policies(dumpjson=True)
     
+    policies = []
+    for t in test:
+        if t["policy"]["name"] not in policies:
+            print(t["policy"]["name"])
+            policies.append(t["policy"]["name"])
