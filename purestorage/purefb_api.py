@@ -278,6 +278,17 @@ class FlashBladeAPI():
                 print(json.dumps(data["items"], indent=4))
             return data["items"]
         
+    # Get single filesystem's attached snapshot policies
+    def get_single_filesystem_snapshot_policies(self, filesystem, dumpjson=False):
+        url = self.baseurl + ""
+        msg = f"filesystem snapshot policies: {filesystem}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
+            return data["items"]
+       
     # Get connected NFS clients
     def get_nfs_clients(self, dumpjson=False):
         url = self.baseurl + "arrays/clients/performance"
