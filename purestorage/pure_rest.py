@@ -208,6 +208,24 @@ class FlashBladeAPI():
         if data is not None:
             return data["items"]
 
+    # Get single filesystem replica link by filesystem name
+    def get_single_filesytem_replica_link(self, filesystem):
+        url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}" 
+        msg = f"filesystem replica link: {filesystem}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+
+    # Get filesystem replica links
+    def get_filesytem_replica_links(self):
+        url = self.baseurl + "file-system-replica-links" 
+        msg = "filesystem replica links"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
+
 
 
 
