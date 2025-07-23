@@ -342,7 +342,42 @@ class FlashBladeAPI():
 
         if data is not None:
             return data["items"][0]
+    
+
+    #########################
+    ### PATCH API Section ###
+    #########################
         
         
+    # Patch a filesystem
+    def patch_filesystem(self, filesystem, payload):
+        url = self.baseurl + f"file-systems?names={filesystem}"
+        if payload["requested_promotion_state"] == "demoted":
+            url = url + "&discard_non_snapshotted_data=true"
+        msg = f"filesystem: {filesystem}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
 
+        if data is not None;
+            return data["items"][0]
 
+    # Patch a network interface
+    def patch_interface(self, interface, payload):
+        url = self.baseurl + f"network-interfaces?names={interface}"
+        msg = f"network interface: {interface}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+
+        if data is not None;
+            return data["items"][0]
+
+    # Patch a snapshot
+    def patch_filesystem_snapshot(self, snapshot, payload):
+        url = self.baseurl + f"file-system-snapshots?names={snapshot}"
+        if payload["destroyed"] == True:
+            url = url + "&latest_replica=True"
+        msg = f"filesystem snapshot: {snapshot}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+
+        if data is not None;
+            return data["items"][0]
+        
+        
