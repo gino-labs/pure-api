@@ -9,5 +9,5 @@ if __name__ == "__main__":
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
-    test = legacy.get_single_filesystem_snapshot_policies("5_min", dumpjson=True)
+    test = legacy.get_snapshot_policies(dumpjson=True)
     
