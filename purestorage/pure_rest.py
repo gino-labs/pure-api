@@ -188,7 +188,6 @@ class FlashBladeAPI():
         if data is not None:
             return data["items"]
 
-
     # Get single network interface by name
     def get_single_interface(self, interface):
         url = self.baseurl + f"network-interfaces?names={interface}"
@@ -198,7 +197,6 @@ class FlashBladeAPI():
         if data is not None:
             return data["items"][0]
         
-
     # Get network interfaces
     def get_interfaces(self):
         url = self.baseurl + "network-interfaces"
@@ -225,6 +223,35 @@ class FlashBladeAPI():
 
         if data is not None:
             return data["items"]
+        
+    # Get single filesystem snapshot by name or filesystem name
+    def get_single_filesystem_snapshot(self, snapshot):
+        url = self.baseurl + f"file-system-snapshots?names_or_owner_names={snapshot}"
+        msg = f"filesystem snapshot: {snapshot}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+        
+    # Get filesystem snapshots
+    def get_filesystem_snapshots(self):
+        url = self.baseurl + f"file-system-snapshots"
+        msg = f"filesystem snapshots"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
+        
+    # Get connected NFS clients
+    def get_nfs_clients(self):
+        url = self.baseurl + "arrays/clients/performance"
+        msg = "NFS clients"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
+        
+        
 
 
 
