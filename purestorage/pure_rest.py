@@ -47,7 +47,7 @@ class FlashBladeAPI():
             print()
             return None
     
-    # Set auth headers with method
+    # Set auth headers
     def Set_Auth_Headers(self):
         headers = {
             "x-auth-token": self.auth_token,
@@ -99,7 +99,7 @@ class FlashBladeAPI():
             return data["items"]
         
     # Get single object store account by name
-    def get_single_object_account(self, account):
+    def get_single_object_store_account(self, account):
         url = self.baseurl + f"object-store-accounts?names={account}"
         msg = f"object store account: {account}"
         data = self.REST_Request("get", url, msg)
@@ -108,7 +108,7 @@ class FlashBladeAPI():
             return data["items"][0]
         
     # Get object store accounts
-    def get_object_accounts(self):
+    def get_object_store_accounts(self):
         url = self.baseurl + "object-store-accounts"
         msg = "object store accounts"
         data = self.REST_Request("get", url, msg)
@@ -133,3 +133,22 @@ class FlashBladeAPI():
 
         if data is not None:
             return data["items"]
+        
+    # Get single object store user
+    def get_single_object_store_user(self, user):
+        url = self.baseurl + f"object-store-users?names={user}"
+        msg = f"object store user: {user}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
+        
+    # Get object store users
+    def get_object_store_users(self):
+        url = self.baseurl + f"object-store-users"
+        msg = f"object store users"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
+        
