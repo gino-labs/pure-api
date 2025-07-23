@@ -164,9 +164,27 @@ class FlashBladeAPI():
     # Get object store access keys
     def get_object_store_access_keys(self):
         url = self.baseurl + f"object-store-access-keys"
-        msg = f"object store access keys"
+        msg = "object store access keys"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
             return data["items"][0]
         
+    # Get single subnet by name
+    def get_single_subnet(self, subnet):
+        url = self.baseurl + f"subnets?names={subnet}"
+        msg = f"subnet: {subnet}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+
+    # Get subnets
+    def get_subnets(self):
+        url = self.baseurl + "subnets"
+        msg = "subnets"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"][0]
+
