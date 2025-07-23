@@ -357,7 +357,7 @@ class FlashBladeAPI():
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        if data is not None;
+        if data is not None:
             return data["items"][0]
 
     # Patch a network interface
@@ -366,7 +366,7 @@ class FlashBladeAPI():
         msg = f"network interface: {interface}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        if data is not None;
+        if data is not None:
             return data["items"][0]
 
     # Patch a snapshot
@@ -377,7 +377,43 @@ class FlashBladeAPI():
         msg = f"filesystem snapshot: {snapshot}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        if data is not None;
+        if data is not None:
             return data["items"][0]
         
+
+    ##########################
+    ### DELETE API Section ###
+    ##########################
+    
+
+    # Delete a filesytem
+    def delete_(self,):
+        url = self.baseurl + f""
+        msg = f""
+        data = self.REST_Request("delete", url, msg)
+
+
+    # Delete an object store user
+    def delete_(self,):
+        url = self.baseurl + f""
+        msg = f""
+        data = self.REST_Request("delete", url, msg)
+
+    # Delete an object store access key
+    def delete_(self,):
+        url = self.baseurl + f""
+        msg = f""
+        data = self.REST_Request("delete", url, msg)
+
+    # Delete a filesystem replica link
+    def delete_(self,):
+        url = self.baseurl + f""
+        msg = f""
+        data = self.REST_Request("delete", url, msg)
+
+    # Delete a filesystem snapshot
+    def delete_(self,):
+        url = self.baseurl + f""
+        msg = f""
+        data = self.REST_Request("delete", url, msg)
         
