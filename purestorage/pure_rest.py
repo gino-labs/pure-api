@@ -65,7 +65,7 @@ class FlashBladeAPI():
         elif method == "patch":
              response = requests.patch(url, header=self.auth_headers, json=payload, verify=False)
         elif method == "delete":
-            response = requests.post(url, header=self.auth_headers, verify=False)
+            response = requests.delete(url, header=self.auth_headers, verify=False)
         
         if response.status_code == 200:
             print(f"{method.upper()} success for {message}")
@@ -83,174 +83,212 @@ class FlashBladeAPI():
 
 
     # Get single filesystem by name
-    def get_single_filesystem(self, filesystem):
+    def get_single_filesystem(self, filesystem, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
             
     # Get Filesystems
-    def get_filesystems(self):
+    def get_filesystems(self, dumpjson=False):
         url = self.baseurl + "file-systems"
         msg = "filesystems"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
         
     # Get single object store account by name
-    def get_single_object_store_account(self, account):
+    def get_single_object_store_account(self, account, dumpjson=False):
         url = self.baseurl + f"object-store-accounts?names={account}"
         msg = f"object store account: {account}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
         
     # Get object store accounts
-    def get_object_store_accounts(self):
+    def get_object_store_accounts(self, dumpjson=False):
         url = self.baseurl + "object-store-accounts"
         msg = "object store accounts"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
         
     # Get single bucket by name
-    def get_single_bucket(self, bucket):
+    def get_single_bucket(self, bucket, dumpjson=False):
         url = self.baseurl + f"buckets?names={bucket}"
         msg = f"bucket: {bucket}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
         
     # Get buckets
-    def get_buckets(self):
+    def get_buckets(self, dumpjson=False):
         url = self.baseurl + "buckets"
         msg = "buckets"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
         
     # Get single object store user by name
-    def get_single_object_store_user(self, user):
+    def get_single_object_store_user(self, user, dumpjson=False):
         url = self.baseurl + f"object-store-users?names={user}"
         msg = f"object store user: {user}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
         
     # Get object store users
-    def get_object_store_users(self):
+    def get_object_store_users(self, dumpjson=False):
         url = self.baseurl + f"object-store-users"
         msg = f"object store users"
-        data = self.REST_Request("get", url, msg)
+        data = self.REST_Request("get", url, msg, dumpjson=False)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
         
     # Get single object store access key by name
-    def get_single_object_store_access_key(self, key):
+    def get_single_object_store_access_key(self, key, dumpjson=False):
         url = self.baseurl + f"object-store-access-keys?names={key}"
         msg = f"object store access key: {key}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
 
     # Get object store access keys
-    def get_object_store_access_keys(self):
+    def get_object_store_access_keys(self, dumpjson=False):
         url = self.baseurl + f"object-store-access-keys"
         msg = "object store access keys"
-        data = self.REST_Request("get", url, msg)
+        data = self.REST_Request("get", url, msg, dumpjson=False)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"][0]
         
     # Get single subnet by name
-    def get_single_subnet(self, subnet):
+    def get_single_subnet(self, subnet, dumpjson=False):
         url = self.baseurl + f"subnets?names={subnet}"
         msg = f"subnet: {subnet}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
 
     # Get subnets
-    def get_subnets(self):
+    def get_subnets(self, dumpjson=False):
         url = self.baseurl + "subnets"
         msg = "subnets"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
 
     # Get single network interface by name
-    def get_single_interface(self, interface):
+    def get_single_interface(self, interface, dumpjson=False):
         url = self.baseurl + f"network-interfaces?names={interface}"
         msg = f"network interface: {interface}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
         
     # Get network interfaces
-    def get_interfaces(self):
+    def get_interfaces(self, dumpjson=False):
         url = self.baseurl + "network-interfaces"
         msg = "network interfaces"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
 
     # Get single filesystem replica link by filesystem name
-    def get_single_filesytem_replica_link(self, filesystem):
+    def get_single_filesytem_replica_link(self, filesystem, dumpjson=False):
         url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}" 
         msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
 
     # Get filesystem replica links
-    def get_filesytem_replica_links(self):
+    def get_filesytem_replica_links(self, dumpjson=False):
         url = self.baseurl + "file-system-replica-links" 
         msg = "filesystem replica links"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
         
     # Get single filesystem snapshot by name or filesystem name
-    def get_single_filesystem_snapshot(self, snapshot):
+    def get_single_filesystem_snapshot(self, snapshot, dumpjson=False):
         url = self.baseurl + f"file-system-snapshots?names_or_owner_names={snapshot}"
         msg = f"filesystem snapshot: {snapshot}"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
             return data["items"][0]
         
     # Get filesystem snapshots
-    def get_filesystem_snapshots(self):
+    def get_filesystem_snapshots(self, dumpjson=False):
         url = self.baseurl + f"file-system-snapshots"
         msg = f"filesystem snapshots"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
         
     # Get connected NFS clients
-    def get_nfs_clients(self):
+    def get_nfs_clients(self, dumpjson=False):
         url = self.baseurl + "arrays/clients/performance"
         msg = "NFS clients"
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
             return data["items"]
         
         
