@@ -186,5 +186,28 @@ class FlashBladeAPI():
         data = self.REST_Request("get", url, msg)
 
         if data is not None:
+            return data["items"]
+
+
+    # Get single network interface by name
+    def get_single_interface(self, interface):
+        url = self.baseurl + f"network-interfaces?names={interface}"
+        msg = f"network interface: {interface}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
             return data["items"][0]
+        
+
+    # Get network interfaces
+    def get_interfaces(self):
+        url = self.baseurl + "network-interfaces"
+        msg = "network interfaces"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            return data["items"]
+
+
+
 
