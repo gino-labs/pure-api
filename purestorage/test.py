@@ -17,5 +17,5 @@ if __name__ == "__main__":
         if policy_name not in policy_list:
             policy_list.append(policy_name)
 
-    for pol in policy_list:
-        policy_info = s200.get_single_snapshot_policy(pol, dumpjson=True)
+    #for pol in policy_list:
+    policy_info = s200.get_single_snapshot_policy(policy_list[0], dumpjson=True)
