@@ -9,7 +9,7 @@ if __name__ == "__main__":
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
-    test = legacy.get_snapshot_policies(dumpjson=True)
+    test = legacy.get_snapshot_policies(dumpjson=False)
     
     policies = []
     for t in test:
@@ -18,3 +18,6 @@ if __name__ == "__main__":
 
         if t["member"]["name"].split(".")[0] not in policies[t["policy"][["name"]]]:
             policies[t["policy"][["name"]]].append(t["member"]["name"].split(".")[0])
+
+    for p in policies:
+        print(json.dumps(p, indent=4))
