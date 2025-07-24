@@ -15,4 +15,6 @@ if __name__ == "__main__":
     for t in test:
         if t["policy"]["name"] not in policies:
             policies.append({t["policy"]["name"]: []})
-        print(t["policy"]["name"])
+
+        if t["member"]["name"].split(".")[0] not in policies[t["policy"][["name"]]]:
+            policies[t["policy"][["name"]]].append(t["member"]["name"].split(".")[0])
