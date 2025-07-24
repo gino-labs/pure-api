@@ -9,15 +9,13 @@ if __name__ == "__main__":
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
-    test = legacy.get_snapshot_policies(dumpjson=False)
+    snapshot_policies = legacy.get_snapshot_policies(dumpjson=False)
     
-    policies = []
-    for t in test:
-        if t["policy"]["name"] not in policies:
-            policies.append({t["policy"]["name"]: []})
+    policy_list = []
+    for pol in snapshot_policies:
+        policy_name = pol["policy"]["name"]
+        if policy_name not in policy_list:
+            policy_list.append(policy_name)
 
-        if t["member"]["name"].split(".")[0] not in policies[t["policy"][["name"]]]:
-            policies[t["policy"][["name"]]].append(t["member"]["name"].split(".")[0])
-
-    for p in policies:
-        print(json.dumps(p, indent=4))
+    for pol in policy_list:
+        policy_info = s200.get_single_snapshot_policy(pol, dumpjson=True)
