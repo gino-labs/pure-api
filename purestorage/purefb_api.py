@@ -286,7 +286,7 @@ class FlashBladeAPI():
 
         if data is not None:
             if dumpjson:
-                print(json.dumps(data["items"], indent=4))
+                print(json.dumps(data, indent=4))
             return data["items"]
         
     # Get snapshot polices
