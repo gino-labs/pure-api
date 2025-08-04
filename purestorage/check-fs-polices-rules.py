@@ -30,5 +30,5 @@ for fs in s200_filesystems:
         print(f"Legacy: {json.dumps(legacy_nfs_rules)}")
         print()
     else:
-        print(f"NFS rules okay: {fs_name}")
+        print(f"NFS rules OK: {fs_name}")
         print()
