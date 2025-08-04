@@ -52,7 +52,23 @@ def check_export_policies():
 
 def compare_snapshot_policies():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    legacy.get_snapshot_policies(dumpjson=True)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy_pols = legacy.get_snapshot_policies()
+    s200_pols = s200.get_snapshot_policies()
+    legacy_list = []
+    s200_list = []
+    for pol in legacy_pols:
+        legacy_list.append(pol["name"])
+    for pol in s200_pols:
+        s200_list.append(pol["name"])
+    for p in legacy_list:
+        if p not in s200_list:
+            print(f"Snapshot policy {p} not in s200 snapshot policies.")
+            print()
+        else:
+            print(f"Snapshot policy {p} OK.")
+            print()
+
 
 if __name__ == "__main__":
     compare_snapshot_policies()
