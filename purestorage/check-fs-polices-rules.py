@@ -37,3 +37,21 @@ def compare_nfs_rules():
         else:
             print(f"NFS rules OK: {fs_name}")
             print()
+
+def check_export_policies():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    legacy_filesystems = legacy.get_filesystems()
+    for fs in legacy_filesystems:
+        if fs["nfs"]["export_policy"]["name"] == None:
+            print(f"{fs['name']} export policy is null.")
+            print()
+        else:
+            print(f"{fs['name']} export policy is present.")
+            print(json.dumps(fs["nfs"]["export_policy"], indent=4))
+            print()
+
+if __name__ == "__main__":
+    check_export_policies()
+
+    
+    
