@@ -27,6 +27,7 @@ for fs in s200_filesystems:
     elif legacy_nfs_rules not in nfs_rules:
         print(f"Legacy NFS rules not found in s200 filesystem: {fs_name}")
         print(f"s200: {json.dumps(nfs_rules)}")
+        print()
         print(f"Legacy: {json.dumps(legacy_nfs_rules)}")
         print()
     else:
