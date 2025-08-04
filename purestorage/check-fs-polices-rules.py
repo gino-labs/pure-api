@@ -50,8 +50,13 @@ def check_export_policies():
             print(json.dumps(fs["nfs"]["export_policy"], indent=4))
             print()
 
+def compare_snapshot_policies():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    legacy.get_snapshot_policies(dumpjson=True)
+
 if __name__ == "__main__":
-    check_export_policies()
+    compare_snapshot_policies()
+    
 
     
     
