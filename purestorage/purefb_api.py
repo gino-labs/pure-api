@@ -280,7 +280,7 @@ class FlashBladeAPI():
         
     # Get single snapshot policy and attached members
     def get_single_snapshot_policy(self, policy, dumpjson=False):
-        url = self.baseurl + f"policies/file-system-snapshots?policy_names={policy}"
+        url = self.baseurl + f"policies?names={policy}"
         msg = f"filesystem snapshot policy: {policy}"
         data = self.REST_Request("get", url, msg)
 
@@ -291,7 +291,7 @@ class FlashBladeAPI():
         
     # Get snapshot polices
     def get_snapshot_policies(self, dumpjson=False):
-        url = self.baseurl + "policies/file-system-snapshots"
+        url = self.baseurl + "policies"
         msg = "filesystem snapshot policies"
         data = self.REST_Request("get", url, msg)
 
