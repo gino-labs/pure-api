@@ -69,6 +69,9 @@ def compare_snapshot_policies():
             print(f"Snapshot policy {p} OK.")
             print()
 
+def compare_filesystem_attached_snapshot_policies():
+    print("TODO")
+
 
 if __name__ == "__main__":
     compare_snapshot_policies()
