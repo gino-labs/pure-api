@@ -299,6 +299,17 @@ class FlashBladeAPI():
             if dumpjson:
                 print(json.dumps(data["items"], indent=4))
             return data["items"]
+        
+    # Get filesystems snapshot policies
+    def get_filesystems_snapshot_policies(self, filesystem, dumpjson=False):
+        url = self.baseurl + f"file-systems/polices?member_names={filesystem}"
+        msg = f"filesystem {filesystem} snapshot policies"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
+            return data["items"]
        
     # Get connected NFS clients
     def get_nfs_clients(self, dumpjson=False):
