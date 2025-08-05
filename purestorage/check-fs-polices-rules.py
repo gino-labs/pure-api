@@ -102,6 +102,8 @@ def compare_filesystem_attached_snapshot_policies():
 
 
 if __name__ == "__main__":
+    compare_nfs_rules()
+    compare_snapshot_policies()
     compare_filesystem_attached_snapshot_policies()
     
 
