@@ -67,13 +67,24 @@ def compare_snapshot_policies():
             print()
 
 def compare_filesystem_attached_snapshot_policies():
-    legacy_filesystems = legacy.get_filesystems()
-    s200_filesystems = s200.get_filesystems()
-    fs_snap_polices = legacy.get_filesystems_snapshot_policies()
+    legacy_policies = legacy.get_snapshot_policies()
+    s200_policies = s200.get_snapshot_policies()
+
+    legacy_policy_dict = {}
+    for pol in legacy_policies:
+        policy_name = pol["name"]
+        legacy_policy_members = legacy.get_filesystems_attached_to_snapshot_policy(policy_name)
+        members = []
+        for member in legacy_policy_members:
+            members.append(member["member"]["name"])
+
+        legacy_policy_dict[policy_name] = members
+
+
 
 
 if __name__ == "__main__":
-    compare_snapshot_policies()
+    compare_filesystem_attached_snapshot_policies()
     
 
     
