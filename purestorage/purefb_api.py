@@ -309,7 +309,7 @@ class FlashBladeAPI():
         if data is not None:
             if dumpjson:
                 print(json.dumps(data["items"], indent=4))
-            return data["items"]
+            return data["items"][0]
        
     # Get connected NFS clients
     def get_nfs_clients(self, dumpjson=False):
