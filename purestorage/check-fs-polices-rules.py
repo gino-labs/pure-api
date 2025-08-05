@@ -80,7 +80,25 @@ def compare_filesystem_attached_snapshot_policies():
 
         legacy_policy_dict[policy_name] = members
 
+    s200_policy_dict = {}
+    for pol in s200_policies:
+        policy_name = pol["name"]
+        s200_policy_members = s200.get_filesystems_attached_to_snapshot_policy(policy_name)
+        members = []
+        for member in s200_policy_members:
+            members.append(member["member"]["name"])
 
+        s200_policy_dict[policy_name] = members
+
+    for policy, filesystems in legacy_policy_dict.items():
+        if policy in s200_policy_dict:
+            for fs in filesystems:
+                if fs not in s200_policy_dict[policy]:
+                    print(f"{policy} should be attached to {fs} on s200")
+                    print()
+                else: 
+                    print(f"Policy {policy} OK for {fs}")
+                    print()
 
 
 if __name__ == "__main__":
