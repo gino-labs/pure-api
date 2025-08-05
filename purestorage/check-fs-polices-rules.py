@@ -2,11 +2,11 @@
 import purefb_api as pfa
 import json
 
-def compare_nfs_rules():
-    # Initialize api sessions to each blade
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+# Initialize api sessions to each blade
+legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
+def compare_nfs_rules():
     legacy_filesystems = legacy.get_filesystems()
     s200_filesystems = s200.get_filesystems()
 
@@ -39,7 +39,6 @@ def compare_nfs_rules():
             print()
 
 def check_export_policies():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     legacy_filesystems = legacy.get_filesystems()
     for fs in legacy_filesystems:
         if fs["nfs"]["export_policy"]["name"] == None:
@@ -51,8 +50,6 @@ def check_export_policies():
             print()
 
 def compare_snapshot_policies():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
     legacy_pols = legacy.get_snapshot_policies()
     s200_pols = s200.get_snapshot_policies()
     legacy_list = []
@@ -70,7 +67,9 @@ def compare_snapshot_policies():
             print()
 
 def compare_filesystem_attached_snapshot_policies():
-    print("TODO")
+    legacy_filesystems = legacy.get_filesystems()
+    s200_filesystems = s200.get_filesystems()
+    fs_snap_polices = legacy.get_filesystems_snapshot_policies()
 
 
 if __name__ == "__main__":
