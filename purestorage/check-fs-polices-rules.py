@@ -74,39 +74,49 @@ def compare_snapshot_policies():
             print()
 
 def compare_filesystem_attached_snapshot_policies():
+    # Get snapshot polices and filesystems
     legacy_policies = legacy.get_snapshot_policies()
     s200_policies = s200.get_snapshot_policies()
+    legacy_filesystems = legacy.get_filesystems()
+    s200_filesystems = s200.get_filesystems()
 
+    # Initialize policy dictionary with policy key, and filsystems list value
     legacy_policy_dict = {}
+    for fs in legacy_filesystems:
+        fs_name = fs["name"]
+        legacy_policy_dict[fs_name] = []
+
+    # Add members associated with policy to their respective list
     for pol in legacy_policies:
         policy_name = pol["name"]
         legacy_policy_members = legacy.get_filesystems_attached_to_snapshot_policy(policy_name)
-        members = []
         for member in legacy_policy_members:
-            members.append(member["member"]["name"])
+            member_name = member["member"]["name"]
+            legacy_policy_dict[member_name].append(policy_name)
 
-        legacy_policy_dict[policy_name] = members
-
+    # Initialize policy dictionary with policy key, and filsystems list value
     s200_policy_dict = {}
+    for fs in s200_filesystems:
+        fs_name = fs["name"]
+        s200_policy_dict[fs_name] = []
+
+    # Add members associated with policy to their respective list
     for pol in s200_policies:
         policy_name = pol["name"]
         s200_policy_members = s200.get_filesystems_attached_to_snapshot_policy(policy_name)
-        members = []
         for member in s200_policy_members:
-            members.append(member["member"]["name"])
+            member_name = member["member"]["name"]
+            s200_policy_dict[member_name].append(policy_name)
 
-        s200_policy_dict[policy_name] = members
-
-    for policy, filesystems in legacy_policy_dict.items():
-        if policy in s200_policy_dict:
-            for fs in filesystems:
-                if fs not in s200_policy_dict[policy]:
-                    print(f"{policy} should be attached to {fs} on s200")
-                    print()
-                else: 
-                    print(f"Policy {policy} OK for {fs}")
-                    print()
-
+    # Print filesystems along with missing snapshot polices
+    for filesystem, policies in legacy_policy_dict.items():
+        fs_missing_policies = []
+        for policy in policies:
+            if policy not in s200_policy_dict[filesystem]:
+                fs_missing_policies.append(policy)
+        if fs_missing_policies:
+            print(f"{filesystem} MISSING policies: {fs_missing_policies}")
+            print()
 
 if __name__ == "__main__":
     compare_nfs_rules()
