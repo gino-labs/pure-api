@@ -13,6 +13,13 @@ def compare_nfs_rules():
     if len(legacy_filesystems) != len(s200_filesystems):
         print(f"Mismatch filesystems count. s200:{len(s200_filesystems)}, legacy:{len(legacy_filesystems)}")
         print()
+        s200_list = []
+        for fs in s200_filesystems:
+            s200_list.append(fs["name"])
+        for fs in legacy_filesystems:
+            if fs["name"] not in s200_list:
+                print(f"{fs['name']} not in s200 filesystems")
+        print()
         exit()
 
     for fs in s200_filesystems:
