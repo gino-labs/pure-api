@@ -411,7 +411,15 @@ class FlashBladeAPI():
 
         if data is not None:
             return data["items"][0]
-    
+        
+    # Post snapshot scheduling policy to a filesystem
+    def post_snapshot_policy_to_filesystem(self, policy, filesystem):
+        url = self.baseurl + f"file-systems/policies?member_names={filesystem}&policy_names={policy}"
+        msg = f"snapshot policy {policy} to {filesystem}"
+        data = self.REST_Request("post", url, msg)
+
+        if data is not None:
+            return data["items"][0]
 
     #########################
     ### PATCH API Section ###
