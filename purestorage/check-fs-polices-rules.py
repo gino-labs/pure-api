@@ -119,7 +119,8 @@ def compare_filesystem_attached_snapshot_policies():
             print(f"{filesystem} MISSING policies: {fs_missing_policies}")
             print()
         else:
-            print(f"{filesystem} policies OK")       
+            print(f"{filesystem} policies OK")
+            print()
 
 if __name__ == "__main__":
     compare_nfs_rules()
