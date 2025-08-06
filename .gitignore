@@ -7,3 +7,7 @@
 # Ignore api tokens
 **.api_tokens
 
+# Ignore site vars containing API tokens
+**va_pure_env
+**co_pure_env
+**az_pure_env
