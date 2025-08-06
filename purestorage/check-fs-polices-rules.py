@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import purefb_api as pfa
 import json
+import time
 
 # Initialize api sessions to each blade
 legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
@@ -117,6 +118,8 @@ def compare_filesystem_attached_snapshot_policies():
         if fs_missing_policies:
             print(f"{filesystem} MISSING policies: {fs_missing_policies}")
             print()
+        else:
+            print(f"{filesystem} policies OK")       
 
 if __name__ == "__main__":
     compare_nfs_rules()
