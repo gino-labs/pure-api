@@ -1,0 +1,9 @@
+# Ignore python stuff
+**__pycache__/
+
+# Ignore virtual env
+**.pureenv
+
+# Ignore api tokens
+**.api_tokens
+
