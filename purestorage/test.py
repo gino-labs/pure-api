@@ -9,13 +9,5 @@ if __name__ == "__main__":
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
-    snapshot_policies = legacy.get_snapshot_policies(dumpjson=False)
-    
-    policy_list = []
-    for pol in snapshot_policies:
-        policy_name = pol["policy"]["name"]
-        if policy_name not in policy_list:
-            policy_list.append(policy_name)
-
-    #for pol in policy_list:
-    policy_info = s200.get_single_snapshot_policy(policy_list[0], dumpjson=True)
+    legacy.get_api_version(dumpjson=True)
+    s200.get_api_version(dumpjson=True)

@@ -80,6 +80,17 @@ class FlashBladeAPI():
     #######################
 
 
+    # Get api version used by blade
+    def get_api_version(self, dumpjson=False):
+        url = f"https://{self.mgt_ip}/api/api_version"
+        msg = "API version"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
+            return data["items"][0]
+
     # Get single filesystem by name
     def get_single_filesystem(self, filesystem, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}"
