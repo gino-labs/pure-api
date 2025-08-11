@@ -88,7 +88,7 @@ class FlashBladeAPI():
 
         if data is not None:
             if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
+                print(json.dumps(data, indent=4))
             return data
 
     # Get single filesystem by name
