@@ -89,7 +89,7 @@ class FlashBladeAPI():
         if data is not None:
             if dumpjson:
                 print(json.dumps(data, indent=4))
-            return data
+            return data["versions"]
 
     # Get single filesystem by name
     def get_single_filesystem(self, filesystem, dumpjson=False):
