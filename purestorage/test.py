@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import time
+import purefb_log as pl
 import purefb_api as pfa
 import pure_migration_v3 as pv3
 
@@ -11,3 +12,7 @@ if __name__ == "__main__":
 
     legacy.get_api_version(dumpjson=True)
     s200.get_api_version(dumpjson=True)
+
+    purelog = pl.PureLog()
+
+    purelog.write_log("Testing logs...")
