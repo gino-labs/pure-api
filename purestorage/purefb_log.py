@@ -2,9 +2,26 @@ import os
 import json
 from datetime import datetime
 
-now = datetime.now()
+class PureLog:
+    def __init__(self):
+        self.logfile = f"{datetime.now().strftime('%d%b%Y')}-pure-python.log"
+        self.logdir = "logs"
 
-day = now.strftime("%d").lstrip("0")
-formatted = f"{now.strftime('%b')}{day}_{now.strftime('%H_%M')}"
+    def timestamp(self):
+        now = datetime.now()
+        formatted_timestamp = f"{now.strftime('%d%b%Y-%H:%M')}"
+        return formatted_timestamp
 
-print(formatted)
+    def write_log(self, message, jsondata=None):
+        os.makedirs(self.logdir, exist_ok=True)
+        todays_log = os.path.join(self.logdir, self.logfile)
+        stamp = self.timestamp()
+
+        with open(todays_log, 'a') as log:
+            log.write(f"[{stamp}] {message}\n")
+
+        if jsondata:
+            with open(todays_log, 'a') as log:
+                json.dump(jsondata, log, indent=4)
+                log.write("\n")
+        
