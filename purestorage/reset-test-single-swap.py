@@ -8,12 +8,12 @@ if __name__ == "__main__":
 
     # Get List of Filesystems on Legacy #
     filesystems = []
-    gxc = pv3.Get_Single_Filesystem("gxc_test", auth_token, pv3.PB1_MGT)
+    gxc = pv3.Get_Single_Filesystem("gxc_testing", auth_token, pv3.PB1_MGT)
     filesystems.append(gxc)
 
     # Get list of filesystems to Promote on S200
     filesystems200 = []
-    gxc2 = pv3.Get_Single_Filesystem("gxc_test", auth_token_s200, pv3.PB2_MGT)
+    gxc2 = pv3.Get_Single_Filesystem("gxc_testing", auth_token_s200, pv3.PB2_MGT)
     filesystems200.append(gxc2)
 
     fs_names = []
@@ -84,10 +84,10 @@ if __name__ == "__main__":
     payload = {
         "destroyed": True
     }
-    pv3.Patch_Filesystem_Snapshot("gxc_test.pre-swap", auth_token, pv3.PB1_MGT, payload, destroy=True)
-    pv3.Patch_Filesystem_Snapshot("gxc_test.replica.pre-swap", auth_token_s200, pv3.PB2_MGT, payload, destroy=True)
-    pv3.Delete_Filesystem_Snapshot("gxc_test.pre-swap", auth_token, pv3.PB1_MGT)
-    pv3.Delete_Filesystem_Snapshot("gxc_test.replica.pre-swap", auth_token_s200, pv3.PB2_MGT)
+    pv3.Patch_Filesystem_Snapshot("gxc_testing.pre-swap", auth_token, pv3.PB1_MGT, payload, destroy=True)
+    pv3.Patch_Filesystem_Snapshot("gxc_testing.replica.pre-swap", auth_token_s200, pv3.PB2_MGT, payload, destroy=True)
+    pv3.Delete_Filesystem_Snapshot("gxc_testing.pre-swap", auth_token, pv3.PB1_MGT)
+    pv3.Delete_Filesystem_Snapshot("gxc_testing.replica.pre-swap", auth_token_s200, pv3.PB2_MGT)
 
     # Demote s200 again
     demote_payload = {
@@ -110,4 +110,4 @@ if __name__ == "__main__":
         ]
     }
     array = pv3.PB2_MGT.split("-")[0]
-    pv3.Post_Filesystem_Replica_Link("gxc_test", array, auth_token, pv3.PB1_MGT, payload)
+    pv3.Post_Filesystem_Replica_Link("gxc_testing", array, auth_token, pv3.PB1_MGT, payload)
