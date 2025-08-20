@@ -11,3 +11,6 @@
 **va_pure_env
 **co_pure_env
 **az_pure_env
+
+# Ignore logs directory
+**/logs/
