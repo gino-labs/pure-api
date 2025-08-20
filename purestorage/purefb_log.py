@@ -9,7 +9,7 @@ class PureLog:
 
     def timestamp(self):
         now = datetime.now()
-        formatted_timestamp = f"{now.strftime('%d%b%Y-%H:%M')}"
+        formatted_timestamp = f"{now.strftime('%d%b%Y-%H:%M:%S')}"
         return formatted_timestamp
 
     def write_log(self, message, jsondata=None):

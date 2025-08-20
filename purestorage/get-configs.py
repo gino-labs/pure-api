@@ -15,11 +15,16 @@ s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
 # Get List of Filesystems on Legacy #
 filesystems = legacy.get_filesystems()
-logger.write_log("Legacy filesystems configuration below in json format", jsondata=filesystems)
+logger.write_log("Legacy filesystems configurations retrieved")
+
+fs_names = []
+for fs in filesystems:
+    fs_names.append(fs["name"])
+logger.write_log("List of legacy filesystem names used for comparing to legacy filesystems", jsondata=fs_names)
 
 # Get list of filesystems to Promote on S200
 filesystems200 = s200.get_filesystems()
-logger.write_log("S200 filesystems configuration below in json format", jsondata=filesystems200)
+logger.write_log("S200 filesystems configurations retrieved")
 
 fs200_names = []
 for fs in filesystems200:
@@ -30,7 +35,7 @@ logger.write_log("S200 list of filesystem names used for comparing to legacy fil
 ifaces = legacy.get_interfaces()
 data_iface_names = []
 original_ips = [] # Orignal production IPs to check on NFS clients later #
-logger.write_log("Legacy interfaces configuration below in json format", jsondata=ifaces)
+logger.write_log("Legacy interfaces configurations retrieved")
 
 for iface in ifaces:
     if "data" in iface["services"]:
@@ -45,23 +50,23 @@ else:
     print("No data interfaces.")
     print()
 
-logger.write_log("List of legacy data interfaces names for comparison against s200", jsondata=data_iface_names)
-logger.write_log(f"Original, Production IPs gathered: {pure_ips}")
+logger.write_log("List of legacy data interfaces names", jsondata=data_iface_names)
+logger.write_log(f"Original, Production IPs gathered", jsondata=original_ips)
 
 # Get Interface info from s200 #
 ifaces_s200 = s200.get_interfaces()
 data_iface_names_s200 = []
-logger.write_log("s200 interfaces configuration below in json format", jsondata=ifaces_s200)
+logger.write_log("S200 interfaces configurations retrieved")
 
 for iface in ifaces_s200:
     if "data" in iface["services"]:
         data_iface_names_s200.append(iface["name"])
 
-logger.write_log("List of s200 data interfaces names for comparison against legacy", jsondata=data_iface_names_s200)
+logger.write_log("List of s200 data interfaces names", jsondata=data_iface_names_s200)
 
 # Get filesystem replica links
 links = legacy.get_filesytem_replica_links()
-logger.write_log("Replica links gathered on legacy", jsondata=links)
+logger.write_log("Replica links retrieved")
 
 # Get NFS clients before swapping IPs #
 print("Getting list of active NFS clients to the pure...")
