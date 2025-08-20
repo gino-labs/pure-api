@@ -10,9 +10,11 @@ if __name__ == "__main__":
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
-    legacy.get_api_version(dumpjson=True)
-    s200.get_api_version(dumpjson=True)
+    vers = legacy.get_api_version()
+    vers200 = s200.get_api_version()
 
     purelog = pl.PureLog()
 
-    purelog.write_log("Testing logs...")
+    purelog.write_log("TEST: See API versions for legacy as json.", jsondata=vers)
+    purelog.write_log("Another test to see appended output.")
+    purelog.write_log("Bye World!")

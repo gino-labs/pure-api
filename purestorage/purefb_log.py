@@ -18,7 +18,7 @@ class PureLog:
         stamp = self.timestamp()
 
         with open(todays_log, 'a') as log:
-            log.write(f"[ {stamp} ] {message}\n")
+            log.write(f"[{stamp}] {message}\n")
 
         if jsondata:
             with open(todays_log, 'a') as log:
