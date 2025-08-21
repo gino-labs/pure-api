@@ -19,7 +19,7 @@ MIGRATION_POLICY = os.getenv("MIGRATION_POLICY")            #
 REPLICATION_CUTOFF = os.getenv("REPLICATION_CUTOFF")        #
 #############################################################
 
-class FlashBladeAPI():
+class FlashBladeAPI:
     def __init__(self, data_ip, mgt_ip, api_token):
         self.data_ip = data_ip
         self.mgt_ip = mgt_ip
