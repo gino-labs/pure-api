@@ -13,8 +13,18 @@ auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 # Get List of Filesystems on Legacy #
 filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
 
+# Remove gxc filesystems from list
+for fs in filesystems[:]:
+    if "gxc" in fs.get("name", ""):
+        filesystems.remove(fs)
+
 # Get list of filesystems to Promote on S200
 filesystems200 = pv3.Get_Filesystems(auth_token_s200, pv3.PB2_MGT)
+
+# Remove gxc filesystems from list
+for fs in filesystems200[:]:
+    if "gxc" in fs.get("name", ""):
+        filesystems200.remove(fs)
 
 fs200_names = []
 for fs in filesystems200:
