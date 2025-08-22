@@ -497,14 +497,14 @@ class FlashBladeAPI:
         data = self.REST_Request("delete", url, msg)
 
     # Delete a filesystem replica link
-    def delete_(self,):
-        url = self.baseurl + f""
-        msg = f""
+    def delete_filesystem_replica_link(self, local_filesystem):
+        url = self.baseurl + f"file-system-replica-links?local_file_system_names={local_filesystem}&cancel_in_progress_transfers=true"
+        msg = f"filesystem replica link: {local_filesystem}"
         data = self.REST_Request("delete", url, msg)
 
     # Delete a filesystem snapshot
-    def delete_(self,):
-        url = self.baseurl + f""
-        msg = f""
+    def delete_filesystem_snapshot(self, snapshot):
+        url = self.baseurl + f"file-system-snapshots?names={snapshot}"
+        msg = f"snapshot: {snapshot}"
         data = self.REST_Request("delete", url, msg)
         
