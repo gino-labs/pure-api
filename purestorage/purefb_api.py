@@ -77,9 +77,11 @@ class FlashBladeAPI:
             else:
                 return response.json()
         else:
-            err_msg = f"Error Status Code: {response.status_code}\n{response.text}"
-            logger.write_log(err_msg)
-            print(err_msg)
+            err_code = f"Error Status Code: {response.status_code}"
+            logger.write_log(err_code)
+            logger.write_log(response.text)
+            print(err_code)
+            print(response.text)
             print()
             return None
     
