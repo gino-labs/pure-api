@@ -475,9 +475,9 @@ class FlashBladeAPI:
         if data is not None:
             return data["items"][0]
 
-    # Post a filesystem replica link #TODO TEST endpoint#
+    # Post a filesystem replica link (Link ID required)
     def post_filesystem_replica_link(self, filesystem, payload):
-        url = self.baseurl + f"file-system-replica-links?names={filesystem}"
+        url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}"
         msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
