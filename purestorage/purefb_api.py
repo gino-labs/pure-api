@@ -160,6 +160,28 @@ class FlashBladeAPI:
                 print(json.dumps(data["items"], indent=4))
             return data["items"]
         
+    # Get single bucket replica link
+    def get_single_bucket_replia_link(self, local_bucket, dumpjson=False):
+        url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}"
+        msg = f"bucket replica link: {local_bucket}"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
+            return data["items"][0]
+        
+    # Get bucket replica links
+    def get_bucket_replia_links(self, dumpjson=False):
+        url = self.baseurl + f"bucket-replica-links"
+        msg = f"bucket replica links"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"][0], indent=4))
+            return data["items"]
+        
     # Get single object store user by name
     def get_single_object_store_user(self, user, dumpjson=False):
         url = self.baseurl + f"object-store-users?names={user}"
@@ -391,6 +413,15 @@ class FlashBladeAPI:
         if data is not None:
             return data["items"][0]
         
+    # Post a bucket replica link
+    def post_bucket_replica_link(self, local_bucket, payload):
+        url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}"
+        msg = f"bucket replica link: {local_bucket}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+        
     # Post an object store user
     def post_object_store_user(self, user):
         url = self.baseurl + f"object-store-users?names={user}&full_access=true"
@@ -531,6 +562,12 @@ class FlashBladeAPI:
     def delete_object_store_remote_credential(self, credential_name):
         url = self.baseurl + f"object-store-remote_credentials?names={credential_name}"
         msg = f"credential name: {credential_name}"
+        data = self.REST_Request("delete", url, msg)
+    
+    # Delete a bucket replica link
+    def delete_bucket_replica_link(self, local_bucket):
+        url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}"
+        msg = f"bucket replica link: {local_bucket}"
         data = self.REST_Request("delete", url, msg)
 
     # Delete a filesystem replica link
