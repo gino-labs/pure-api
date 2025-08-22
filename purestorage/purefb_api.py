@@ -3,6 +3,7 @@ import os
 import json
 import urllib3
 import requests
+import purefb_log as pfl
 
 # Disabling Insecure Requests Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -65,15 +66,20 @@ class FlashBladeAPI:
         elif method == "delete":
             response = requests.delete(url, headers=self.auth_headers, verify=False)
         
+        logger = pfl.PureLog()
         if response.status_code == 200:
-            print(f"{method.upper()} success for {message}")
+            msg = f"{method.upper()} success for {message}"
+            logger.write_log(msg)
+            print(msg)
             print()
             if method == "delete":
                 return {"status_code": response.status_code, "text": response.text}
             else:
                 return response.json()
         else:
-            print(f"Error Status Code: {response.status_code}\n{response.text}")
+            err_msg = f"Error Status Code: {response.status_code}\n{response.text}"
+            logger.write_log(err_msg)
+            print(err_msg)
             print()
             return None
     
