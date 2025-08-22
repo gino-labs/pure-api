@@ -175,7 +175,7 @@ class FlashBladeAPI:
     def get_object_store_users(self, dumpjson=False):
         url = self.baseurl + f"object-store-users"
         msg = f"object store users"
-        data = self.REST_Request("get", url, msg, dumpjson=False)
+        data = self.REST_Request("get", url, msg)
 
         if data is not None:
             if dumpjson:
@@ -197,12 +197,34 @@ class FlashBladeAPI:
     def get_object_store_access_keys(self, dumpjson=False):
         url = self.baseurl + f"object-store-access-keys"
         msg = "object store access keys"
-        data = self.REST_Request("get", url, msg, dumpjson=False)
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
+            return data["items"]
+        
+    # Get single object store remote credential
+    def get_single_object_store_remote_credentials(self, credential_name, dumpjson=False):
+        url = self.baseurl + f"object-store-remote-credentials?names={credential_name}"
+        msg = f"object store remote credential: {credential_name}"
+        data = self.REST_Request("get", url, msg)
 
         if data is not None:
             if dumpjson:
                 print(json.dumps(data["items"], indent=4))
             return data["items"][0]
+        
+    # Get object store remote credentials
+    def get_object_store_remote_credentials(self, dumpjson=False):
+        url = self.baseurl + f"object-store-remote-credentials"
+        msg = f"object store remote credentials"
+        data = self.REST_Request("get", url, msg)
+
+        if data is not None:
+            if dumpjson:
+                print(json.dumps(data["items"], indent=4))
+            return data["items"]
         
     # Get single subnet by name
     def get_single_subnet(self, subnet, dumpjson=False):
@@ -387,6 +409,15 @@ class FlashBladeAPI:
         if data is not None:
             return data["items"][0]
         
+    # Post an object store remote credential
+    def post_object_store_remote_credential(self, credential_name, payload):
+        url = self.baseurl + "object-store-remote-credentials"
+        msg = f"object store remote credential: {credential_name}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+        
     # Post a subnet
     def post_subnet(self, subnet, paylaod):
         url = self.baseurl + f"subnets?names={subnet}"
@@ -494,6 +525,12 @@ class FlashBladeAPI:
     def delete_object_store_access_key(self, access_key):
         url = self.baseurl + f"object-store-access-keys?names={access_key}"
         msg = f"access key: {access_key}"
+        data = self.REST_Request("delete", url, msg)
+
+    # Delete an object store remote credential
+    def delete_object_store_remote_credential(self, credential_name):
+        url = self.baseurl + f"object-store-remote_credentials?names={credential_name}"
+        msg = f"credential name: {credential_name}"
         data = self.REST_Request("delete", url, msg)
 
     # Delete a filesystem replica link
