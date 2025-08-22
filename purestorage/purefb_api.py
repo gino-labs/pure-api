@@ -302,7 +302,7 @@ class FlashBladeAPI:
 
     # Get single filesystem replica link by filesystem name
     def get_single_filesytem_replica_link(self, filesystem, dumpjson=False):
-        url = self.baseurl + f"file-system-replica-links?names={filesystem}" 
+        url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}" 
         msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("get", url, msg)
 
@@ -477,7 +477,7 @@ class FlashBladeAPI:
 
     # Post a filesystem replica link #TODO TEST endpoint#
     def post_filesystem_replica_link(self, filesystem, payload):
-        url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}"
+        url = self.baseurl + f"file-system-replica-links?names={filesystem}"
         msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
