@@ -15,5 +15,16 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    replica_links = legacy.get_filesytem_replica_links()
-    purelog.write_log("Get replica links to see json output.", jsondata=replica_links)
+    purelog.write_log("Testing POST replica link to see replication error from older filesystems")
+    filesystem = "anaconda_linux_tucson"
+    payload = {
+        "policies": [
+            {
+                "name": "5_min",
+            }
+        ]
+    }
+    purelog.write_log(f"Using {filesystem} for testing replica link post")
+    post = s200.post_filesystem_replica_link(filesystem, payload)
+
+
