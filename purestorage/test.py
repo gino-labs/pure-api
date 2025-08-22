@@ -15,6 +15,5 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    purelog.write_log("TEST: See API versions for legacy as json.", jsondata=vers)
-    purelog.write_log("Another test to see appended output.")
-    purelog.write_log("Bye World!")
+    replica_links = legacy.get_filesytem_replica_links()
+    purelog.write_log("Get replica links to see json output.", jsondata=replica_links)

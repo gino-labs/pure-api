@@ -68,7 +68,10 @@ class FlashBladeAPI:
         if response.status_code == 200:
             print(f"{method.upper()} success for {message}")
             print()
-            return response.json()
+            if method == "delete":
+                return {"status_code": response.status_code, "text": response.text}
+            else:
+                return response.json()
         else:
             print(f"Error Status Code: {response.status_code}\n{response.text}")
             print()
@@ -476,22 +479,21 @@ class FlashBladeAPI:
     
 
     # Delete a filesytem
-    def delete_(self,):
-        url = self.baseurl + f""
-        msg = f""
+    def delete_filesystem(self, filesystem):
+        url = self.baseurl + f"file-systems?names={filesystem}"
+        msg = f"filesystem: {filesystem}"
         data = self.REST_Request("delete", url, msg)
 
-
     # Delete an object store user
-    def delete_(self,):
-        url = self.baseurl + f""
-        msg = f""
+    def delete_object_store_user(self, object_user):
+        url = self.baseurl + f"object-store-users?names={object_user}"
+        msg = f"object store user: object_user"
         data = self.REST_Request("delete", url, msg)
 
     # Delete an object store access key
-    def delete_(self,):
-        url = self.baseurl + f""
-        msg = f""
+    def delete_object_store_access_key(self, access_key):
+        url = self.baseurl + f"object-store-access-keys?names={access_key}"
+        msg = f"access key: {access_key}"
         data = self.REST_Request("delete", url, msg)
 
     # Delete a filesystem replica link
