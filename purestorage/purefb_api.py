@@ -86,7 +86,7 @@ class FlashBladeAPI:
             return None
         
     # Parse json data or rest request items
-    def Parse_Data(self, data, index=None, dump=False):
+    def Parse_Data(self, data, dump=False):
         def log_print(msg, show_data=None, debug=dump):
             if debug:
                 if show_data is not None:
@@ -98,17 +98,13 @@ class FlashBladeAPI:
                     self.logger.write_log(msg)
                     print(msg)
                     print()
-            else:
-                pass
 
         if data is not None:
             try:
-                if index:
-                    parsed_data = data["items"][index]
-                else:
-                    parsed_data = data["items"]
-                log_print("DEBUG: See parsed data", show_data=parsed_data)
-                return parsed_data
+                log_print("DEBUG: See parsed data", show_data=data["items"])
+                if len(data["items"]) == 1:
+                    return data["items"][0]
+                return data["items"]
             except Exception as e:
                 log_print(f"Exception has occured:\n {e}", debug=True)
                 log_print("Returning full unparsed json data insead", debug=True)
@@ -157,7 +153,7 @@ class FlashBladeAPI:
         if filesystems is not None:
             fs_list = self.to_csv(filesystems)
             url = self.baseurl + f"file-systems?names={fs_list}"
-            msg = f"filesystems: {filesystems}"
+            msg = f"filesystems: {filesystems}"      
         else:
             url = self.baseurl + "file-systems"
             msg = "filesystems"
