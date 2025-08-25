@@ -110,10 +110,10 @@ class FlashBladeAPI:
                 log_print("DEBUG: See parsed data", show_data=parsed_data)
                 return parsed_data
             except Exception as e:
-                debug = True
                 log_print(f"Exception has occured:\n {e}", debug=True)
                 log_print("Returning full unparsed json data insead", debug=True)
-                log_print("Json output for data", show_data=data, debug=True)
+                if dump:
+                    log_print("Json output for data", show_data=data, debug=True)
                 return data
         else:
             log_print("Data returned is None. Please check endpoint or call.")
