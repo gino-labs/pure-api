@@ -107,7 +107,7 @@ class FlashBladeAPI:
                     parsed_data = data["items"][index]
                 else:
                     parsed_data = data["items"]
-                log_print("DEBUG: See parsed data", data=parsed_data)
+                log_print("DEBUG: See parsed data", show_data=parsed_data)
                 return parsed_data
             except Exception as e:
                 debug = True
