@@ -152,7 +152,7 @@ class FlashBladeAPI:
         msg = "filesystems"
         data = self.REST_Request("get", url, msg)
 
-        self.Parse_Data(data)
+        self.Parse_Data(data, dump=dumpjson)
         
     # Get single object store account by name
     def get_single_object_store_account(self, account, dumpjson=False):
