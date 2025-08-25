@@ -25,8 +25,10 @@ if __name__ == "__main__":
         ]
     }
     purelog.write_log(f"Using {filesystem} for testing replica link post")
-    get = legacy.get_single_filesytem_replica_link("anaconda_linux_tucson")
-    purelog.write_log("Double check json using name of replica link", jsondata=get)
+    fs = legacy.get_single_filesystem("anaconda_linux_tucson", dumpjson=True)
+    fs_replica_link = legacy.get_single_filesytem_replica_link("anaconda_linux_tucson", dumpjson=True)
+    purelog.write_log(f"Check json output of {fs}", jsondata=fs)
+    purelog.write_log(f"Check json output of {fs_replica_link}", jsondata=fs_replica_link)
     #post = legacy.post_filesystem_replica_link("anaconda_linux_tucson", payload)
 
 
