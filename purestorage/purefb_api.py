@@ -154,7 +154,7 @@ class FlashBladeAPI:
     def get_object_store_accounts(self, accounts=None, dumpjson=False):
         if accounts is not None:
             acct_list = self.to_csv(accounts)
-            url = self.baseurl + f"object-store-accounts?names{acct_list}"
+            url = self.baseurl + f"object-store-accounts?names={acct_list}"
             msg = f"object store accounts: {acct_list}"
         else:
             url = self.baseurl + "object-store-accounts"
@@ -162,28 +162,20 @@ class FlashBladeAPI:
 
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
-     
-    # Get single bucket by name
-    def get_single_bucket(self, bucket, dumpjson=False):
-        url = self.baseurl + f"buckets?names={bucket}"
-        msg = f"bucket: {bucket}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
         
     # Get buckets
-    def get_buckets(self, dumpjson=False):
-        url = self.baseurl + "buckets"
-        msg = "buckets"
-        data = self.REST_Request("get", url, msg)
+    def get_buckets(self, buckets=None, dumpjson=False):
+        if buckets is not None:
+            buck_list = self.to_csv(buckets)
+            url = self.baseurl + f"buckets?names={buck_list}"
+            msg = f"buckets: {buck_list}"
+        else:
+            url = self.baseurl + "buckets"
+            msg = "buckets"
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+
         
     # Get single bucket replica link
     def get_single_bucket_replia_link(self, local_bucket, dumpjson=False):
