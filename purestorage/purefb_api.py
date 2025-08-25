@@ -86,8 +86,8 @@ class FlashBladeAPI:
             return None
         
     # Parse json data or rest request items
-    def Parse_Data(self, data, index=None, dumpbool=False):
-        def log_print(msg, show_data=None, debug=dumpbool):
+    def Parse_Data(self, data, index=None, dump=False):
+        def log_print(msg, show_data=None, debug=dump):
             if debug:
                 if show_data is not None:
                     self.logger.write_log(msg, jsondata=show_data)

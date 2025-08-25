@@ -14,7 +14,7 @@ if __name__ == "__main__":
     vers200 = s200.get_api_version()
 
     purelog = pl.PureLog()
-
+    '''
     purelog.write_log("Testing POST replica link to see replication error from older filesystems")
     filesystem = "anaconda_linux_tucson"
     payload = {
@@ -30,5 +30,7 @@ if __name__ == "__main__":
     purelog.write_log(f"Check json output of {fs}", jsondata=fs)
     purelog.write_log(f"Check json output of {fs_replica_link}", jsondata=fs_replica_link)
     #post = legacy.post_filesystem_replica_link("anaconda_linux_tucson", payload)
+    '''
 
+    s200.get_filesystems()
 
