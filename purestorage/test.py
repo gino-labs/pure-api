@@ -32,5 +32,5 @@ if __name__ == "__main__":
     #post = legacy.post_filesystem_replica_link("anaconda_linux_tucson", payload)
     '''
 
-    s200.get_filesystems()
+    s200.get_filesystems(filesystems="anaconda_linux_tucson")
 

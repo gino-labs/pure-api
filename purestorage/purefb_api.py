@@ -157,13 +157,13 @@ class FlashBladeAPI:
         if filesystems is not None:
             fs_list = self.to_csv(filesystems)
             url = self.baseurl + f"file-systems?names={fs_list}"
-            msg = "filesystems"
+            msg = f"filesystems: {filesystems}"
         else:
             url = self.baseurl + "file-systems"
             msg = "filesystems"
         data = self.REST_Request("get", url, msg)
 
-        self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Get single object store account by name
     def get_single_object_store_account(self, account, dumpjson=False):
