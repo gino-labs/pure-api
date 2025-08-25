@@ -175,30 +175,20 @@ class FlashBladeAPI:
 
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
-
-        
-    # Get single bucket replica link
-    def get_single_bucket_replia_link(self, local_bucket, dumpjson=False):
-        url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}"
-        msg = f"bucket replica link: {local_bucket}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
         
     # Get bucket replica links
-    def get_bucket_replia_links(self, dumpjson=False):
-        url = self.baseurl + f"bucket-replica-links"
-        msg = f"bucket replica links"
-        data = self.REST_Request("get", url, msg)
+    def get_bucket_replia_links(self, buckets=None, dumpjson=False):
+        if buckets is not None:
+            buck_list = self.to_csv(buckets)
+            url = self.baseurl + f"bucket-replica-links?local_bucket_names={buck_list}"
+            msg = f"bucket replica links: {buck_list}"
+        else:
+            url = self.baseurl + f"bucket-replica-links"
+            msg = f"bucket replica links"
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"]
-        
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
     # Get single object store user by name
     def get_single_object_store_user(self, user, dumpjson=False):
         url = self.baseurl + f"object-store-users?names={user}"
