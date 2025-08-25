@@ -86,8 +86,8 @@ class FlashBladeAPI:
             return None
         
     # Parse json data or rest request items
-    def Parse_Data(self, data, index=None, dumpjson=False):
-        def log_print(msg, show_data=None, debug=dumpjson):
+    def Parse_Data(self, data, index=None, dumpbool=False):
+        def log_print(msg, show_data=None, debug=dumpbool):
             if debug:
                 if show_data is not None:
                     self.logger.write_log(msg, jsondata=show_data)
@@ -152,10 +152,7 @@ class FlashBladeAPI:
         msg = "filesystems"
         data = self.REST_Request("get", url, msg)
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        self.Parse_Data(data)
         
     # Get single object store account by name
     def get_single_object_store_account(self, account, dumpjson=False):
