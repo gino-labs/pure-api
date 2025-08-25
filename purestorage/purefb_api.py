@@ -136,17 +136,6 @@ class FlashBladeAPI:
             if dumpjson:
                 print(json.dumps(data, indent=4))
             return data["versions"]
-
-    # Get single filesystem by name
-    def get_single_filesystem(self, filesystem, dumpjson=False):
-        url = self.baseurl + f"file-systems?names={filesystem}"
-        msg = f"filesystem: {filesystem}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
             
     # Get Filesystems
     def get_filesystems(self, filesystems=None, dumpjson=False):
