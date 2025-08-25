@@ -25,8 +25,8 @@ if __name__ == "__main__":
         ]
     }
     purelog.write_log(f"Using {filesystem} for testing replica link post")
-    get = legacy.get_single_filesytem_replica_link("cardano_linux_backup")
+    get = legacy.get_single_filesytem_replica_link("anaconda_linux_tucson")
     purelog.write_log("Double check json using name of replica link", jsondata=get)
-    post = legacy.post_filesystem_replica_link("anaconda_linux_tucson", payload)
+    #post = legacy.post_filesystem_replica_link("anaconda_linux_tucson", payload)
 
 
