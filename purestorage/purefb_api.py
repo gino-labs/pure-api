@@ -28,6 +28,7 @@ class FlashBladeAPI:
         self.baseurl = f"https://{mgt_ip}/api/2.latest/"
         self.auth_token = self.Get_Session_Token()
         self.auth_headers = self.Set_Auth_Headers()
+        self.logger = pfl.PureLog()
 
     # Get session token
     def Get_Session_Token(self):
@@ -66,10 +67,9 @@ class FlashBladeAPI:
         elif method == "delete":
             response = requests.delete(url, headers=self.auth_headers, verify=False)
         
-        logger = pfl.PureLog()
         if response.status_code == 200:
             msg = f"{method.upper()} success for {message}"
-            logger.write_log(msg)
+            self.logger.write_log(msg)
             print(msg)
             print()
             if method == "delete":
@@ -78,12 +78,45 @@ class FlashBladeAPI:
                 return response.json()
         else:
             err_code = f"Error Status Code: {response.status_code}"
-            logger.write_log(err_code)
-            logger.write_log(response.text)
+            self.logger.write_log(err_code)
+            self.logger.write_log(response.text)
             print(err_code)
             print(response.text)
             print()
             return None
+        
+    # Parse json data or rest request items
+    def Parse_Data(self, data, index=None, dumpjson=False):
+        def log_print(msg, show_data=None, debug=dumpjson):
+            if debug:
+                if show_data is not None:
+                    self.logger.write_log(msg, jsondata=show_data)
+                    print(msg)
+                    print(json.dumps(show_data, indent=4))
+                    print()
+                else:
+                    self.logger.write_log(msg)
+                    print(msg)
+                    print()
+            else:
+                pass
+
+        if data is not None:
+            try:
+                if index:
+                    parsed_data = data["items"][index]
+                else:
+                    parsed_data = data["items"]
+                log_print("DEBUG: See parsed data", data=parsed_data)
+                return parsed_data
+            except Exception as e:
+                debug = True
+                log_print(f"Exception has occured:\n {e}", debug=True)
+                log_print("Returning full unparsed json data insead", debug=True)
+                log_print("Json output for data", show_data=data, debug=True)
+                return data
+        else:
+            log_print("Data returned is None. Please check endpoint or call.")
     
 
     #######################
