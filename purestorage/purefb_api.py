@@ -146,32 +146,23 @@ class FlashBladeAPI:
         else:
             url = self.baseurl + "file-systems"
             msg = "filesystems"
+            
         data = self.REST_Request("get", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
         
-    # Get single object store account by name
-    def get_single_object_store_account(self, account, dumpjson=False):
-        url = self.baseurl + f"object-store-accounts?names={account}"
-        msg = f"object store account: {account}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
-        
     # Get object store accounts
-    def get_object_store_accounts(self, dumpjson=False):
-        url = self.baseurl + "object-store-accounts"
-        msg = "object store accounts"
-        data = self.REST_Request("get", url, msg)
+    def get_object_store_accounts(self, accounts=None, dumpjson=False):
+        if accounts is not None:
+            acct_list = self.to_csv(accounts)
+            url = self.baseurl + f"object-store-accounts?names{acct_list}"
+            msg = f"object store accounts: {acct_list}"
+        else:
+            url = self.baseurl + "object-store-accounts"
+            msg = "object store accounts"
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
-        
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+     
     # Get single bucket by name
     def get_single_bucket(self, bucket, dumpjson=False):
         url = self.baseurl + f"buckets?names={bucket}"
