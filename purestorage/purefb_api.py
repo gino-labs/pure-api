@@ -117,7 +117,13 @@ class FlashBladeAPI:
                 return data
         else:
             log_print("Data returned is None. Please check endpoint or call.")
-    
+
+    # Helper function to return a csv string or single string
+    def to_csv(self, value):
+        if isinstance(value, str):
+            return value
+        return ",".join(value)
+        
 
     #######################
     ### GET API Section ###
@@ -147,9 +153,14 @@ class FlashBladeAPI:
             return data["items"][0]
             
     # Get Filesystems
-    def get_filesystems(self, dumpjson=False):
-        url = self.baseurl + "file-systems"
-        msg = "filesystems"
+    def get_filesystems(self, filesystems=None, dumpjson=False):
+        if filesystems is not None:
+            fs_list = self.to_csv(filesystems)
+            url = self.baseurl + f"file-systems?names={fs_list}"
+            msg = "filesystems"
+        else:
+            url = self.baseurl + "file-systems"
+            msg = "filesystems"
         data = self.REST_Request("get", url, msg)
 
         self.Parse_Data(data, dump=dumpjson)
