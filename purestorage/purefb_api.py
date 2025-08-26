@@ -267,27 +267,18 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
         
-    # Get single filesystem snapshot by name or filesystem name
-    def get_single_filesystem_snapshot(self, snapshot, dumpjson=False):
-        url = self.baseurl + f"file-system-snapshots?names_or_owner_names={snapshot}"
-        msg = f"filesystem snapshot: {snapshot}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
-        
     # Get filesystem snapshots
-    def get_filesystem_snapshots(self, dumpjson=False):
-        url = self.baseurl + f"file-system-snapshots"
-        msg = f"filesystem snapshots"
-        data = self.REST_Request("get", url, msg)
+    def get_filesystem_snapshots(self, snapshots=None, dumpjson=False):
+        if snapshots is not None:
+            snap_list = self.to_csv(snapshots)
+            url = self.baseurl + f"file-system-snapshots?names_or_owner_names={snap_list}"
+            msg = f"filesystem snapshots: {snap_list}"
+        else:
+            url = self.baseurl + f"file-system-snapshots"
+            msg = f"filesystem snapshots"
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Get single snapshot policy and attached members
     def get_single_snapshot_policy(self, policy, dumpjson=False):
