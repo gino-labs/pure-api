@@ -280,27 +280,18 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
         
-    # Get single snapshot policy and attached members
-    def get_single_snapshot_policy(self, policy, dumpjson=False):
-        url = self.baseurl + f"policies?names={policy}"
-        msg = f"filesystem snapshot policy: {policy}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data, indent=4))
-            return data["items"]
-        
     # Get snapshot polices
-    def get_snapshot_policies(self, dumpjson=False):
-        url = self.baseurl + "policies"
-        msg = "filesystem snapshot policies"
+    def get_snapshot_policies(self, policies=None, dumpjson=False):
+        if policies is not None:
+            pol_list = self.to_csv(policies)
+            url = self.baseurl + f"policies?names={pol_list}"
+            msg = f"filesystem snapshot policys: {pol_list}"
+        else:
+            url = self.baseurl + "policies"
+            msg = "filesystem snapshot policies"
+        
         data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Get snapshot policies attached 
     def get_filesystems_attached_to_snapshot_policy(self, policy, dumpjson=False):
