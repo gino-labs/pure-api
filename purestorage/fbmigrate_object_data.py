@@ -25,6 +25,14 @@ def migrate_object_store_accounts():
             s200.post_object_store_account(acct["name"], payload)
 
 # Migrate buckets
+def migrate_buckets():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+
+    buckets = legacy.get_buckets()
+    s200_buckets = s200.get_buckets()
+
+    s200_buckets_list = []
 
 # Migrate object store users
 
