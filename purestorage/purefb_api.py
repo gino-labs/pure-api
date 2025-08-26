@@ -294,26 +294,24 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
         
     # Get snapshot policies attached 
-    def get_filesystems_attached_to_snapshot_policy(self, policy, dumpjson=False):
-        url = self.baseurl + f"file-systems/policies?policy_names={policy}"
-        msg = f"attached snapshot policy: {policy}"
-        data = self.REST_Request("get", url, msg)
+    def get_filesystems_attached_to_snapshot_policy(self, policies=None, dumpjson=False):
+        if policies is not None:
+            pol_list = self.to_csv(policies)
+            url = self.baseurl + f"file-systems/policies?policy_names={pol_list}"
+            msg = f"attached snapshot policy: {pol_list}"
+        else:
+            url = self.baseurl + f"file-systems/policies"
+            msg = f"attached snapshot policies"
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
        
     # Get connected NFS clients
     def get_nfs_clients(self, dumpjson=False):
         url = self.baseurl + "arrays/clients/performance"
         msg = "NFS clients"
         data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        return self.Parse_Data(data, dump=dumpjson)
         
         
     ########################
