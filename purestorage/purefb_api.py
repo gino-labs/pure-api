@@ -202,27 +202,18 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
 
-    # Get single object store access key by name
-    def get_single_object_store_access_key(self, key, dumpjson=False):
-        url = self.baseurl + f"object-store-access-keys?names={key}"
-        msg = f"object store access key: {key}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
-
     # Get object store access keys
-    def get_object_store_access_keys(self, dumpjson=False):
-        url = self.baseurl + f"object-store-access-keys"
-        msg = "object store access keys"
+    def get_object_store_access_keys(self, keys=None, dumpjson=False):
+        if keys is not None:
+            key_list = self.to_csv(keys)
+            url = self.baseurl + f"object-store-access-keys?names={key_list}"
+            msg = f"object store access keys: {key_list}"
+        else:
+            url = self.baseurl + f"object-store-access-keys"
+            msg = "object store access keys"
+        
         data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Get single object store remote credential
     def get_single_object_store_remote_credentials(self, credential_name, dumpjson=False):
