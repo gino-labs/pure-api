@@ -215,27 +215,18 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
         
-    # Get single object store remote credential
-    def get_single_object_store_remote_credentials(self, credential_name, dumpjson=False):
-        url = self.baseurl + f"object-store-remote-credentials?names={credential_name}"
-        msg = f"object store remote credential: {credential_name}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"][0]
-        
     # Get object store remote credentials
-    def get_object_store_remote_credentials(self, dumpjson=False):
-        url = self.baseurl + f"object-store-remote-credentials"
-        msg = f"object store remote credentials"
+    def get_object_store_remote_credentials(self, credentials=None, dumpjson=False):
+        if credentials is not None:
+            cred_list = self.to_csv(credentials)
+            url = self.baseurl + f"object-store-remote-credentials?names={cred_list}"
+            msg = f"object store remote credential: {cred_list}"
+        else:
+            url = self.baseurl + f"object-store-remote-credentials"
+            msg = f"object store remote credentials"
+            
         data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Get single subnet by name
     def get_single_subnet(self, subnet, dumpjson=False):
@@ -249,15 +240,17 @@ class FlashBladeAPI:
             return data["items"][0]
 
     # Get subnets
-    def get_subnets(self, dumpjson=False):
-        url = self.baseurl + "subnets"
-        msg = "subnets"
+    def get_subnets(self, subnets=None, dumpjson=False):
+        if subnets is not None:
+            sub_list = self.to_csv(subnets)
+            url = self.baseurl + f"subnets?names={sub_list}"
+            msg = f"subnet: {sub_list}"
+        else:
+            url = self.baseurl + "subnets"
+            msg = "subnets"
+            
         data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Get single network interface by name
     def get_single_interface(self, interface, dumpjson=False):
