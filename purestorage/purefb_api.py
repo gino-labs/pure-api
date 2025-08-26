@@ -254,27 +254,18 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
 
-    # Get single filesystem replica link by filesystem name
-    def get_single_filesytem_replica_link(self, filesystem, dumpjson=False):
-        url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}" 
-        msg = f"filesystem replica link: {filesystem}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
-
     # Get filesystem replica links
-    def get_filesytem_replica_links(self, dumpjson=False):
-        url = self.baseurl + "file-system-replica-links" 
-        msg = "filesystem replica links"
+    def get_filesytem_replica_links(self, filesystems, dumpjson=False):
+        if filesystems is not None:
+            fs_list = self.to_csv(filesystems)
+            url = self.baseurl + f"file-system-replica-links?local_file_system_names={fs_list}" 
+            msg = f"filesystem replica links: {fs_list}"
+        else:
+            url = self.baseurl + "file-system-replica-links" 
+            msg = "filesystem replica links"
+        
         data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Get single filesystem snapshot by name or filesystem name
     def get_single_filesystem_snapshot(self, snapshot, dumpjson=False):
