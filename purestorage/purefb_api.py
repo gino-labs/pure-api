@@ -220,59 +220,39 @@ class FlashBladeAPI:
         if credentials is not None:
             cred_list = self.to_csv(credentials)
             url = self.baseurl + f"object-store-remote-credentials?names={cred_list}"
-            msg = f"object store remote credential: {cred_list}"
+            msg = f"object store remote credentials: {cred_list}"
         else:
             url = self.baseurl + f"object-store-remote-credentials"
             msg = f"object store remote credentials"
             
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
-        
-    # Get single subnet by name
-    def get_single_subnet(self, subnet, dumpjson=False):
-        url = self.baseurl + f"subnets?names={subnet}"
-        msg = f"subnet: {subnet}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
 
     # Get subnets
     def get_subnets(self, subnets=None, dumpjson=False):
         if subnets is not None:
             sub_list = self.to_csv(subnets)
             url = self.baseurl + f"subnets?names={sub_list}"
-            msg = f"subnet: {sub_list}"
+            msg = f"subnets: {sub_list}"
         else:
             url = self.baseurl + "subnets"
             msg = "subnets"
-            
+
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
-
-    # Get single network interface by name
-    def get_single_interface(self, interface, dumpjson=False):
-        url = self.baseurl + f"network-interfaces?names={interface}"
-        msg = f"network interface: {interface}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
         
     # Get network interfaces
-    def get_interfaces(self, dumpjson=False):
-        url = self.baseurl + "network-interfaces"
-        msg = "network interfaces"
-        data = self.REST_Request("get", url, msg)
+    def get_interfaces(self, interfaces=None, dumpjson=False):
+        if interfaces is not None:
+            iface_list = self.to_csv(interfaces)
+            url = self.baseurl + f"network-interfaces?names={iface_list}"
+            msg = f"network interfaces: {iface_list}"
+        else:
+            url = self.baseurl + "network-interfaces"
+            msg = "network interfaces"
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Get single filesystem replica link by filesystem name
     def get_single_filesytem_replica_link(self, filesystem, dumpjson=False):
