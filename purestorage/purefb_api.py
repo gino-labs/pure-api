@@ -188,29 +188,20 @@ class FlashBladeAPI:
 
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
-    
-    # Get single object store user by name
-    def get_single_object_store_user(self, user, dumpjson=False):
-        url = self.baseurl + f"object-store-users?names={user}"
-        msg = f"object store user: {user}"
-        data = self.REST_Request("get", url, msg)
-
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"][0], indent=4))
-            return data["items"][0]
         
     # Get object store users
-    def get_object_store_users(self, dumpjson=False):
-        url = self.baseurl + f"object-store-users"
-        msg = f"object store users"
-        data = self.REST_Request("get", url, msg)
+    def get_object_store_users(self, users=None, dumpjson=False):
+        if users is not None:
+            user_list = self.to_csv(users)
+            url = self.baseurl + f"object-store-users?names={user_list}"
+            msg = f"object store users: {users}"
+        else:
+            url = self.baseurl + f"object-store-users"
+            msg = f"object store users"
 
-        if data is not None:
-            if dumpjson:
-                print(json.dumps(data["items"], indent=4))
-            return data["items"]
-        
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Get single object store access key by name
     def get_single_object_store_access_key(self, key, dumpjson=False):
         url = self.baseurl + f"object-store-access-keys?names={key}"
