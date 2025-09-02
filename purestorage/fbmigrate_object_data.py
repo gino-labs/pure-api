@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 from jinja2 import Environment, FileSystemLoader
+from datetime import datetime
 import purefb_api as pfa
 import purefb_log as pfl
 import subprocess
+import json
 import os
 
 # Migrate object store accounts
@@ -73,7 +75,27 @@ def create_new_access_keys():
 
     users = legacy.get_object_store_users()
     s200_users = s200.get_object_store_users()
+
+    # List of object store user names
+    legacy_user_names = [user["name"] for user in users]
+
     # Post new access keys from migrated users
+    for user in s200_users:
+        if user["name"] in legacy_user_names and not user["access_keys"]:
+            payload = {
+                "user": {
+                    "name": user
+                }
+            }
+            key_data = s200.post_object_store_access_key(user["name"], payload)
+
+            # Save key data to file in .secrets directory
+            os.makedirs(".secrets", exist_ok=True)
+            today = f"{datetime.now().strftime('%d%b%Y')}"
+            with open(f"s200_access_keys_created_{today}.json", "a") as file:
+                file.write(json.dumps(key_data, indent=4) + "\n")
+
+
 
 # Migrate object storage using rclone
 
