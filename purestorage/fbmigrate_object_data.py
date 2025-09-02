@@ -35,11 +35,11 @@ def migrate_buckets():
     s200_buckets = s200.get_buckets()
 
     # List of s200 bucket names
-    s200_buckets_names = [bucket["name"] for bucket in s200_buckets]
+    s200_bucket_names = [bucket["name"] for bucket in s200_buckets]
 
     # Post each bucket not in s200 bucket names
     for bucket in buckets:
-        if bucket["name"] not in s200_buckets_names:
+        if bucket["name"] not in s200_bucket_names:
             payload = {
                 "account": bucket["account"],
                 "bucket_type": bucket["bucket_type"],
@@ -50,9 +50,21 @@ def migrate_buckets():
             }
             s200.post_bucket(bucket["name"], payload)
         
-
-
 # Migrate object store users
+def migrate_object_store_users():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+
+    users = legacy.get_object_store_users()
+    s200_users = s200.get_object_store_users()
+
+    # List of s200 object store user names
+    s200_user_names = [user["name"] for user in s200_users]
+
+    # Post each user not in s200 user names
+    for user in users:
+        if user["name"] not in s200_user_names:
+            s200.post_object_store_user(user["name"])
 
 # Create new object store access/secret keys for users on both FBs (Save secrets for s200)
 
