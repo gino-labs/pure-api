@@ -13,15 +13,17 @@ def migrate_object_store_accounts():
     accts = legacy.get_object_store_accounts()
     s200_accts = s200.get_object_store_accounts()
 
+    # List of s200 object store account names
     s200_acct_names = [acct["name"] for acct in s200_accts]
 
+    # Post each account not in s200 account names
     for acct in accts:
-        payload = {
-            "bucket_defaults": acct["bucket_defaults"],
-            "hard_limit_enabled": acct["hard_limit_enabled"],
-            "quota_limit": acct["quota_limit"]
-        }
         if acct["name"] not in s200_acct_names:
+            payload = {
+                "bucket_defaults": acct["bucket_defaults"],
+                "hard_limit_enabled": acct["hard_limit_enabled"],
+                "quota_limit": acct["quota_limit"]
+            }
             s200.post_object_store_account(acct["name"], payload)
 
 # Migrate buckets
@@ -32,7 +34,23 @@ def migrate_buckets():
     buckets = legacy.get_buckets()
     s200_buckets = s200.get_buckets()
 
-    s200_buckets_list = []
+    # List of s200 bucket names
+    s200_buckets_names = [bucket["name"] for bucket in s200_buckets]
+
+    # Post each bucket not in s200 bucket names
+    for bucket in buckets:
+        if bucket["name"] not in s200_buckets_names:
+            payload = {
+                "account": bucket["account"],
+                "bucket_type": bucket["bucket_type"],
+                "hard_limit_enabled": bucket["hard_limit_enabled"],
+                "object_lock_config": bucket["object_lock_config"],
+                "quota_limit": bucket["quota_limit"],
+                "retention_lock": bucket["unlocked"]
+            }
+            s200.post_bucket(bucket["name"], payload)
+        
+
 
 # Migrate object store users
 
