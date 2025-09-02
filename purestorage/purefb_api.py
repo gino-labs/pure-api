@@ -22,31 +22,14 @@ REPLICATION_CUTOFF = os.getenv("REPLICATION_CUTOFF")        #
 
 class FlashBladeAPI:
     def __init__(self, data_ip, mgt_ip, api_token):
-        self.data_ip = data_ip
-        self.mgt_ip = mgt_ip
-        self.api_token = api_token
-        self.baseurl = f"https://{mgt_ip}/api/2.latest/"
-        self.auth_token = self.Get_Session_Token()
-        self.auth_headers = self.Set_Auth_Headers()
-        self.logger = pfl.PureLog()
-
-    # Get session token
-    def Get_Session_Token(self):
         try:
-            url = f"https://{self.mgt_ip}/api/login"
-
-            headers = {
-            "api-token": self.api_token,
-            "Content-Type": "application/json"
-        }
-            response = requests.post(url, headers=headers, verify=False)
-
-            if response.status_code == 200:
-                return response.headers.get("x-auth-token")
-            else:
-                print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
-                print()
-                return None
+            self.data_ip = data_ip
+            self.mgt_ip = mgt_ip
+            self.api_token = api_token
+            self.baseurl = f"https://{mgt_ip}/api/2.latest/"
+            self.auth_token = self.Get_Session_Token()
+            self.auth_headers = self.Set_Auth_Headers()
+            self.logger = pfl.PureLog()
         except requests.RequestException as e:
             e_msg = f"Error RequestException Occured (see below). Did you forget to source your environment variables?"
             self.logger.write_log(e_msg)
@@ -54,6 +37,23 @@ class FlashBladeAPI:
             print(e_msg + "\n" + e)
             print()
             raise
+
+    # Get session token
+    def Get_Session_Token(self):
+        url = f"https://{self.mgt_ip}/api/login"
+
+        headers = {
+        "api-token": self.api_token,
+        "Content-Type": "application/json"
+    }
+        response = requests.post(url, headers=headers, verify=False)
+
+        if response.status_code == 200:
+            return response.headers.get("x-auth-token")
+        else:
+            print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
+            print()
+            return None
     
     # Set auth headers
     def Set_Auth_Headers(self):
