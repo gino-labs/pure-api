@@ -32,8 +32,6 @@ class FlashBladeAPI:
             self.logger = pfl.PureLog()
         except requests.RequestException as e:
             e_msg = f"Error RequestException Occured (see below). Did you forget to source your environment variables?"
-            self.logger.write_log(e_msg)
-            self.logger.write_log(e)
             print(e_msg + "\n" + e)
             print()
             raise
