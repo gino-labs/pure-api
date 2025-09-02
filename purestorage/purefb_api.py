@@ -32,20 +32,28 @@ class FlashBladeAPI:
 
     # Get session token
     def Get_Session_Token(self):
-        url = f"https://{self.mgt_ip}/api/login"
+        try:
+            url = f"https://{self.mgt_ip}/api/login"
 
-        headers = {
-        "api-token": self.api_token,
-        "Content-Type": "application/json"
-    }
-        response = requests.post(url, headers=headers, verify=False)
+            headers = {
+            "api-token": self.api_token,
+            "Content-Type": "application/json"
+        }
+            response = requests.post(url, headers=headers, verify=False)
 
-        if response.status_code == 200:
-            return response.headers.get("x-auth-token")
-        else:
-            print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
+            if response.status_code == 200:
+                return response.headers.get("x-auth-token")
+            else:
+                print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
+                print()
+                return None
+        except:
+            e_msg = f"Error RequestException Occured (see below). Did you forget to source your environment variables?"
+            self.logger.write_log(e_msg)
+            self.logger.write_log(e)
+            print(e_msg + "\n" + e)
             print()
-            return None
+            raise
     
     # Set auth headers
     def Set_Auth_Headers(self):
@@ -58,40 +66,32 @@ class FlashBladeAPI:
     # Make a api request
     def REST_Request(self, method, url, message, payload=None):
         method = str(method).lower()
-        try:
-            if method == "get":
-                response = requests.get(url, headers=self.auth_headers, verify=False)
-            elif method == "post":
-                response = requests.post(url, headers=self.auth_headers, json=payload, verify=False)
-            elif method == "patch":
-                response = requests.patch(url, headers=self.auth_headers, json=payload, verify=False)
-            elif method == "delete":
-                response = requests.delete(url, headers=self.auth_headers, verify=False)
-        
-            if response.status_code == 200:
-                msg = f"{method.upper()} success for {message}"
-                self.logger.write_log(msg)
-                print(msg)
-                print()
-                if method == "delete":
-                    return {"status_code": response.status_code, "text": response.text}
-                else:
-                    return response.json()
-            else:
-                err_code = f"Error Status Code: {response.status_code}"
-                self.logger.write_log(err_code)
-                self.logger.write_log(response.text)
-                print(err_code)
-                print(response.text)
-                print()
-                return None
-        except requests.RequestException as e:
-            e_msg = f"Error RequestException Occured (see below). Did you forget to source your environment variables?"
-            self.logger.write_log(e_msg)
-            self.logger.write_log(e)
-            print(e_msg + "\n" + e)
+        if method == "get":
+            response = requests.get(url, headers=self.auth_headers, verify=False)
+        elif method == "post":
+            response = requests.post(url, headers=self.auth_headers, json=payload, verify=False)
+        elif method == "patch":
+            response = requests.patch(url, headers=self.auth_headers, json=payload, verify=False)
+        elif method == "delete":
+            response = requests.delete(url, headers=self.auth_headers, verify=False)
+    
+        if response.status_code == 200:
+            msg = f"{method.upper()} success for {message}"
+            self.logger.write_log(msg)
+            print(msg)
             print()
-            raise
+            if method == "delete":
+                return {"status_code": response.status_code, "text": response.text}
+            else:
+                return response.json()
+        else:
+            err_code = f"Error Status Code: {response.status_code}"
+            self.logger.write_log(err_code)
+            self.logger.write_log(response.text)
+            print(err_code)
+            print(response.text)
+            print()
+            return None
         
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
