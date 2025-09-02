@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import sys
 import json
 import urllib3
 import requests
@@ -31,10 +32,10 @@ class FlashBladeAPI:
             self.auth_headers = self.Set_Auth_Headers()
             self.logger = pfl.PureLog()
         except requests.RequestException as e:
-            e_msg = f"Error RequestException Occured (see below). Did you forget to source your environment variables?"
-            print(f"{e_msg}\n{e}")
+            e_msg = f"Error RequestException occured. Did you forget to source your environment variables?"
+            print(f"{e_msg}")
             print()
-            raise
+            sys.exit(1)
 
     # Get session token
     def Get_Session_Token(self):
