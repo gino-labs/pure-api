@@ -12,5 +12,5 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    legacy.get_object_store_accounts(dumpjson=True)
+    legacy.get_object_store_users(dumpjson=True)
 
