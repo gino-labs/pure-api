@@ -32,7 +32,7 @@ class FlashBladeAPI:
             self.auth_headers = self.Set_Auth_Headers()
             self.logger = pfl.PureLog()
         except requests.RequestException as e:
-            e_msg = f"\nError RequestException occured. Did you forget to source your environment variables?"
+            e_msg = f"\nError RequestException occured. Please check your environment variables are correctly set."
             print(f"{e_msg}")
             print()
             sys.exit(1)
