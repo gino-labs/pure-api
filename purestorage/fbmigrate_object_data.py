@@ -71,6 +71,9 @@ def create_new_access_keys():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
+    users = legacy.get_object_store_users()
+    s200_users = s200.get_object_store_users()
+    # Post new access keys from migrated users
 
 # Migrate object storage using rclone
 
