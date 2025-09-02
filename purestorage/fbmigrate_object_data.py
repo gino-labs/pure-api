@@ -67,6 +67,10 @@ def migrate_object_store_users():
             s200.post_object_store_user(user["name"])
 
 # Create new object store access/secret keys for users on both FBs (Save secrets for s200)
+def create_new_access_keys():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+
 
 # Migrate object storage using rclone
 
