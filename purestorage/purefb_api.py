@@ -47,7 +47,7 @@ class FlashBladeAPI:
                 print(f"Login failed. Status Code: {response.status_code}\n{response.text}")
                 print()
                 return None
-        except:
+        except requests.RequestException as e:
             e_msg = f"Error RequestException Occured (see below). Did you forget to source your environment variables?"
             self.logger.write_log(e_msg)
             self.logger.write_log(e)
