@@ -12,13 +12,19 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    bucket = legacy.get_buckets(buckets="gxc-bucket", dumpjson=True)
+    bucket = legacy.get_buckets(buckets="gxc-bucket")
+    credential = legacy.get_object_store_remote_credentials(credentials="gxc-remote-creds", dumpjson=True)
+
+    s200_bucket = s200.get_buckets("gxc-bucket")
 
     bucket_id = bucket["id"]
+    s200_bucket_id = s200_bucket["id"]
+
+    credential_id = credential["id"]
 
     payload = {
         "paused": False,
         "cascading_enabled": False
     }
-    legacy.post_bucket_replica_link(bucket_id, "gxc-bucket", "gxc-remote-creds", payload)
+    legacy.post_bucket_replica_link("gxc-bucket", credential_id, payload)
 
