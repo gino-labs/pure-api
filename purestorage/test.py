@@ -12,11 +12,13 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    legacy.get_buckets(buckets="gxc-bucket", dumpjson=True)
+    bucket = legacy.get_buckets(buckets="gxc-bucket", dumpjson=True)
+
+    bucket_id = bucket["id"]
 
     payload = {
         "paused": False,
         "cascading_enabled": False
     }
-    legacy.post_bucket_replica_link("gxc-bucket", "gxc-remote-creds", payload)
+    legacy.post_bucket_replica_link(bucket_id, "gxc-bucket", "gxc-remote-creds", payload)
 
