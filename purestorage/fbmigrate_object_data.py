@@ -65,7 +65,7 @@ def migrate_object_store_users():
 
     # Post each user not in s200 user names
     for user in users:
-        if user["name"] not in s200_user_names:
+        if user["name"] not in s200_user_names and "migration" not in user["name"]:
             s200.post_object_store_user(user["name"])
 
 # Create new object store access/secret keys for users on both FBs (Save secrets for s200)
@@ -128,7 +128,6 @@ def create_migration_legacy_users():
     # Write to temporary file
     with open(".secrets/migration-keys.json", "w") as file:
         json.dump(migration_keys, file, indent=4)
-
 
 # Migrate object storage using rclone
 
