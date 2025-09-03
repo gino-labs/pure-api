@@ -240,7 +240,15 @@ def create_object_replica_links():
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
     buckets = legacy.get_buckets()
+    s200_buckets = s200.get_buckets()
     credentials = legacy.get_object_store_remote_credentials()
+
+    # Enabled versioning on each s200 bucket
+    for bucket in s200_buckets:
+        payload = {
+            "versioning": "enabled"
+        }
+        s200.patch_bucket(bucket["name"], payload)
 
     # For each bucket on legacy establish replica link to remote s200
     for bucket in buckets:
@@ -251,12 +259,16 @@ def create_object_replica_links():
                 replication_credential = cred
                 break
     
-        # Enable versioning on each bucket
+        # Enable versioning on the bucket (Required for object replication)
         payload = {
             "versioning": "enabled"
         }
+        legacy.patch_bucket(bucket["name"], payload)
 
+        # Post new bucket replica link with a valid credential
         
+
+
         
 
     
