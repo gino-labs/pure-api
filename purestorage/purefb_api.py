@@ -358,8 +358,8 @@ class FlashBladeAPI:
     # Error Status Code: 400
     # {"errors":[{"code":10,"context":null,"message":"Either names or ids query parameter is required."}]}
     # Tried bucket id, bucket name, credential id, credential name, remote blade id.
-    def post_bucket_replica_link(self, bucket, bucket_id, remote_credential_ids, remote_id, payload):
-        url = self.baseurl + f"bucket-replica-links?ids={remote_id}&local_bucket_ids={bucket_id}&remote_bucket_names={bucket}&remote_credential_ids={remote_credential_ids}"
+    def post_bucket_replica_link(self, bucket, bucket_id, remote_credential_ids, payload):
+        url = self.baseurl + f"bucket-replica-links?ids={bucket_id}&local_bucket_ids={bucket_id}&remote_bucket_names={bucket}&remote_credential_ids={remote_credential_ids}"
         msg = f"bucket replica link: {bucket} with remote credential: {remote_credential_ids}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
