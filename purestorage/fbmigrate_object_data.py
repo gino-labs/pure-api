@@ -7,6 +7,8 @@ import subprocess
 import json
 import os
 
+script_logger = pfl.PureLog()
+
 # Migrate object store accounts
 def migrate_object_store_accounts():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
@@ -95,7 +97,7 @@ def create_new_access_keys():
     # Save key data to file in .secrets directory
     os.makedirs(".secrets", exist_ok=True)
     today = f"{datetime.now().strftime('%d%b%Y')}"
-    with open(f".secrets/s200_access_keys_created_{today}.json", "w") as file:
+    with open(".secrets/s200_access_keys.json", "w") as file:
         json.dump(key_data, file, indent=4)
 
 # Create temporary users on legacy for migrating objects
@@ -126,10 +128,82 @@ def create_migration_legacy_users():
         migration_keys.append(migration_key)
     
     # Write to temporary file
-    with open(".secrets/migration-keys.json", "w") as file:
+    with open(".secrets/migration_keys.json", "w") as file:
         json.dump(migration_keys, file, indent=4)
 
 # Migrate object storage using rclone
+def rclone_object_storage_buckets():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+
+    buckets = legacy.get_buckets()
+    users = legacy.get_object_store_users()
+
+    s200_buckets = s200.get_buckets()
+    s200_users = s200.get_object_store_users()
+
+    # Load saved json keys created by earlier functions
+    with open(".secrets/migration_keys.json", "r") as file:
+        legacy_migration_keys = json.load(file)
+
+    with open(".secrets/s200_access_keys.json", "r") as file:
+        s200_migration_keys = json.load(file)
+    
+    # For each bucket, determine the associated account, then the associated user to use with the proper credentials
+    for bucket in buckets:
+        bucket_account = bucket["account"]["name"]
+
+        for user in users:
+            if user["account"]["name"] == bucket_account and "migration" in user["account"]["name"]:
+                matching_legacy_user = user
+                break
+                
+        for key in legacy_migration_keys:
+            if key["user"]["name"] == matching_legacy_user["name"]:
+                legacy_key = key
+                break
+
+        for user in s200_users:
+            if user["account"]["name"] == bucket_account:
+                matching_s200_user = user
+                break
+
+        for key in s200_migration_keys:
+            if key["user"]["name"] == matching_s200_user["name"]:
+                s200_key = key
+                break
+        
+        # Using rclone.conf.j2 jinja template to render with config data
+        config_data = {
+            "access_key_src": legacy_key["name"],
+            "secret_key_src": legacy_key["secret_access_key"],
+            "data_ip_src": legacy.data_ip,
+            "access_key_dest": s200_key["name"],
+            "secret_key_dest": s200["secreat_access_key"],
+            "data_ip_dest": s200.data_ip
+        }
+
+        env = Environment(loader=FileSystemLoader('.'))
+        template = env.get_template('rclone.conf.j2')
+        rendered_output = template.render(config_data)
+
+        with open("rclone.conf", "w") as file:
+            file.write(rendered_output)
+
+        # Use subprocess module to run rclone process
+        rclone_cmd = ["rclone", "copy", f"srcfb:{bucket['name']}", f"destfb:{bucket['name']}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"]
+        try:
+            subprocess.run(rclone_cmd)
+            msg = f"Rclone success for {bucket['name']}"
+            script_logger.write_log(msg)
+            print(msg)
+            print()
+        except Exception as e:
+            print(f"Excpetion has occured trying to rclone {bucket['name']}: {e}")
+            print()
+
+    # After each bucket has been rcloned remove the last rclone.conf
+    os.remove("rclone.conf")
 
 # Establish object replication link after using s200 created keys
 
