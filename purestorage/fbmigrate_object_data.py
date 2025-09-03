@@ -139,7 +139,6 @@ def rclone_object_storage_buckets():
     buckets = legacy.get_buckets()
     users = legacy.get_object_store_users()
 
-    s200_buckets = s200.get_buckets()
     s200_users = s200.get_object_store_users()
 
     # Load saved json keys created by earlier functions
@@ -179,7 +178,7 @@ def rclone_object_storage_buckets():
             "secret_key_src": legacy_key["secret_access_key"],
             "data_ip_src": legacy.data_ip,
             "access_key_dest": s200_key["name"],
-            "secret_key_dest": s200["secreat_access_key"],
+            "secret_key_dest": s200_key["secreat_access_key"],
             "data_ip_dest": s200.data_ip
         }
 
@@ -205,6 +204,15 @@ def rclone_object_storage_buckets():
     # After each bucket has been rcloned remove the last rclone.conf
     os.remove("rclone.conf")
 
-# Establish object replication link after using s200 created keys
-
 # Remove temporary object store users on legacy used for rclone
+def remove_temporary_migration_users():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+
+    users = legacy.get_object_store_users()
+
+    for user in users:
+        if "migration" in user["name"]:
+            legacy.delete_object_store_user(user["name"])
+    os.remove(".secrets/migration_keys.json")
+
+# Establish object replication link after using s200 created keys
