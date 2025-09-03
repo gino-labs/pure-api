@@ -218,7 +218,6 @@ def remove_temporary_migration_users():
 # Add remote credentials from s200 to source
 def add_remote_credentials():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
     # Add remote credentials to legacy from s200 using json file in .secrets
     with open(".secrets/s200_access_keys.json", "r") as file:
@@ -234,3 +233,31 @@ def add_remote_credentials():
             "secret_access_key": secret_key
         }
         legacy.post_object_store_remote_credential(account_user, payload)
+
+# Establish bucket replica links, enable object versioning on buckets
+def create_object_replica_links():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+
+    buckets = legacy.get_buckets()
+    credentials = legacy.get_object_store_remote_credentials()
+
+    # For each bucket on legacy establish replica link to remote s200
+    for bucket in buckets:
+        account = bucket["account"]["name"]
+
+        for cred in credentials:
+            if account in cred["name"]:
+                replication_credential = cred
+                break
+    
+        # Enable versioning on each bucket
+        payload = {
+            "versioning": "enabled"
+        }
+
+        
+        
+
+    
+
