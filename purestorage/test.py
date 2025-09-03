@@ -12,6 +12,8 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
+    legacy.get_buckets(buckets="gxc-bucket", dumpjson=True)
+
     payload = {
         "paused": False,
         "cascading_enabled": False
