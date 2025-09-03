@@ -92,7 +92,7 @@ def create_new_access_keys():
             # Save key data to file in .secrets directory
             os.makedirs(".secrets", exist_ok=True)
             today = f"{datetime.now().strftime('%d%b%Y')}"
-            with open(f"s200_access_keys_created_{today}.json", "a") as file:
+            with open(f".secrets/s200_access_keys_created_{today}.json", "a") as file:
                 file.write(json.dumps(key_data, indent=4) + "\n")
 
 
