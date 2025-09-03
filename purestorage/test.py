@@ -12,5 +12,9 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    s200.get_object_store_users(dumpjson=True)
+    payload = {
+        "paused": False,
+        "cascading_enabled": False
+    }
+    legacy.post_bucket_replica_link("gxc-bucket", "gxc-remote-creds", payload)
 
