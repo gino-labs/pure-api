@@ -13,8 +13,9 @@ if __name__ == "__main__":
     purelog = pl.PureLog()
 
     bucket = legacy.get_buckets(buckets="gxc-bucket")
-    credential = legacy.get_object_store_remote_credentials(credentials="gxc-remote-creds", dumpjson=True)
-
+    credentials = legacy.get_object_store_remote_credentials(dumpjson=True)
+    #credentials="gxc-remote-creds",
+    exit()
     s200_bucket = s200.get_buckets("gxc-bucket")
 
     bucket_id = bucket["id"]
