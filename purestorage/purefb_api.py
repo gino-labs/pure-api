@@ -474,6 +474,15 @@ class FlashBladeAPI:
         if data is not None:
             return data["items"][0]
         
+    # Patch a bucket
+    def patch_bucket(self, bucket, payload):
+        url = self.baseurl + f"buckets?names={bucket}"
+        msg = f"filesystem bucket: {bucket}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+
+        if data is not None:
+            return data["items"][0]
+        
 
     ##########################
     ### DELETE API Section ###
