@@ -23,9 +23,11 @@ if __name__ == "__main__":
     credential_name = credential["name"]
     credential_id = credential["id"]
 
+    remote_id = credential["remote"]["id"]
+
     payload = {
         "paused": False,
         "cascading_enabled": False
     }
-    legacy.post_bucket_replica_link(bucket_name, bucket_id, credential_id, payload)
+    legacy.post_bucket_replica_link(bucket_name, bucket_id, credential_id, remote_id, payload)
 
