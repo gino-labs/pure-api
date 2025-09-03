@@ -355,9 +355,9 @@ class FlashBladeAPI:
             return data["items"][0]
         
     # Post a bucket replica link
-    def post_bucket_replica_link(self, bucket, remote_credential, payload):
-        url = self.baseurl + f"bucket-replica-links?local_bucket_names={bucket}&remote_bucket_names={bucket}&remote_credential_names={remote_credential}"
-        msg = f"bucket replica link: {bucket} with remote credential: {remote_credential}"
+    def post_bucket_replica_link(self, bucket, remote_credential_ids, payload):
+        url = self.baseurl + f"bucket-replica-links?local_bucket_names={bucket}&remote_bucket_names={bucket}&remote_credential_ids={remote_credential_ids}"
+        msg = f"bucket replica link: {bucket} with remote credential: {remote_credential_ids}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
         if data is not None:
