@@ -79,6 +79,7 @@ def create_new_access_keys():
     # List of object store user names
     legacy_user_names = [user["name"] for user in users]
 
+    key_data= []
     # Post new access keys from migrated users
     for user in s200_users:
         if user["name"] in legacy_user_names and not user["access_keys"]:
@@ -87,14 +88,46 @@ def create_new_access_keys():
                     "name": user
                 }
             }
-            key_data = s200.post_object_store_access_key(user["name"], payload)
+            # Post new access key and append to list
+            new_key_entry = s200.post_object_store_access_key(user["name"], payload)
+            key_data.append(new_key_entry)
 
-            # Save key data to file in .secrets directory
-            os.makedirs(".secrets", exist_ok=True)
-            today = f"{datetime.now().strftime('%d%b%Y')}"
-            with open(f".secrets/s200_access_keys_created_{today}.json", "a") as file:
-                file.write(json.dumps(key_data, indent=4) + "\n")
+    # Save key data to file in .secrets directory
+    os.makedirs(".secrets", exist_ok=True)
+    today = f"{datetime.now().strftime('%d%b%Y')}"
+    with open(f".secrets/s200_access_keys_created_{today}.json", "w") as file:
+        json.dump(key_data, file, indent=4)
 
+# Create temporary users on legacy for migrating objects
+def create_migration_legacy_users():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+
+    accts = legacy.get_object_store_accounts()
+
+    acct_names = [accts["name"] for acct in accts]
+
+    # For each account create a temporaray migration user
+    migration_users = []
+    for acct in acct_names:
+        migration_user = f"{acct}/migration" 
+        legacy.post_object_store_user(migration_user)
+        migration_users.append(migration_user)
+
+    # For each migration user create a temporary access key
+    migration_keys = []
+    for user in migration_users:
+        payload = {
+                "user": {
+                    "name": user
+                }
+            }
+        migration_key = legacy.post_object_store_access_key(user, payload)
+        migration_keys.append(migration_key)
+    
+    # Write to temporary file
+    with open(".secrets/migration-keys.json", "w") as file:
+        json.dump(migration_keys, file, indent=4)
 
 
 # Migrate object storage using rclone
