@@ -266,7 +266,9 @@ def create_object_replica_links():
         legacy.patch_bucket(bucket["name"], payload)
 
         # Post new bucket replica link with a valid credential
-        
+        # TO DO Compare api called remote credentials to credentials named in json file
+
+
 
 
         
