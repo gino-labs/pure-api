@@ -108,9 +108,10 @@ class FlashBladeAPI:
 
         if data is not None:
             try:
-                log_print("DEBUG: See parsed data", show_data=data["items"])
                 if len(data["items"]) == 1:
+                    log_print("DEBUG: See parsed data", show_data=data["items"][0])
                     return data["items"][0]
+                log_print("DEBUG: See parsed data", show_data=data["items"])
                 return data["items"]
             except Exception as e:
                 log_print(f"Exception has occured:\n {e}", debug=True)
