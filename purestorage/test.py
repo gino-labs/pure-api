@@ -20,5 +20,5 @@ if __name__ == "__main__":
         "paused": False,
         "cascading_enabled": False
     }
-    legacy.post_bucket_replica_link(bucket_id, "gxc-bucket", "gxc-remote-creds", payload)
+    legacy.post_bucket_replica_link("gxc-bucket", "gxc-remote-creds", payload)
 
