@@ -215,4 +215,22 @@ def remove_temporary_migration_users():
             legacy.delete_object_store_user(user["name"])
     os.remove(".secrets/migration_keys.json")
 
-# Establish object replication link after using s200 created keys
+# Add remote credentials from s200 to source
+def add_remote_credentials():
+    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+
+    # Add remote credentials to legacy from s200 using json file in .secrets
+    with open(".secrets/s200_access_keys.json", "r") as file:
+        s200_credentials = json.load(file)
+
+    for cred in s200_credentials:
+        access_key = cred["name"]
+        secret_key = cred["secret_access_key"]
+        account_user = cred["user"]["name"].replace("/", "-")
+
+        payload = {
+            "access_key_id": access_key,
+            "secret_access_key": secret_key
+        }
+        legacy.post_object_store_remote_credential(account_user, payload)
