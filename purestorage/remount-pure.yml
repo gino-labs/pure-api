@@ -4,13 +4,9 @@
   become: yes
   gather_facts: no
   tasks:
-    - name: Get list of systemd mount units using PureStorage
+    - name: Get list of mounts using PureStorage
       shell: |
-        for MOUNT in $(systemctl list-units --type=mount --no-legend | awk '$1 != "-.mount" {print $1}'); do 
-          if systemctl show "$MOUNT" -p Options --no-pager | grep -qE '{{ pure_ips }}'; then
-            systemctl show "$MOUNT" -p Where | cut -d "=" -f 2
-          fi
-        done
+        findmnt -t nfs,nfs4 -o target,options | awk '/{{ pure_ips }}/ { print $1 }'
       register: pure_mounts
 
     - name: Restart the mount units
