@@ -16,3 +16,5 @@ if __name__ == "__main__":
 
     # List of s200 object store user names
     s200_user_names = [user["name"] for user in s200_users]
+
+    print(s200_user_names)
