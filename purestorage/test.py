@@ -100,3 +100,26 @@ if __name__ == "__main__":
         }
     }
     purelog.write_log("Dynamic host inventory dictionary created for future ansible inventory")
+
+    # Simulate changes in order using logs
+    purelog.write_log("Create temporary inventory file")
+
+    purelog.write_log("Create final snapshots of promoted filesystems prior to swap followed by 30second wait timer for each filesystem.")
+
+    purelog.write_log("On Legacy, for each filesystem Patch it to requested state demoted, writable false")
+
+    purelog.write_log("Patch Legacy interfaces IPs to S200, only if name in S200 interface name list")
+
+    purelog.write_log("Patch S200 interfaces IPs to Legacy, only if name in Legacy interface name list")
+
+    purelog.write_log("Delete filesystem replica links on legacy. Unhealthy state if not done.")
+
+    purelog.write_log("Patch requested Promotion state, writable True, protocols for each legacy filesystem name in S200 filesystem names list.")
+
+    purelog.write_log("Enter root password and run ansible playbook")
+
+    purelog.write_log(f"Ansible Cmd: ansible-playbook -i <temp-nfs-inventory> -e pure_ips={pure_ips} -k remount-pure.yml")
+
+    purelog.write_log(f"Ansible task 1: Get list of systemd mount units using PureStorage")
+
+    purelog.write_log(f"Ansible task 2: Restart the mount units")
