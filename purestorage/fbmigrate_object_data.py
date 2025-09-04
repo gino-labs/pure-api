@@ -71,7 +71,7 @@ def migrate_object_store_users():
             s200.post_object_store_user(user["name"])
 
 # Create new object store access/secret keys for users on both FBs (Save secrets for s200)
-def create_new_access_keys():
+def create_new_s200_access_keys():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
@@ -101,7 +101,7 @@ def create_new_access_keys():
         json.dump(key_data, file, indent=4)
 
 # Create temporary users on legacy for migrating objects
-def create_migration_legacy_users():
+def create_migration_legacy_users_and_keys():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
@@ -235,7 +235,7 @@ def add_remote_credentials():
         legacy.post_object_store_remote_credential(account_user, payload)
 
 # Establish bucket replica links, enable object versioning on buckets
-def create_object_replica_links():
+def create_bucket_replica_links():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
@@ -277,14 +277,31 @@ def create_object_replica_links():
         legacy.post_bucket_replica_link(bucket["name"], replication_credential["name"], payload)
                 
         
+# Main Script
+if __name__ == "__main__":
+    # Fucntion call to migrate object store accounts
+    migrate_object_store_accounts()
 
+    # Function call to migrate object store buckets
+    migrate_buckets()
+
+    # Fucntion call to migrate object store users
+    migrate_object_store_users()
+
+    # Function call to create new access keys on migrated s200 users
+    create_new_s200_access_keys()
         
-            
+    # Fucntion call to create tempoary migration users and keys on legacy
+    create_migration_legacy_users_and_keys()
 
+    # Fucntion call to move object storage with rclone
+    rclone_object_storage_buckets()
 
+    # Function call to remove temporary created users/files
+    remove_temporary_migration_users()
 
+    # Function call to add remote credentials on legacy for object replication
+    add_remote_credentials()
 
-        
-
-    
-
+    # Function call to create the bucket replica links
+    create_bucket_replica_links()
