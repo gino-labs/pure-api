@@ -243,6 +243,9 @@ def create_object_replica_links():
     s200_buckets = s200.get_buckets()
     credentials = legacy.get_object_store_remote_credentials()
 
+    with open(".secrets/s200_access_keys.json") as f:
+        s200_credentials = json.load(f)
+
     # Enabled versioning on each s200 bucket
     for bucket in s200_buckets:
         payload = {
@@ -266,7 +269,14 @@ def create_object_replica_links():
         legacy.patch_bucket(bucket["name"], payload)
 
         # Post new bucket replica link with a valid credential
-        # TO DO Compare api called remote credentials to credentials named in json file
+        for cred in s200_credentials:
+            if cred["name"] == replication_credential["access_key_id"]:
+                cred_user = cred["user"]["name"]
+                break
+        
+
+        
+            
 
 
 
