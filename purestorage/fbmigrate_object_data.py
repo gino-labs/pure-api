@@ -269,10 +269,13 @@ def create_object_replica_links():
         legacy.patch_bucket(bucket["name"], payload)
 
         # Post new bucket replica link with a valid credential
-        for cred in s200_credentials:
-            if cred["name"] == replication_credential["access_key_id"]:
-                cred_user = cred["user"]["name"]
-                break
+        payload = {
+            "paused": False,
+            "cascading_enabled": False
+        }
+        
+        legacy.post_bucket_replica_link(bucket["name"], replication_credential["name"], payload)
+                
         
 
         
