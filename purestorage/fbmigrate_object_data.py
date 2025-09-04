@@ -63,6 +63,7 @@ def migrate_object_store_users():
     s200_users = s200.get_object_store_users()
 
     # List of s200 object store user names
+    # FIXME empty list can't access
     s200_user_names = [user["name"] for user in s200_users]
 
     # Post each user not in s200 user names

@@ -12,9 +12,11 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    s200_users = s200.get_object_store_users()
+    s200_users = s200.get_object_store_users(dumpjson=True)
 
     # List of s200 object store user names
-    s200_user_names = [user["name"] for user in s200_users]
-
-    print(s200_user_names)
+    if s200_users is not None:
+        s200_user_names = [user["name"] for user in s200_users]
+        print(s200_user_names)
+    else:
+        print("s200 users is None.")
