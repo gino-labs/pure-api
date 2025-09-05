@@ -228,6 +228,7 @@ def rclone_object_storage_buckets():
             print()
             if user["account"]["name"] == bucket_account and "migration" in user["name"]:
                 matching_legacy_user = user
+                print(matching_legacy_user)
                 #break
         exit()
                 
