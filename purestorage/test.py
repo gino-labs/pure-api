@@ -12,6 +12,6 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    legacy.get_object_store_accounts(dumpjson=True)
-    legacy.get_buckets(dumpjson=True)
+    
+    s200.get_buckets(dumpjson=True)
 
