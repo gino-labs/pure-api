@@ -384,7 +384,7 @@ class FlashBladeAPI:
         
     # Post an object store remote credential
     def post_object_store_remote_credential(self, credential_name, payload):
-        url = self.baseurl + "object-store-remote-credentials"
+        url = self.baseurl + f"object-store-remote-credentials?names={credential_name}"
         msg = f"object store remote credential: {credential_name}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
