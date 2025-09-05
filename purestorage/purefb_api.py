@@ -24,6 +24,7 @@ REPLICATION_CUTOFF = os.getenv("REPLICATION_CUTOFF")        #
 class FlashBladeAPI:
     def __init__(self, data_ip, mgt_ip, api_token):
         try:
+            self.name = mgt_ip.split("-")[0]
             self.data_ip = data_ip
             self.mgt_ip = mgt_ip
             self.api_token = api_token
