@@ -222,31 +222,33 @@ def rclone_object_storage_buckets():
         bucket_account = bucket["account"]["name"]
 
         for user in users:
-            print(user["name"])
-            print(user["account"]["name"])
-            print(bucket_account)
-            print()
+            # Same account for user and bucket, and migration in user name
             if user["account"]["name"] == bucket_account and "migration" in user["name"]:
                 matching_legacy_user = user
-                print(matching_legacy_user)
-                #break
-        exit()
+                print(f"Using legacy user: {matching_legacy_user['name']}")
+                print()
+                break
                 
         for key in legacy_migration_keys:
             if key["user"]["name"] == matching_legacy_user["name"]:
                 legacy_key = key
+                print(f"Using legacy key: {key['user']['name']} - {legacy_key['name']}")
+                print()
                 break
 
         for user in s200_users:
             if user["account"]["name"] == bucket_account:
                 matching_s200_user = user
+                print(f"Using s200 user: {matching_s200_user['name']}")
+                print()
                 break
 
         for key in s200_migration_keys:
             if key["user"]["name"] == matching_s200_user["name"]:
                 s200_key = key
+                print(f"Using s200 key: {s200_key['user']['name']} - {s200_key['name']}")
                 break
-        
+        exit()
         # Using rclone.conf.j2 jinja template to render with config data
         config_data = {
             "access_key_src": legacy_key["name"],
