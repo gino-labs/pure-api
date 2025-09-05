@@ -70,7 +70,7 @@ def migrate_buckets():
             if bucket["object_lock_config"]["default_retention"]:
                 default_retention = str(bucket["object_lock_config"]["default_retention"])
             else:
-                defatul_retention = ""
+                default_retention = ""
 
             if bucket["quota_limit"]:
                 quota_limit = str(bucket["quota_limit"])
