@@ -82,8 +82,9 @@ def migrate_buckets():
                 quota_limit = ""
             
             print(json.dumps(bucket["account"], indent=4))
+            account = bucket["account"]["name"]
             payload = {
-                "account": bucket["account"],
+                "account": bucket,
                 "bucket_type": bucket["bucket_type"],
                 "hard_limit_enabled": bucket["hard_limit_enabled"],
                 "object_lock_config": {
