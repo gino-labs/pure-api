@@ -167,7 +167,7 @@ def create_migration_legacy_users_and_keys():
     accts = legacy.get_object_store_accounts()
     users = legacy.get_object_store_users()
 
-    for user in user:
+    for user in users:
         if "migration" in user["name"]:
             legacy.delete_object_store_user(user["name"])
 
