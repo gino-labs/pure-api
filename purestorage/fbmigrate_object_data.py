@@ -29,9 +29,12 @@ def migrate_object_store_accounts():
     for acct in accts:
         if acct["name"] not in s200_acct_names:
             payload = {
-                "bucket_defaults": acct["bucket_defaults"],
+                "bucket_defaults": { 
+                    "hard_limit_enabled": acct["bucket_defaults"]["hard_limit_enabled"],
+                    "quota_limit": str(acct["bucket_defaults"]["quota_limit"])
+                },
                 "hard_limit_enabled": acct["hard_limit_enabled"],
-                "quota_limit": acct["quota_limit"]
+                "quota_limit": str(acct["quota_limit"])
             }
             s200.post_object_store_account(acct["name"], payload)
 
@@ -58,9 +61,14 @@ def migrate_buckets():
                 "account": bucket["account"],
                 "bucket_type": bucket["bucket_type"],
                 "hard_limit_enabled": bucket["hard_limit_enabled"],
-                #"object_lock_config": bucket["object_lock_config"],
+                "object_lock_config": {
+                    "default_retention_mode": bucket["object_lock_config"]["default_retention_mode"],
+                    "enabled": bucket["object_lock_config"]["enabled"],
+                    "freeze_locked_objects": bucket["object_lock_config"]["freeze_locked_objects"],
+                    "default_retention": str(bucket["object_lock_config"]["default_retention"])
+                },
                 "quota_limit": str(bucket["quota_limit"]),
-                #"retention_lock": bucket["unlocked"]
+                "retention_lock": bucket["unlocked"]
             }
             s200.post_bucket(bucket["name"], payload)
         
