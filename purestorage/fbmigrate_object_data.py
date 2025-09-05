@@ -384,8 +384,11 @@ def create_bucket_replica_links():
             "paused": False,
             "cascading_enabled": False
         }
+        legacy_array_connections = legacy.get_array_connections()
+        remote_name = legacy_array_connections["remote"]["name"]
+        cred_name = f"{remote_name}/{replication_credential["name"]}"
         
-        legacy.post_bucket_replica_link(bucket["name"], replication_credential["name"], payload)
+        legacy.post_bucket_replica_link(bucket["name"], cred_name, payload)
         buckets_linked += 1
     
     if buckets_linked == 0:
