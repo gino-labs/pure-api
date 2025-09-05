@@ -387,6 +387,10 @@ def create_bucket_replica_links():
         legacy_array_connections = legacy.get_array_connections()
         remote_name = legacy_array_connections["remote"]["name"]
         cred_name = f"{remote_name}/{replication_credential['name']}"
+
+        print(cred_name)
+        print()
+        exit()
         
         legacy.post_bucket_replica_link(bucket["name"], cred_name, payload)
         buckets_linked += 1
@@ -415,7 +419,7 @@ if __name__ == "__main__":
     create_migration_legacy_users_and_keys()
 
     # Fucntion call to move object storage with rclone
-    rclone_object_storage_buckets()
+    #rclone_object_storage_buckets()
 
     # Function call to remove temporary created users/files
     remove_temporary_migration_users()
