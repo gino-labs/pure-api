@@ -68,7 +68,7 @@ def migrate_buckets():
                     "default_retention": str(bucket["object_lock_config"]["default_retention"])
                 },
                 "quota_limit": str(bucket["quota_limit"]),
-                "retention_lock": bucket["unlocked"]
+                "retention_lock": bucket["retention_lock"]
             }
             s200.post_bucket(bucket["name"], payload)
         
