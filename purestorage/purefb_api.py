@@ -500,7 +500,7 @@ class FlashBladeAPI:
     # Delete an object store user
     def delete_object_store_user(self, object_user):
         url = self.baseurl + f"object-store-users?names={object_user}"
-        msg = f"object store user: object_user"
+        msg = f"object store user: {object_user}"
         data = self.REST_Request("delete", url, msg)
 
     # Delete an object store access key
