@@ -167,7 +167,6 @@ def create_new_s200_access_keys():
     else:
         print("s200 keys already exist, check .secrets/s200_access_keys.json")
         print()
-    exit()
 
 # Create temporary users on legacy for migrating objects
 def create_migration_legacy_users_and_keys():
