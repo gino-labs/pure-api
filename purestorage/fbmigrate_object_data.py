@@ -138,6 +138,17 @@ def create_new_s200_access_keys():
     else:
         legacy_user_names = [user["name"] for user in users]
 
+    double_access_key_list = []
+    s200_keys = s200.get_object_store_access_keys()
+    # Check if 2 access keys already exist for a user
+    if s200_keys and not isinstance(s200_keys, dict):
+        single_access_key_list = []
+        for key in s200_keys:
+            if key["user"]["name"] in single_access_key_list:
+                double_access_key_list.append(key["user"]["name"])
+            else:
+                single_access_key_list.append(key["user"]["name"])
+        
     key_data= []
     # Post new access keys from migrated users
     for user in s200_users:
@@ -146,9 +157,12 @@ def create_new_s200_access_keys():
                 s200_keys = json.load(f)
             match_found = next((key for key in s200_keys if key["user"]["name"] == user["name"]), None)
             if match_found:
-                print(match_found)
-                print()
                 continue
+
+        if user["name"] in double_access_key_list:
+            print(f"Error: User {user['name']} already has two access keys, please delete one to continue.")
+            print()
+            exit()
         if user["name"] in legacy_user_names:
             payload = {
                 "user": {
@@ -158,7 +172,6 @@ def create_new_s200_access_keys():
             # Post new access key and append to list
             new_key_entry = s200.post_object_store_access_key(user["name"], payload)
             key_data.append(new_key_entry)
-    exit()
 
     # Save key data to file in .secrets directory
     os.makedirs(".secrets", exist_ok=True)
