@@ -12,4 +12,4 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    s200.get_object_store_access_keys(dumpjson=True)
+    s200.get_array_connections(dumpjson=True)
