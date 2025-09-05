@@ -152,8 +152,8 @@ def create_new_s200_access_keys():
     key_data= []
     # Post new access keys from migrated users
     for user in s200_users:
-        if os.path.exists(".secrets/s200_access_keys.json"):
-            with open(".secrets/s200_access_keys.json", "r") as f:
+        if os.path.exists(f".secrets/{s200.name}_s200_access_keys.json"):
+            with open(f".secrets/{s200.name}_200_access_keys.json", "r") as f:
                 s200_keys = json.load(f)
             match_found = next((key for key in s200_keys if key["user"]["name"] == user["name"]), None)
             if match_found:
@@ -176,12 +176,12 @@ def create_new_s200_access_keys():
     # Save key data to file in .secrets directory
     os.makedirs(".secrets", exist_ok=True)
     if key_data:
-        with open(".secrets/s200_access_keys.json", "a") as file:
+        with open(f".secrets/{s200.name}_s200_access_keys.json", "a") as file:
             json.dump(key_data, file, indent=4)
-        print("S200 keys have been saved to .secrets/s200_access_keys.json.")
+        print(f"S200 keys have been saved to .secrets/{s200.name}_s200_access_keys.json.")
         print()
     else:
-        print("s200 keys already exist, check .secrets/s200_access_keys.json")
+        print(f"s200 keys already exist, check .secrets/{s200.name}_s200_access_keys.json")
         print()
 
 # Create temporary users on legacy for migrating objects
@@ -241,7 +241,7 @@ def rclone_object_storage_buckets():
     with open(".secrets/migration_keys.json", "r") as file:
         legacy_migration_keys = json.load(file)
 
-    with open(".secrets/s200_access_keys.json", "r") as file:
+    with open(f".secrets/{s200.name}_s200_access_keys.json", "r") as file:
         s200_migration_keys = json.load(file)
     
     # For each bucket, determine the associated account, then the associated user to use with the proper credentials
@@ -321,9 +321,10 @@ def remove_temporary_migration_users():
 # Add remote credentials from s200 to source
 def add_remote_credentials():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
     # Add remote credentials to legacy from s200 using json file in .secrets
-    with open(".secrets/s200_access_keys.json", "r") as file:
+    with open(f".secrets/{s200.name}_s200_access_keys.json", "r") as file:
         s200_credentials = json.load(file)
 
     for cred in s200_credentials:
