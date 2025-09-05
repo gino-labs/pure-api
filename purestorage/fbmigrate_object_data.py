@@ -13,6 +13,8 @@ script_logger = pfl.PureLog()
 def migrate_object_store_accounts():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("Object store accounts")
+    print()
 
     accts = legacy.get_object_store_accounts()
     s200_accts = s200.get_object_store_accounts()
@@ -79,6 +81,7 @@ def migrate_buckets():
             else:
                 quota_limit = ""
             
+            print(json.dumps(bucket["account"], indent=4))
             payload = {
                 "account": bucket["account"],
                 "bucket_type": bucket["bucket_type"],
