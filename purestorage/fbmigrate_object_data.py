@@ -141,6 +141,12 @@ def create_new_s200_access_keys():
     key_data= []
     # Post new access keys from migrated users
     for user in s200_users:
+        if os.path.exists(".secrets/s200_access_keys.json"):
+            with open(".secrets/s200_access_keys.json", "r") as f:
+                s200_keys = json.load(f)
+            match_found = next((key for key in s200_keys if key["user"]["name"] == user["name"]), None)
+            if match_found:
+                continue
         if user["name"] in legacy_user_names:
             payload = {
                 "user": {
@@ -153,8 +159,14 @@ def create_new_s200_access_keys():
 
     # Save key data to file in .secrets directory
     os.makedirs(".secrets", exist_ok=True)
-    with open(".secrets/s200_access_keys.json", "w") as file:
-        json.dump(key_data, file, indent=4)
+    if key_data:
+        with open(".secrets/s200_access_keys.json", "a") as file:
+            json.dump(key_data, file, indent=4)
+        print("S200 keys have been saved to .secrets/s200_access_keys.json.")
+        print()
+    else:
+        print("s200 keys already exist, check .secrets/s200_access_keys.json")
+        print()
     exit()
 
 # Create temporary users on legacy for migrating objects
