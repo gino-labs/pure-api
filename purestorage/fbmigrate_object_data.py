@@ -153,7 +153,7 @@ def create_new_s200_access_keys():
     # Post new access keys from migrated users
     for user in s200_users:
         if os.path.exists(f".secrets/{s200.name}_s200_access_keys.json"):
-            with open(f".secrets/{s200.name}_200_access_keys.json", "r") as f:
+            with open(f".secrets/{s200.name}_s200_access_keys.json", "r") as f:
                 s200_keys = json.load(f)
             match_found = next((key for key in s200_keys if key["user"]["name"] == user["name"]), None)
             if match_found:
