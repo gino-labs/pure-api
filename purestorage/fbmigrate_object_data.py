@@ -331,6 +331,11 @@ def create_bucket_replica_links():
     buckets = legacy.get_buckets()
     s200_buckets = s200.get_buckets()
     credentials = legacy.get_object_store_remote_credentials()
+    replica_links = legacy.get_bucket_replia_links()
+
+    buckets_with_links = []
+    for link in replica_links:
+        buckets_with_links.append(link["local_bucket"]["name"])
 
     # Enabled versioning on each s200 bucket
     for bucket in s200_buckets:
@@ -340,7 +345,10 @@ def create_bucket_replica_links():
         s200.patch_bucket(bucket["name"], payload)
 
     # For each bucket on legacy establish replica link to remote s200
+    buckets_linked = 0
     for bucket in buckets:
+        if bucket["name"] in buckets_with_links:
+            continue
         account = bucket["account"]["name"]
 
         for cred in credentials:
@@ -361,8 +369,14 @@ def create_bucket_replica_links():
         }
         
         legacy.post_bucket_replica_link(bucket["name"], replication_credential["name"], payload)
-                
-        
+        buckets_linked += 1
+    
+    if buckets_linked == 0:
+        print("Bucket Replica links already established.")
+    else:
+        print(f"Bucket replica links update: {buckets_linked}")
+    print()
+                 
 # Main Script
 if __name__ == "__main__":
     # Fucntion call to migrate object store accounts
