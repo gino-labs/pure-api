@@ -178,6 +178,8 @@ def create_migration_legacy_users_and_keys():
         legacy.post_object_store_user(migration_user)
         migration_users.append(migration_user)
 
+    print(migration_users)
+    print()
     # For each migration user create a temporary access key
     migration_keys = []
     for user in migration_users:
