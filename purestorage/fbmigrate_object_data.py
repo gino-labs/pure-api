@@ -138,6 +138,10 @@ def create_new_s200_access_keys():
     else:
         legacy_user_names = [user["name"] for user in users]
 
+    for user in s200_users:
+        print(json.dumps(user, indent=4))
+
+    exit()
     key_data= []
     # Post new access keys from migrated users
     for user in s200_users:
@@ -153,7 +157,6 @@ def create_new_s200_access_keys():
 
     # Save key data to file in .secrets directory
     os.makedirs(".secrets", exist_ok=True)
-    today = f"{datetime.now().strftime('%d%b%Y')}"
     with open(".secrets/s200_access_keys.json", "w") as file:
         json.dump(key_data, file, indent=4)
 
