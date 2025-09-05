@@ -90,7 +90,8 @@ class FlashBladeAPI:
             print(err_code)
             print(response.text)
             print()
-            return None
+            #return None
+            sys.exit(1)
         
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
