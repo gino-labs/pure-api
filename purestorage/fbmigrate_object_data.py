@@ -259,8 +259,7 @@ def rclone_object_storage_buckets():
                 s200_key = key
                 print(f"Using s200 key: {s200_key['user']['name']} - {s200_key['name']}")
                 break
-        print(json.dumps(s200_migration_keys, indent=4))
-        exit()
+
         # Using rclone.conf.j2 jinja template to render with config data
         config_data = {
             "access_key_src": legacy_key["name"],
