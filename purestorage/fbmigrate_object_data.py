@@ -313,10 +313,9 @@ def add_remote_credentials():
     for cred in s200_credentials:
         access_key = cred["name"]
         secret_key = cred["secret_access_key"]
-        account_user = cred["user"]["name"].replace("/", "-")
-        print(account_user)
+        account_user = cred["user"]["name"].replace("/", "--")
+        print(f"Posting remote credential from s200 to legacy: {account_user}")
         print()
-        exit()
 
         payload = {
             "access_key_id": access_key,
@@ -332,9 +331,6 @@ def create_bucket_replica_links():
     buckets = legacy.get_buckets()
     s200_buckets = s200.get_buckets()
     credentials = legacy.get_object_store_remote_credentials()
-
-    with open(".secrets/s200_access_keys.json") as f:
-        s200_credentials = json.load(f)
 
     # Enabled versioning on each s200 bucket
     for bucket in s200_buckets:

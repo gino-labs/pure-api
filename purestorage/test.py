@@ -12,7 +12,4 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    legacy.get_object_store_users(dumpjson=True)
-    s200.get_object_store_users(dumpjson=True)
-
-    legacy.get_buckets(dumpjson=True)
+    legacy.get_object_store_remote_credentials(dumpjson=True)
