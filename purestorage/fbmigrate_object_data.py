@@ -338,7 +338,12 @@ def add_remote_credentials():
             "access_key_id": access_key,
             "secret_access_key": secret_key
         }
-        legacy.post_object_store_remote_credential(account_user, payload)
+
+        legacy_array_connections = legacy.get_array_connections()
+        remote_name = legacy_array_connections["remote"]["name"]
+        cred_name = f"{remote_name}/{account_user}"
+
+        legacy.post_object_store_remote_credential(cred_name, payload)
 
 # Establish bucket replica links, enable object versioning on buckets
 def create_bucket_replica_links():
