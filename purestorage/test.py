@@ -15,8 +15,8 @@ if __name__ == "__main__":
     s200_users = s200.get_object_store_users(dumpjson=True)
 
     # List of s200 object store user names
-    if s200_users is not []:
+    if s200_users:
         s200_user_names = [user["name"] for user in s200_users]
         print(s200_user_names)
     else:
-        print("s200 users is None.")
+        print("s200 users list is empty.")
