@@ -12,4 +12,4 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    legacy.get_object_store_remote_credentials(dumpjson=True)
+    s200.get_object_store_access_keys(dumpjson=True)
