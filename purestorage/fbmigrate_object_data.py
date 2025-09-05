@@ -81,7 +81,6 @@ def migrate_buckets():
             else:
                 quota_limit = ""
             
-            print(json.dumps(bucket["account"], indent=4))
             account = bucket["account"]["name"]
             payload = {
                 "account": {
@@ -134,7 +133,10 @@ def create_new_s200_access_keys():
     s200_users = s200.get_object_store_users()
 
     # List of object store user names
-    legacy_user_names = [user["name"] for user in users]
+    if isinstance(users, dict):
+        legacy_user_names = [users["name"]]
+    else:
+        legacy_user_names = [user["name"] for user in users]
 
     key_data= []
     # Post new access keys from migrated users
@@ -159,10 +161,15 @@ def create_new_s200_access_keys():
 def create_migration_legacy_users_and_keys():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("Create legacy migration users and keys")
+    print()
 
     accts = legacy.get_object_store_accounts()
 
-    acct_names = [accts["name"] for acct in accts]
+    if isinstance(accts, dict):
+        acct_names = [accts["name"]]
+    else:
+        acct_names = [acct["name"] for acct in accts]
 
     # For each account create a temporaray migration user
     migration_users = []
@@ -190,6 +197,8 @@ def create_migration_legacy_users_and_keys():
 def rclone_object_storage_buckets():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("Rclone object storage")
+    print()
 
     buckets = legacy.get_buckets()
     users = legacy.get_object_store_users()
