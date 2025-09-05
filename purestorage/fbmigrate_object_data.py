@@ -144,7 +144,7 @@ def create_new_s200_access_keys():
         if user["name"] in legacy_user_names and not user["access_keys"]:
             payload = {
                 "user": {
-                    "name": user
+                    "name": user["name"]
                 }
             }
             # Post new access key and append to list
@@ -178,8 +178,6 @@ def create_migration_legacy_users_and_keys():
         legacy.post_object_store_user(migration_user)
         migration_users.append(migration_user)
 
-    print(migration_users)
-    print()
     # For each migration user create a temporary access key
     migration_keys = []
     for user in migration_users:
