@@ -52,6 +52,8 @@ def migrate_object_store_accounts():
 def migrate_buckets():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("Migrate buckets")
+    print()
 
     buckets = legacy.get_buckets()
     s200_buckets = s200.get_buckets()
@@ -96,6 +98,8 @@ def migrate_buckets():
 def migrate_object_store_users():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("Migrate Users")
+    print()
 
     users = legacy.get_object_store_users()
     s200_users = s200.get_object_store_users()
@@ -117,6 +121,8 @@ def migrate_object_store_users():
 def create_new_s200_access_keys():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("New s200 access keys")
+    print()
 
     users = legacy.get_object_store_users()
     s200_users = s200.get_object_store_users()
