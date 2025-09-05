@@ -84,7 +84,9 @@ def migrate_buckets():
             print(json.dumps(bucket["account"], indent=4))
             account = bucket["account"]["name"]
             payload = {
-                "account": bucket,
+                "account": {
+                    "name": account
+                },
                 "bucket_type": bucket["bucket_type"],
                 "hard_limit_enabled": bucket["hard_limit_enabled"],
                 "object_lock_config": {
