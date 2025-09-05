@@ -15,3 +15,4 @@ if __name__ == "__main__":
     legacy.get_buckets(dumpjson=True)
     s200.get_buckets(dumpjson=True)
 
+    s200.get_object_store_accounts(dumpjson=True)
