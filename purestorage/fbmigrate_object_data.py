@@ -266,7 +266,7 @@ def rclone_object_storage_buckets():
             "secret_key_src": legacy_key["secret_access_key"],
             "data_ip_src": legacy.data_ip,
             "access_key_dest": s200_key["name"],
-            "secret_key_dest": s200_key["secreat_access_key"],
+            "secret_key_dest": s200_key["secret_access_key"],
             "data_ip_dest": s200.data_ip
         }
 
