@@ -323,6 +323,16 @@ def add_remote_credentials():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
+    remote_creds = legacy.get_object_store_remote_credentials()
+
+    if remote_creds:
+        if isinstance(remote_creds, dict):
+            cred_remote_names = [remote_creds["name"]]
+        else:
+            cred_remote_names = [cred["name"] for cred in remote_creds]
+    else:
+        cred_remote_names = []
+
     # Add remote credentials to legacy from s200 using json file in .secrets
     with open(f".secrets/{s200.name}_s200_access_keys.json", "r") as file:
         s200_credentials = json.load(file)
@@ -342,6 +352,9 @@ def add_remote_credentials():
         legacy_array_connections = legacy.get_array_connections()
         remote_name = legacy_array_connections["remote"]["name"]
         cred_name = f"{remote_name}/{account_user}"
+
+        if cred_name in cred_remote_names:
+            continue
 
         legacy.post_object_store_remote_credential(cred_name, payload)
 
