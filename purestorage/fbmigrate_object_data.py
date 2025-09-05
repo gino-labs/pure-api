@@ -146,6 +146,8 @@ def create_new_s200_access_keys():
                 s200_keys = json.load(f)
             match_found = next((key for key in s200_keys if key["user"]["name"] == user["name"]), None)
             if match_found:
+                print(match_found)
+                print()
                 continue
         if user["name"] in legacy_user_names:
             payload = {
@@ -156,6 +158,7 @@ def create_new_s200_access_keys():
             # Post new access key and append to list
             new_key_entry = s200.post_object_store_access_key(user["name"], payload)
             key_data.append(new_key_entry)
+    exit()
 
     # Save key data to file in .secrets directory
     os.makedirs(".secrets", exist_ok=True)
