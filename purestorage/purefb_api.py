@@ -321,7 +321,6 @@ class FlashBladeAPI:
         url = self.baseurl + "arrays/clients/performance"
         msg = "NFS clients"
         data = self.REST_Request("get", url, msg)
-
         return data
         
     # Get remote array connections
