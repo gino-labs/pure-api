@@ -382,7 +382,7 @@ class FlashBladeAPI:
         if data is not None:
             return data["items"][0]
         
-    # Post an object store remote credential
+    # Post an object store remote credential (formatted <remote-name>/<credentials-name>)
     def post_object_store_remote_credential(self, credential_name, payload):
         url = self.baseurl + f"object-store-remote-credentials?names={credential_name}"
         msg = f"object store remote credential: {credential_name}"

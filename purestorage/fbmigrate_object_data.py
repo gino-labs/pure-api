@@ -301,7 +301,7 @@ def rclone_object_storage_buckets():
             msg = f"Rclone success for {bucket['name']}"
             script_logger.write_log(msg, show_output=True)
         except Exception as e:
-            print(f"Excpetion has occured trying to rclone {bucket['name']}: {e}")
+            print(f"Exception has occured trying to rclone {bucket['name']}: {e}")
             print()
 
     # After each bucket has been rcloned remove the last rclone.conf
@@ -329,7 +329,7 @@ def add_remote_credentials():
     for cred in s200_credentials:
         access_key = cred["name"]
         secret_key = cred["secret_access_key"]
-        account_user = cred["user"]["name"].replace("/", "--")
+        account_user = cred["user"]["name"].replace("/", "-")
         print(f"Posting remote credential from s200 to legacy: {account_user}")
         print()
 
