@@ -58,9 +58,9 @@ def migrate_buckets():
                 "account": bucket["account"],
                 "bucket_type": bucket["bucket_type"],
                 "hard_limit_enabled": bucket["hard_limit_enabled"],
-                "object_lock_config": bucket["object_lock_config"],
-                "quota_limit": bucket["quota_limit"],
-                "retention_lock": bucket["unlocked"]
+                #"object_lock_config": bucket["object_lock_config"],
+                "quota_limit": str(bucket["quota_limit"]),
+                #"retention_lock": bucket["unlocked"]
             }
             s200.post_bucket(bucket["name"], payload)
         
