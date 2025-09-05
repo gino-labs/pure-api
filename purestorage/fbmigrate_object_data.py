@@ -18,7 +18,12 @@ def migrate_object_store_accounts():
     s200_accts = s200.get_object_store_accounts()
 
     # List of s200 object store account names
-    s200_acct_names = [] if not s200_accts else [acct["name"] for acct in s200_accts]
+    if not s200_accts:
+        s200_acct_names = []
+    elif isinstance(s200_accts, dict):
+        s200_acct_names = [s200_accts["name"]]
+    else:
+        s200_acct_names = [acct["name"] for acct in s200_accts]
 
     # Post each account not in s200 account names
     for acct in accts:
@@ -39,7 +44,12 @@ def migrate_buckets():
     s200_buckets = s200.get_buckets()
 
     # List of s200 bucket names
-    s200_bucket_names = [] if not s200_buckets else [bucket["name"] for bucket in s200_buckets]
+    if not s200_buckets:
+        s200_bucket_names = []
+    elif isinstance(s200_buckets, dict):
+        s200_bucket_names = [s200_buckets["name"]]
+    else:
+        s200_bucket_names = [bucket["name"] for bucket in s200_buckets]
 
     # Post each bucket not in s200 bucket names
     for bucket in buckets:
@@ -63,7 +73,12 @@ def migrate_object_store_users():
     s200_users = s200.get_object_store_users()
 
     # List of s200 object store user names if any
-    s200_user_names = [] if not s200_users else [user["name"] for user in s200_users]
+    if not s200_users:
+        s200_user_names = []
+    elif isinstance(s200_users, dict):
+        s200_user_names = [s200_users["name"]]
+    else:
+        s200_user_names = [user["name"] for user in s200_users]
 
     # Post each user not in s200 user names
     for user in users:
