@@ -28,13 +28,23 @@ def migrate_object_store_accounts():
     # Post each account not in s200 account names
     for acct in accts:
         if acct["name"] not in s200_acct_names:
+            if acct["bucket_defaults"]["quota_limit"]:
+                bd_quota_limit = str(acct["bucket_defaults"]["quota_limit"])
+            else:
+                bd_quota_limit = ""
+
+            if acct["quota_limit"]:
+                quota_limit = str(acct["quota_limit"])
+            else:
+                quota_limit = ""
+
             payload = {
                 "bucket_defaults": { 
                     "hard_limit_enabled": acct["bucket_defaults"]["hard_limit_enabled"],
-                    "quota_limit": str(acct["bucket_defaults"]["quota_limit"])
+                    "quota_limit": bd_quota_limit
                 },
                 "hard_limit_enabled": acct["hard_limit_enabled"],
-                "quota_limit": str(acct["quota_limit"])
+                "quota_limit": quota_limit
             }
             s200.post_object_store_account(acct["name"], payload)
 
@@ -57,6 +67,16 @@ def migrate_buckets():
     # Post each bucket not in s200 bucket names
     for bucket in buckets:
         if bucket["name"] not in s200_bucket_names:
+            if bucket["object_lock_config"]["default_retention"]:
+                default_retention = str(bucket["object_lock_config"]["default_retention"])
+            else:
+                defatul_retention = ""
+
+            if bucket["quota_limit"]:
+                quota_limit = str(bucket["quota_limit"])
+            else:
+                quota_limit = ""
+            
             payload = {
                 "account": bucket["account"],
                 "bucket_type": bucket["bucket_type"],
@@ -65,9 +85,9 @@ def migrate_buckets():
                     "default_retention_mode": bucket["object_lock_config"]["default_retention_mode"],
                     "enabled": bucket["object_lock_config"]["enabled"],
                     "freeze_locked_objects": bucket["object_lock_config"]["freeze_locked_objects"],
-                    "default_retention": str(bucket["object_lock_config"]["default_retention"])
+                    "default_retention": default_retention
                 },
-                "quota_limit": str(bucket["quota_limit"]),
+                "quota_limit": quota_limit,
                 "retention_lock": bucket["retention_lock"]
             }
             s200.post_bucket(bucket["name"], payload)
