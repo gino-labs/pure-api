@@ -281,10 +281,9 @@ def rclone_object_storage_buckets():
         rclone_cmd = ["rclone", "copy", f"srcfb:{bucket['name']}", f"destfb:{bucket['name']}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"]
         try:
             subprocess.run(rclone_cmd)
-            msg = f"Rclone success for {bucket['name']}"
-            script_logger.write_log(msg)
-            print(msg)
             print()
+            msg = f"Rclone success for {bucket['name']}"
+            script_logger.write_log(msg, show_output=True)
         except Exception as e:
             print(f"Excpetion has occured trying to rclone {bucket['name']}: {e}")
             print()
@@ -315,6 +314,9 @@ def add_remote_credentials():
         access_key = cred["name"]
         secret_key = cred["secret_access_key"]
         account_user = cred["user"]["name"].replace("/", "-")
+        print(account_user)
+        print()
+        exit()
 
         payload = {
             "access_key_id": access_key,
