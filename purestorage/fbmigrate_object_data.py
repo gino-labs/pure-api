@@ -310,6 +310,8 @@ def rclone_object_storage_buckets():
 # Remove temporary object store users on legacy used for rclone
 def remove_temporary_migration_users():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    print("Remove temporary migration users on legacy")
+    print()
 
     users = legacy.get_object_store_users()
 
@@ -322,6 +324,8 @@ def remove_temporary_migration_users():
 def add_remote_credentials():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("Add remote credentials from s200 to legacy")
+    print()
 
     remote_creds = legacy.get_object_store_remote_credentials()
 
@@ -362,6 +366,8 @@ def add_remote_credentials():
 def create_bucket_replica_links():
     legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    print("Create bucket replica links")
+    print()
 
     buckets = legacy.get_buckets()
     s200_buckets = s200.get_buckets()
