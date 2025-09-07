@@ -12,4 +12,4 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    legacy.get_array_connections(dumpjson=True)
+    legacy.get_bucket_replia_links(dumpjson=True)
