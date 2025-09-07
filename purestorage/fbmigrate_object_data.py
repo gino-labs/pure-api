@@ -368,9 +368,13 @@ def create_bucket_replica_links():
     credentials = legacy.get_object_store_remote_credentials()
     replica_links = legacy.get_bucket_replia_links()
 
-    buckets_with_links = []
-    for link in replica_links:
-        buckets_with_links.append(link["local_bucket"]["name"])
+    if replica_links:
+        if isinstance(replica_links, dict):
+            buckets_with_links = [replica_links["local"]["name"]]
+        else:
+            buckets_with_links = [link["local_bucket"]["name"] for link in replica_links]
+    else:
+        buckets_with_links = []
 
     # Enabled versioning on each s200 bucket
     for bucket in s200_buckets:
