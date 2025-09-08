@@ -19,12 +19,13 @@ if __name__ == "__main__":
         "writable": False,
         "requested_promotion_state": "demoted"
     }
-    # rc = pv3.Patch_Fs("gxc_testing", auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED on legacy")
 
     promote_payload = {
         "writable": True,
         "requested_promotion_state": "promoted"
     }
 
-    pv3.Patch_Fs("gxc_testing", auth_token_s200, pv3.PB2_MGT, demote_payload, message="DEMOTED on s200")
-    #pv3.Patch_Fs("gxc_testing", auth_token_s200, pv3.PB2_MGT, promote_payload, message="PROMOTED on s200")
+    #pv3.Patch_Fs("gxc_testing", auth_token_s200, pv3.PB2_MGT, demote_payload, message="DEMOTED on s200")
+    pv3.Patch_Fs("gxc_testing", auth_token_s200, pv3.PB2_MGT, promote_payload, message="PROMOTED on s200")
+
+    #links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
