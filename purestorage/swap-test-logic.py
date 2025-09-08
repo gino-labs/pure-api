@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # Get List of Filesystems on Legacy #
     filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
     purelog.write_log("Legacy filesystems retrieved")
-    print(len(filesystems))
+    print(f"Legacy filesystems count before removing gxc: {len(filesystems)}")
 
     purelog.write_log(f"Legacy filesystems before with gxc...")
     # Remove gxc filesystems from list
@@ -33,12 +33,12 @@ if __name__ == "__main__":
         if "gxc" in fs.get("name", ""):
             filesystems.remove(fs)
     purelog.write_log("Legacy filesystems after without gxc...")
-    print(len(filesystems))
+    print(f"Legacy filesystems count after removing gxc: {len(filesystems)}")
 
     # Get list of filesystems to Promote on S200
     filesystems200 = pv3.Get_Filesystems(auth_token_s200, pv3.PB2_MGT)
     purelog.write_log("S200 filesystems retreived")
-    print(len(filesystems200))
+    print(f"S200 filesystems count before removing gxc: {len(filesystems200)}")
 
     purelog.write_log("S200 filesystems before with gxc...")
     # Remove gxc filesystems from list
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         if "gxc" in fs.get("name", ""):
             filesystems200.remove(fs)
     purelog.write_log("S200 filesystems before without gxc...")
-    print(len(filesystems200))
+    print(f"Legacy filesystems count before removing gxc: {len(filesystems200)}")
 
     fs200_names = []
     for fs in filesystems200:
@@ -101,7 +101,6 @@ if __name__ == "__main__":
     print()
     clients = pv3.Get_NFS_Clients(auth_token, pv3.PB1_MGT, message=False)
     purelog.write_log("NFS Clients connected retrieved")
-    dump(clients)
 
     hosts = []
     for client in clients:
