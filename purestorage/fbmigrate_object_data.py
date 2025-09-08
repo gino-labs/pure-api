@@ -294,7 +294,7 @@ def rclone_object_storage_buckets():
             file.write(rendered_output)
 
         # Use subprocess module to run rclone process
-        rclone_cmd = ["rclone", "copy", f"srcfb:{bucket['name']}", f"destfb:{bucket['name']}", "--config", "rclone.conf", "--progress", "-vv", "--no-check-certificate"]
+        rclone_cmd = ["rclone", "copy", f"srcfb:{bucket['name']}", f"destfb:{bucket['name']}", "--config", "rclone.conf", "--checkers=32","--progress", "-vv", "--no-check-certificate"]
         try:
             subprocess.run(rclone_cmd)
             print()
