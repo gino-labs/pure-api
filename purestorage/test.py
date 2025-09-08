@@ -13,9 +13,25 @@ if __name__ == "__main__":
     purelog = pl.PureLog()
 
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
     
-    demote_payload = {
-        "writable": False,
-        "requested_promotion_state": "demoted"
+    # demote_payload = {
+    #     "writable": False,
+    #     "requested_promotion_state": "demoted"
+    # }
+    # rc = pv3.Patch_Fs("gxc_testing", auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED on legacy")
+
+    promote_payload = {
+        "nfs": {
+            "v3_enabled": fs["nfs"]["v3_enabled"],
+            "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
+            "rules": fs["nfs"]["rules"]
+        },
+        "http": {
+            "enabled": fs["http"]["enabled"]
+        },
+        "writable": True,
+        "requested_promotion_state": "promoted"
     }
-    rc = pv3.Patch_Fs("gxc_testing", auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED on legacy")
+
+    pv3.Patch_Fs("gxc_testing", auth_token_s200, pv3.PB2_MGT, promote_payload, message="PROMOTED on s200")
