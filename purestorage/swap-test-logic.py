@@ -10,6 +10,11 @@ if __name__ == "__main__":
     #legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
     #s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
+    def dump(data):
+        print(json.dumps(data, indent=4))
+        print()
+        time.sleep(5)
+
     purelog = pl.PureLog()
 
     # Get auth tokens #
@@ -20,6 +25,7 @@ if __name__ == "__main__":
     # Get List of Filesystems on Legacy #
     filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
     purelog.write_log("Legacy filesystems retrieved")
+    dump(filesystems)
 
     purelog.write_log(f"Legacy filesystems before with gxc...")
     # Remove gxc filesystems from list
@@ -27,10 +33,12 @@ if __name__ == "__main__":
         if "gxc" in fs.get("name", ""):
             filesystems.remove(fs)
     purelog.write_log("Legacy filesystems after without gxc...")
+    dump(filesystems)
 
     # Get list of filesystems to Promote on S200
     filesystems200 = pv3.Get_Filesystems(auth_token_s200, pv3.PB2_MGT)
     purelog.write_log("S200 filesystems retreived")
+    dump(filesystems200)
 
     purelog.write_log("S200 filesystems before with gxc...")
     # Remove gxc filesystems from list
@@ -38,17 +46,20 @@ if __name__ == "__main__":
         if "gxc" in fs.get("name", ""):
             filesystems200.remove(fs)
     purelog.write_log("S200 filesystems before without gxc...")
+    dump(filesystems200)
 
     fs200_names = []
     for fs in filesystems200:
         fs200_names.append(fs["name"])
     purelog.write_log("S200 filesystems names list: ", jsondata=fs200_names)
+    dump(fs200_names)
 
     # Get Interface info from legacy #
     ifaces = pv3.Get_Interfaces(auth_token, pv3.PB1_MGT)
     data_iface_names = []
     original_ips = [] # Orignal production IPs to check on NFS clients later #
     purelog.write_log("Legacy interfaces retrieved")
+    dump(ifaces)
 
     for iface in ifaces:
         if "data" in iface["services"]:
@@ -56,6 +67,8 @@ if __name__ == "__main__":
             original_ips.append(iface["address"])
     purelog.write_log("Legacy data interface names list: ", jsondata=data_iface_names)
     purelog.write_log("Original data IPs of legacy FlashBlade used for Production: ", jsondata=original_ips)
+    dump(data_iface_names)
+    dump(original_ips)
 
     if len(original_ips) > 1:
         pure_ips = "|".join(original_ips)
@@ -70,21 +83,25 @@ if __name__ == "__main__":
     ifaces_s200 = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
     data_iface_names_s200 = []
     purelog.write_log("S200 interfaces retrieved")
+    dump(ifaces_s200)
 
     for iface in ifaces_s200:
         if "data" in iface["services"]:
             data_iface_names_s200.append(iface["name"])
     purelog.write_log("S200 data interface names list: ", jsondata=data_iface_names_s200)
+    dump(data_iface_names_s200)
 
     # Get filesystem replica links
     links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
     purelog.write_log("Replica links retrieved on Legacy")
+    dump(links)
 
     # Get NFS clients before swapping IPs #
     print("Getting list of active NFS clients to the pure...")
     print()
     clients = pv3.Get_NFS_Clients(auth_token, pv3.PB1_MGT, message=False)
     purelog.write_log("NFS Clients connected retrieved")
+    dump(clients)
 
     hosts = []
     for client in clients:
@@ -93,6 +110,7 @@ if __name__ == "__main__":
             host = host.split(":")[0]
             hosts.append(host)
     purelog.write_log("Updated list to exclude 172.20.0.X replication addresses: ", jsondata=hosts)
+    dump(hosts)
 
     inventory = {
         "all": {
@@ -100,6 +118,7 @@ if __name__ == "__main__":
         }
     }
     purelog.write_log("Dynamic host inventory dictionary created for future ansible inventory")
+    dump(inventory)
 
     # Simulate changes in order using logs
     purelog.write_log("Create temporary inventory file")
