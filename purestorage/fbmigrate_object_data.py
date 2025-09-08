@@ -376,7 +376,7 @@ def create_bucket_replica_links():
 
     if replica_links:
         if isinstance(replica_links, dict):
-            buckets_with_links = [replica_links["local"]["name"]]
+            buckets_with_links = [replica_links["local_bucket"]["name"]]
         else:
             buckets_with_links = [link["local_bucket"]["name"] for link in replica_links]
     else:
