@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # Get List of Filesystems on Legacy #
     filesystems = pv3.Get_Filesystems(auth_token, pv3.PB1_MGT)
     purelog.write_log("Legacy filesystems retrieved")
-    dump(filesystems)
+    print(len(filesystems))
 
     purelog.write_log(f"Legacy filesystems before with gxc...")
     # Remove gxc filesystems from list
@@ -33,12 +33,12 @@ if __name__ == "__main__":
         if "gxc" in fs.get("name", ""):
             filesystems.remove(fs)
     purelog.write_log("Legacy filesystems after without gxc...")
-    dump(filesystems)
+    print(len(filesystems))
 
     # Get list of filesystems to Promote on S200
     filesystems200 = pv3.Get_Filesystems(auth_token_s200, pv3.PB2_MGT)
     purelog.write_log("S200 filesystems retreived")
-    dump(filesystems200)
+    print(len(filesystems200))
 
     purelog.write_log("S200 filesystems before with gxc...")
     # Remove gxc filesystems from list
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         if "gxc" in fs.get("name", ""):
             filesystems200.remove(fs)
     purelog.write_log("S200 filesystems before without gxc...")
-    dump(filesystems200)
+    print(len(filesystems200))
 
     fs200_names = []
     for fs in filesystems200:
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     data_iface_names = []
     original_ips = [] # Orignal production IPs to check on NFS clients later #
     purelog.write_log("Legacy interfaces retrieved")
-    dump(ifaces)
+    print(len(ifaces))
 
     for iface in ifaces:
         if "data" in iface["services"]:
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     ifaces_s200 = pv3.Get_Interfaces(auth_token_s200, pv3.PB2_MGT)
     data_iface_names_s200 = []
     purelog.write_log("S200 interfaces retrieved")
-    dump(ifaces_s200)
+    print(len(ifaces_s200))
 
     for iface in ifaces_s200:
         if "data" in iface["services"]:
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     # Get filesystem replica links
     links = pv3.Get_Filesystem_Replica_Links(auth_token, pv3.PB1_MGT)
     purelog.write_log("Replica links retrieved on Legacy")
-    dump(links)
+    print(len(links))
 
     # Get NFS clients before swapping IPs #
     print("Getting list of active NFS clients to the pure...")
