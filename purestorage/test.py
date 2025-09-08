@@ -12,4 +12,10 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    legacy.get_bucket_replia_links(dumpjson=True)
+    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
+    
+    demote_payload = {
+        "writable": False,
+        "requested_promotion_state": "demoted"
+    }
+    rc = pv3.Patch_Fs("gxc_testing", auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED on legacy")
