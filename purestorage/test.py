@@ -22,14 +22,6 @@ if __name__ == "__main__":
     # rc = pv3.Patch_Fs("gxc_testing", auth_token, pv3.PB1_MGT, demote_payload, message="DEMOTED on legacy")
 
     promote_payload = {
-        "nfs": {
-            "v3_enabled": fs["nfs"]["v3_enabled"],
-            "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
-            "rules": fs["nfs"]["rules"]
-        },
-        "http": {
-            "enabled": fs["http"]["enabled"]
-        },
         "writable": True,
         "requested_promotion_state": "promoted"
     }
