@@ -77,23 +77,21 @@ class FlashBladeAPI:
     
         if response.status_code == 200:
             msg = f"{method.upper()} success for {message}"
-            self.logger.write_log(msg)
-            print(msg)
-            print()
+            self.logger.write_log(msg, show_output=True)
             if method == "delete":
                 return {"status_code": response.status_code, "text": response.text}
             else:
                 return response.json()
         else:
+            err_json = json.loads(response.text)
             err_code = f"Error Status Code: {response.status_code}"
             self.logger.write_log(err_code)
             self.logger.write_log(response.text)
             print(err_code)
             print(response.text)
             print()
-            #return None
-            sys.exit(1)
-        
+            return None
+
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
         def log_print(msg, show_data=None, debug=dump):
