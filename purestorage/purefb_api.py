@@ -263,7 +263,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
 
     # Get filesystem replica links
-    def get_filesytem_replica_links(self, filesystems, dumpjson=False):
+    def get_filesytem_replica_links(self, filesystems=None, dumpjson=False):
         if filesystems is not None:
             fs_list = self.to_csv(filesystems)
             url = self.baseurl + f"file-system-replica-links?local_file_system_names={fs_list}" 
