@@ -8,25 +8,31 @@ import json
 import os
 
 # Logger object
-purelog = pfl.PureLog()
+scriptlog = pfl.PureLog()
 
 # FlashBlade API Object Instances
-Legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
 s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
 # Get Legacy file systems
+legacy.get_filesystems()
 
 # Get S200 file systems
+s200.get_filesystems()
 
 # Get Legacy interfaces' info
+legacy.get_interfaces()
 
 # Store Production IPs in variable to pass to ansible playbook later
 
 # Get S200 interfaces' info
+s200.get_interfaces()
 
 # Get file system replica links on Legacy
+legacy.get_filesytem_replica_links()
 
 # Get active NFS clients before swapping
+legacy.get_nfs_clients()
 
 # Create inventory file with NFS clients obtained
 
