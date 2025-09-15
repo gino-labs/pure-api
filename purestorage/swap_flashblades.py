@@ -32,6 +32,7 @@ s200.get_interfaces()
 legacy.get_filesytem_replica_links()
 
 # Get active NFS clients before swapping
+scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
 legacy.get_nfs_clients()
 
 # Create inventory file with NFS clients obtained
