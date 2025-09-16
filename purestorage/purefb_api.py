@@ -94,7 +94,6 @@ class FlashBladeAPI:
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
         if "errors" not in data:
-            print(data)
             try:
                 if len(data["items"]) == 1:
                     if dump:
