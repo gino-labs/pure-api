@@ -33,6 +33,6 @@ if __name__ == "__main__":
         ]
     }
 
-    print(analinux_name)
+    legacy.get_array_connections(dumpjson=True)
 
     legacy.post_filesystem_replica_link(analinux_name, payload)
