@@ -15,6 +15,4 @@ if __name__ == "__main__":
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
     auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
     
-    data = legacy.get_nfs_clients(dumpjson=True)
-
-    print(json.dumps(data, indent=4))
+    legacy.post_filesystem_snapshot("anaconda_linux_denver", "test-snap")
