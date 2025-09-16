@@ -20,4 +20,9 @@ if __name__ == "__main__":
         "requested_promotion_state": "demoted"
     }
 
-    legacy.patch_filesystem("test", demote_payload)
+    promote_payload = {
+        "writable": True,
+        "requested_promotion_state": "promoted"
+    }
+
+    legacy.patch_filesystem("test", promote_payload)
