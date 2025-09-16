@@ -129,5 +129,6 @@ for fs in legacy_filesystems:
         s200.patch_filesystem(fs["name"], promote_payload)
 
 # Run ansible playbook with nfs client inventory and production IP variable
+print("Enter root password for ansible playbook.")
+subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"])
 
-# Clean up
