@@ -17,10 +17,10 @@ if __name__ == "__main__":
     
     s200.patch_interface("gxc-testing", {"address": "10.232.0.12"})
 
-    ana = legacy.get_filesytem_replica_links(filesystems="anaconda_linux_denver")
+    #ana = legacy.get_filesytem_replica_links(filesystems="anaconda_linux_denver")
     analinux = legacy.get_filesystems(filesystems="anaconda_linux_denver")
 
-    analinux_id = analinux["id"]
+    analinux_name = analinux["name"]
 
     #purelog.write_log(f"Deleting replication link for {ana['local_file_system']['name']}", show_output=True)
     #test_dat = legacy.delete_filesystem_replica_link(ana["id"])
@@ -33,4 +33,4 @@ if __name__ == "__main__":
         ]
     }
 
-    legacy.post_filesystem_replica_link(analinux_id, payload)
+    legacy.post_filesystem_replica_link(analinux_name, payload)
