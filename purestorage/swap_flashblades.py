@@ -22,6 +22,8 @@ s200_filesystems = s200.get_filesystems()
 
 s200_filesystem_names = [fs["name"] for fs in s200_filesystems]
 
+scriptlog.write_log("S200 file system names list", jsondata=s200_filesystem_names, show_output=True)
+
 # Get Legacy interfaces' info
 legacy_interfaces = legacy.get_interfaces()
 
@@ -42,10 +44,14 @@ else:
     print("No data interfaces.")
     print()
 
+scriptlog.write_log("Legacy data interface names list", jsondata=legacy_data_iface_names, show_output=True)
+scriptlog.write_log("Legacy production IP list", jsondata=legacy_data_ips, show_output=True)
+
 # Get S200 interfaces' info
 s200_interfaces = s200.get_interfaces()
 
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["name"]]
+scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_names, show_output=True)
 
 # Get file system replica links on Legacy
 legacy_replica_links = legacy.get_filesytem_replica_links()
