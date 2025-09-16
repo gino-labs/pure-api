@@ -33,6 +33,8 @@ if __name__ == "__main__":
         ]
     }
 
-    legacy.get_array_connections(dumpjson=True)
+    connections = legacy.get_array_connections(dumpjson=True)
 
-    legacy.post_filesystem_replica_link(analinux_name, payload)
+    remote_array = connections["remote"]["name"]
+
+    legacy.post_filesystem_replica_link(analinux_name, remote_array, payload)
