@@ -115,7 +115,7 @@ class FlashBladeAPI:
         else:
             self.logger.write_log("Bad request, following errors detected:", jsondata=data, show_output=True)
             user_input = input("Would you like to continue? y/n ")[:1].lower()
-            while user_input != "y" or user_input != "n":
+            while user_input not in ("y", "n"):
                 user_input = input("Please enter y/n to stop or continue: ")[:1].lower()
             if user_input == "n":
                 sys.exit(1)
