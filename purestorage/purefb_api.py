@@ -105,7 +105,10 @@ class FlashBladeAPI:
                 else:
                     if dump:
                         self.logger.write_log("Debug: See parsed data.", jsondata=data["items"], show_output=dump)
-                    return data["items"]
+                    if "items" not in data:
+                        return data
+                    else:
+                        return data["items"]
             except Exception as e:
                 self.logger.write_log(f"Exception has occured:\n {e}", show_output=True)
                 self.logger.write_log("Returning full unparsed json data.", show_output=True)
@@ -482,44 +485,58 @@ class FlashBladeAPI:
     
 
     # Delete a filesytem
-    def delete_filesystem(self, filesystem):
+    def delete_filesystem(self, filesystem, dumpjson=True):
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("delete", url, msg)
 
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Delete an object store user
-    def delete_object_store_user(self, object_user):
+    def delete_object_store_user(self, object_user, dumpjson=True):
         url = self.baseurl + f"object-store-users?names={object_user}"
         msg = f"object store user: {object_user}"
         data = self.REST_Request("delete", url, msg)
 
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Delete an object store access key
-    def delete_object_store_access_key(self, access_key):
+    def delete_object_store_access_key(self, access_key, dumpjson=True):
         url = self.baseurl + f"object-store-access-keys?names={access_key}"
         msg = f"access key: {access_key}"
         data = self.REST_Request("delete", url, msg)
 
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Delete an object store remote credential
-    def delete_object_store_remote_credential(self, credential_name):
+    def delete_object_store_remote_credential(self, credential_name, dumpjson=True):
         url = self.baseurl + f"object-store-remote_credentials?names={credential_name}"
         msg = f"credential name: {credential_name}"
         data = self.REST_Request("delete", url, msg)
+
+        return self.Parse_Data(data, dump=dumpjson)
     
     # Delete a bucket replica link
-    def delete_bucket_replica_link(self, local_bucket):
+    def delete_bucket_replica_link(self, local_bucket, dumpjson=True):
         url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}"
         msg = f"bucket replica link: {local_bucket}"
         data = self.REST_Request("delete", url, msg)
 
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Delete a filesystem replica link
-    def delete_filesystem_replica_link(self, local_filesystem):
+    def delete_filesystem_replica_link(self, local_filesystem, dumpjson=True):
         url = self.baseurl + f"file-system-replica-links?local_file_system_names={local_filesystem}&cancel_in_progress_transfers=true"
         msg = f"filesystem replica link: {local_filesystem}"
         data = self.REST_Request("delete", url, msg)
 
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Delete a filesystem snapshot
-    def delete_filesystem_snapshot(self, snapshot):
+    def delete_filesystem_snapshot(self, snapshot, dumpjson=True):
         url = self.baseurl + f"file-system-snapshots?names={snapshot}"
         msg = f"snapshot: {snapshot}"
         data = self.REST_Request("delete", url, msg)
+
+        return self.Parse_Data(data, dump=dumpjson)
         
