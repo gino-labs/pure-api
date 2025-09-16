@@ -104,7 +104,7 @@ for iface in s200_interfaces:
 
 # Delete replica links on Legacy
 for link in legacy_replica_links:
-    scriptlog.write_log(f"Deleting replication link for {link['local_file_system']['name']}")
+    scriptlog.write_log(f"Deleting replication link for {link['local_file_system']['name']}", show_output=True)
     legacy.delete_filesystem_replica_link(link["id"])
 
 # Promote / Enabled each file system on S200
