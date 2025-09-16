@@ -117,6 +117,7 @@ class FlashBladeAPI:
                 return data
         else:
             self.logger.write_log("Bad request, following errors detected:", jsondata=data, show_output=True)
+            return data
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):
@@ -455,8 +456,7 @@ class FlashBladeAPI:
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        self.Parse_Data(data)
 
     # Patch a network interface
     def patch_interface(self, interface, payload):
@@ -464,8 +464,7 @@ class FlashBladeAPI:
         msg = f"network interface: {interface}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        self.Parse_Data(data)
 
     # Patch a snapshot
     def patch_filesystem_snapshot(self, snapshot, payload):
@@ -475,8 +474,7 @@ class FlashBladeAPI:
         msg = f"filesystem snapshot: {snapshot}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        self.Parse_Data(data)
         
     # Patch a bucket
     def patch_bucket(self, bucket, payload):
@@ -484,8 +482,7 @@ class FlashBladeAPI:
         msg = f"filesystem bucket: {bucket}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        self.Parse_Data(data)
         
 
     ##########################
