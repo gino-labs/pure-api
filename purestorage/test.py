@@ -15,6 +15,6 @@ if __name__ == "__main__":
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
     auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
     
-    s200.patch_interface("gxc-testing", {"address": "10.232.0.11"})
+    s200.patch_interface("gxc-testing", {"address": "10.232.0.12"})
 
     legacy.delete_filesystem_replica_link("anaconda_linux_denver")
