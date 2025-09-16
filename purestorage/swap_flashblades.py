@@ -71,7 +71,7 @@ inventory = {
 inventory_filename = s200.mgt_ip[:2] + "_inventory.json"
 
 os.makedirs("logs", exist_ok=True)
-with open(f"log/{inventory_filename}", "w") as inv_file:
+with open(f"logs/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
 # Create final snapshots on Legacy and wait 30 seconds for them to settle
