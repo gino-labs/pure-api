@@ -103,11 +103,15 @@ for iface in s200_interfaces:
         legacy.patch_interface(iface["name"], payload)
 
 # Delete replica links on Legacy
-for link in legacy_replica_links:
-    scriptlog.write_log(f"Deleting replication link for {link['local_file_system']['name']}", show_output=True)
-    legacy.delete_filesystem_replica_link(link["id"])
+legacy_array_connections = legacy.get_array_connections()
 
-# Promote / Enabled each file system on S200
+remote_array = legacy_array_connections["remote"]["name"]
+
+for link in legacy_replica_links:
+    fs = link["local_file_system"]["name"]
+    legacy.delete_filesystem_replica_link(fs, remote_array)
+
+# Promote / Enable each file system on S200
 
 # Run ansible playbook with nfs client inventory and production IP variable
 

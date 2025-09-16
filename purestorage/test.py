@@ -16,23 +16,3 @@ if __name__ == "__main__":
     auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
 
     connections = legacy.get_array_connections(dumpjson=True)
-
-    remote_array = connections["remote"]["name"]
-
-    ana = legacy.get_filesytem_replica_links(filesystems="anaconda_linux_denver")
-    analinux = legacy.get_filesystems(filesystems="anaconda_linux_denver")
-
-    analinux_name = analinux["name"]
-
-    purelog.write_log(f"Deleting replication link for {ana['local_file_system']['name']}", show_output=True)
-    test_dat = legacy.delete_filesystem_replica_link(analinux_name, remote_array)
-
-    payload = {
-        "policies": [
-            {
-                "name": "5_min",
-            }
-        ]
-    }
-
-    legacy.post_filesystem_replica_link(analinux_name, remote_array, payload)
