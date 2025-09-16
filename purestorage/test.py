@@ -15,4 +15,9 @@ if __name__ == "__main__":
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
     auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
     
-    legacy.post_filesystem_snapshot("anaconda_linux_denver", "test-snap")
+    demote_payload = {
+        "writable": False,
+        "requested_promotion_state": "demoted"
+    }
+
+    legacy.patch_filesystem("test", demote_payload)
