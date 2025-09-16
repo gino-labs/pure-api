@@ -17,4 +17,6 @@ if __name__ == "__main__":
     
     s200.patch_interface("gxc-testing", {"address": "10.232.0.12"})
 
-    legacy.delete_filesystem_replica_link("anaconda_linux_denver")
+    ana = legacy.get_filesytem_replica_links(filesystems="anaconda_linux_denver")
+
+    legacy.delete_filesystem_replica_link(ana["id"])
