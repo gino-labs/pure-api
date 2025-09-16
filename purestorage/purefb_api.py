@@ -88,6 +88,7 @@ class FlashBladeAPI:
                 self.logger.write_log(err_code, show_output=True)
                 self.logger.write_log(response.text, show_output=True)
                 errors = response.json()["errors"]
+                print(errors)
                 return errors
             except Exception as e:
                 print(f"Exception occurred:\n{e}")
