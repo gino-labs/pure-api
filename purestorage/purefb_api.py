@@ -416,9 +416,9 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
 
     # Post a filesystem replica link (Replica Link ID required)
-    def post_filesystem_replica_link(self, filesystem_id, payload, dumpjson=False):
-        url = self.baseurl + f"file-system-replica-links?ids={filesystem_id}"
-        msg = f"filesystem replica link: {filesystem_id}"
+    def post_filesystem_replica_link(self, filesystem, payload, dumpjson=False):
+        url = self.baseurl + f"file-system-replica-links?names={filesystem}"
+        msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
         return self.Parse_Data(data, dump=dumpjson)
