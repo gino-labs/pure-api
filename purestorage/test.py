@@ -19,4 +19,6 @@ if __name__ == "__main__":
 
     ana = legacy.get_filesytem_replica_links(filesystems="anaconda_linux_denver")
 
-    legacy.delete_filesystem_replica_link(ana["id"])
+    test_dat = legacy.delete_filesystem_replica_link(ana["id"])
+
+    print(test_dat)
