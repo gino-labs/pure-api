@@ -62,6 +62,16 @@ class FlashBladeAPI:
             "Content-Type": "application/json"
         }
         return headers
+    
+    # Function to prompt user whether or not to continue
+    def continue_check(self):
+        user_input = input("Would you like to continue? y/n ")[:1].lower()
+        while user_input not in ("y", "n"):
+            user_input = input("Please enter y/n to stop or continue the script: ")[:1].lower()
+        if user_input == "n":
+            sys.exit(1)
+        else:
+            return True
 
     # Make a api request
     def REST_Request(self, method, url, message, payload=None):
@@ -103,6 +113,7 @@ class FlashBladeAPI:
                     return data["items"][0]
                 elif len(data["items"]) == 0:
                     self.logger.write_log("Zero items returned from parsed data list.", show_output=True)
+                    self.continue_check()
                     return data["items"]
                 else:
                     if dump:
@@ -117,13 +128,8 @@ class FlashBladeAPI:
                 return data
         else:
             self.logger.write_log("Bad request, following errors detected:", jsondata=data, show_output=True)
-            user_input = input("Would you like to continue? y/n ")[:1].lower()
-            while user_input not in ("y", "n"):
-                user_input = input("Please enter y/n to stop or continue the script: ")[:1].lower()
-            if user_input == "n":
-                sys.exit(1)
-            else:
-                return data
+            self.continue_check()
+            return data
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):
