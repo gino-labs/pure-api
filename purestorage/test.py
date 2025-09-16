@@ -25,7 +25,6 @@ if __name__ == "__main__":
         "requested_promotion_state": "promoted"
     }
 
-    legacy.post_filesystem_snapshot("anaconda_linux_denver", "test-snap-again", dumpjson=True)
     data = legacy.patch_filesystem("testing_fail", promote_payload)
 
     print(data)
