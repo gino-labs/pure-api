@@ -83,12 +83,15 @@ class FlashBladeAPI:
             else:
                 return response.json()
         else:
-            err_json = json.loads(response.text)
-            err_code = f"Error Status Code: {response.status_code}"
-            self.logger.write_log(err_code, show_output=True)
-            self.logger.write_log(response.text, show_output=True)
-            print(json.dumps(err_json, indent=4))
-            return None
+            try:
+                err_code = f"Error Status Code: {response.status_code}"
+                self.logger.write_log(err_code, show_output=True)
+                self.logger.write_log(response.text, show_output=True)
+                errors = response.json()["errors"]
+                return errors
+            except Exception as e:
+                print(f"Exception occurred:\n{e}")
+                sys.exit(1)
 
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
