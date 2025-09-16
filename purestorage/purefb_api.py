@@ -88,14 +88,16 @@ class FlashBladeAPI:
                 errors = response.json()
                 return errors
             except Exception as e:
-                print(f"Exception occurred:\n{e}")
+                print(f"Exception occurred: {type(e).__name__} -> {e}")
                 sys.exit(1)
 
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
         if "errors" not in data:
             try:
-                if len(data["items"]) == 1:
+                if "items" not in data:
+                    return data
+                elif len(data["items"]) == 1:
                     if dump:
                         self.logger.write_log("Debug: See parsed data.", jsondata=data["items"][0], show_output=dump)
                     return data["items"][0]
@@ -105,12 +107,10 @@ class FlashBladeAPI:
                 else:
                     if dump:
                         self.logger.write_log("Debug: See parsed data.", jsondata=data["items"], show_output=dump)
-                    if "items" not in data:
-                        return data
                     else:
                         return data["items"]
             except Exception as e:
-                self.logger.write_log(f"Exception has occured:\n {e}", show_output=True)
+                self.logger.write_log(f"Exception has occured: {type(e).__name__} -> {e}", show_output=True)
                 self.logger.write_log("Returning full unparsed json data.", show_output=True)
                 if dump:
                     self.logger.write_log("Json output for data", jsondata=data, show_output=dump)
