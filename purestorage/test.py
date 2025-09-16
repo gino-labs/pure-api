@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     analinux_id = analinux["id"]
 
-    purelog.write_log(f"Deleting replication link for {ana['local_file_system']['name']}", show_output=True)
+    #purelog.write_log(f"Deleting replication link for {ana['local_file_system']['name']}", show_output=True)
     #test_dat = legacy.delete_filesystem_replica_link(ana["id"])
 
     payload = {
