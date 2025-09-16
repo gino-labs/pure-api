@@ -135,7 +135,7 @@ class FlashBladeAPI:
         msg = "API version"
         data = self.REST_Request("get", url, msg)
 
-        if data is not None:
+        if "errors" not in data:
             if dumpjson:
                 print(json.dumps(data, indent=4))
             return data["versions"]
@@ -330,97 +330,87 @@ class FlashBladeAPI:
 
 
     # Post a filesystem (default NFS)
-    def post_filesystem(self, filesystem, payload):
+    def post_filesystem(self, filesystem, payload, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}&default_exports=nfs"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store account
-    def post_object_store_account(self, account, payload):
+    def post_object_store_account(self, account, payload, dumpjson=False):
         url = self.baseurl + f"object-store-accounts?names={account}"
         msg = f"object store account: {account}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Post a bucket
-    def post_bucket(self, bucket, payload):
+    def post_bucket(self, bucket, payload, dumpjson=False):
         url = self.baseurl + f"buckets?names={bucket}"
         msg = f"bucket: {bucket}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post a bucket replica link (ENDPOINT BROKEN)
-    def post_bucket_replica_link(self, bucket, remote_credential, payload):
+    def post_bucket_replica_link(self, bucket, remote_credential, payload, dumpjson=False):
         url = self.baseurl + f"bucket-replica-links?local_bucket_names={bucket}&remote_bucket_names={bucket}&remote_credentials_names={remote_credential}"
         msg = f"bucket replica link: {bucket} with remote credential: {remote_credential}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store user
-    def post_object_store_user(self, user):
+    def post_object_store_user(self, user, dumpjson=False):
         url = self.baseurl + f"object-store-users?names={user}&full_access=true"
         msg = f"object store user: {user}"
         data = self.REST_Request("post", url, msg)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store access key (Secret key shown once in response)
-    def post_object_store_access_key(self, user, payload):
+    def post_object_store_access_key(self, user, payload, dumpjson=False):
         url = self.baseurl + "object-store-access-keys"
         msg = f"object store access key: {user}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store remote credential (formatted <remote-name>/<credentials-name>)
-    def post_object_store_remote_credential(self, credential_name, payload):
+    def post_object_store_remote_credential(self, credential_name, payload, dumpjson=False):
         url = self.baseurl + f"object-store-remote-credentials?names={credential_name}"
         msg = f"object store remote credential: {credential_name}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post a subnet
-    def post_subnet(self, subnet, paylaod):
+    def post_subnet(self, subnet, payload, dumpjson=False):
         url = self.baseurl + f"subnets?names={subnet}"
         msg = f"subnet: {subnet}"
-        data = self.REST_Request("post", url, msg, payload=paylaod)
+        data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Post a network interface
-    def post_interface(self, interface, payload):
+    def post_interface(self, interface, payload, dumpjson=False):
         url = self.baseurl + f"network-interfaces?names={interface}"
         msg = f"network interface: {interface}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Post a filesystem replica link (Replica Link ID required)
-    def post_filesystem_replica_link(self, filesystem_id, payload):
+    def post_filesystem_replica_link(self, filesystem_id, payload, dumpjson=False):
         url = self.baseurl + f"file-system-replica-links?ids={filesystem_id}"
         msg = f"filesystem replica link: {filesystem_id}"
         data = self.REST_Request("post", url, msg, payload=payload)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post a filesystem snapshot
-    def post_filesystem_snapshot(self, filesystem, snapshot, replicate=True):
+    def post_filesystem_snapshot(self, filesystem, snapshot, replicate=True, dumpjson=False):
         if replicate:
             url = self.baseurl + f"file-system-snapshots?source_names={filesystem}&send=true"
         else:
@@ -428,17 +418,15 @@ class FlashBladeAPI:
         msg = f"filesytem snapshot: {snapshot} for {filesystem}"
         data = self.REST_Request("post", url, msg, payload={"suffix":snapshot})
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Post snapshot scheduling policy to a filesystem
-    def post_snapshot_policy_to_filesystem(self, policy, filesystem):
+    def post_snapshot_policy_to_filesystem(self, policy, filesystem, dumpjson=False):
         url = self.baseurl + f"file-systems/policies?member_names={filesystem}&policy_names={policy}"
         msg = f"snapshot policy {policy} to {filesystem}"
         data = self.REST_Request("post", url, msg)
 
-        if data is not None:
-            return data["items"][0]
+        return self.Parse_Data(data, dump=dumpjson)
 
 
     #########################
@@ -447,40 +435,40 @@ class FlashBladeAPI:
         
         
     # Patch a filesystem
-    def patch_filesystem(self, filesystem, payload):
+    def patch_filesystem(self, filesystem, payload, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}"
         if payload["requested_promotion_state"] == "demoted":
             url = url + "&discard_non_snapshotted_data=true"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        self.Parse_Data(data)
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Patch a network interface
-    def patch_interface(self, interface, payload):
+    def patch_interface(self, interface, payload, dumpjson=False):
         url = self.baseurl + f"network-interfaces?names={interface}"
         msg = f"network interface: {interface}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        self.Parse_Data(data)
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Patch a snapshot
-    def patch_filesystem_snapshot(self, snapshot, payload):
+    def patch_filesystem_snapshot(self, snapshot, payload, dumpjson=False):
         url = self.baseurl + f"file-system-snapshots?names={snapshot}"
         if payload["destroyed"] == True:
             url = url + "&latest_replica=True"
         msg = f"filesystem snapshot: {snapshot}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        self.Parse_Data(data)
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Patch a bucket
-    def patch_bucket(self, bucket, payload):
+    def patch_bucket(self, bucket, payload, dumpjson=False):
         url = self.baseurl + f"buckets?names={bucket}"
         msg = f"filesystem bucket: {bucket}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
-        self.Parse_Data(data)
+        return self.Parse_Data(data, dump=dumpjson)
         
 
     ##########################
