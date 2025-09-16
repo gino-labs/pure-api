@@ -87,8 +87,7 @@ class FlashBladeAPI:
                 err_code = f"Error Status Code: {response.status_code}"
                 self.logger.write_log(err_code, show_output=True)
                 self.logger.write_log(response.text, show_output=True)
-                errors = response.json()["errors"]
-                print(errors)
+                errors = response.json()
                 return errors
             except Exception as e:
                 print(f"Exception occurred:\n{e}")
@@ -96,7 +95,7 @@ class FlashBladeAPI:
 
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
-        if data is not None:
+        if "errors" not in data:
             try:
                 if len(data["items"]) == 1:
                     if dump:
@@ -116,7 +115,7 @@ class FlashBladeAPI:
                     self.logger.write_log("Json output for data", jsondata=data, show_output=dump)
                 return data
         else:
-            self.logger.write_log("Data is None. Nothing to parse. Please check API endpoint requested.")
+            self.logger.write_log("Bad request, following errors detected:", jsondata=data, show_output=True)
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):
