@@ -90,13 +90,21 @@ for fs in legacy_filesystems:
     
     legacy.patch_filesystem(fs["name"], demote_payload)
 
-
-
 # Patch Legacy IPs to S200
+for iface in legacy_interfaces:
+    if iface["name"] in s200_filesystem_names:
+        payload = { "address": iface["address"] }
+        s200.patch_interface(iface["name"], payload)
 
 # Patch S200 IPs to Legacy
+for iface in s200_interfaces:
+    if iface["name"] in legacy_data_iface_names:
+        payload = { "address": iface["address"] }
+        legacy.patch_interface(iface["name"], payload)
 
 # Delete replica links on Legacy
+for link in legacy_replica_links:
+    legacy.delete_filesystem_replica_link()
 
 # Promote / Enabled each file system on S200
 
