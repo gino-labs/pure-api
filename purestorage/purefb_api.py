@@ -62,7 +62,7 @@ class FlashBladeAPI:
             "Content-Type": "application/json"
         }
         return headers
-    
+
     # Make a api request
     def REST_Request(self, method, url, message, payload=None):
         method = str(method).lower()
@@ -114,7 +114,13 @@ class FlashBladeAPI:
                 return data
         else:
             self.logger.write_log("Bad request, following errors detected:", jsondata=data, show_output=True)
-            return data
+            user_input = input("Would you like to continue? y/n ")[:1].lower()
+            while user_input != "y" or user_input != "n":
+                user_input = input("Please enter y/n to stop or continue: ")[:1].lower()
+            if user_input == "n":
+                sys.exit(1)
+            else:
+                return data
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):

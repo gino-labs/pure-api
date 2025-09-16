@@ -2,7 +2,6 @@
 import purefb_api as pfa
 import purefb_log as pfl
 import subprocess
-import tempfile
 import time
 import json
 import os
@@ -83,16 +82,14 @@ scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...")
 time.sleep(30)
 
 # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
-try:
-    for fs in legacy_filesystems:
-        demote_payload = {
-            "writable": False,
-            "requested_promotion_state": "demoted"
-        }
-        
-        legacy.patch_filesystem(fs["name"], demote_payload)
-except Exception as e:
-    print("todo")
+for fs in legacy_filesystems:
+    demote_payload = {
+        "writable": False,
+        "requested_promotion_state": "demoted"
+    }
+    
+    legacy.patch_filesystem(fs["name"], demote_payload)
+
 
 
 # Patch Legacy IPs to S200
