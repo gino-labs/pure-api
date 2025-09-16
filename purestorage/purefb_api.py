@@ -84,9 +84,7 @@ class FlashBladeAPI:
                 return response.json()
         else:
             try:
-                err_code = f"Error Status Code: {response.status_code}"
-                self.logger.write_log(err_code, show_output=True)
-                self.logger.write_log(response.text, show_output=True)
+                self.logger.write_log(f"Error Status Code: {response.status_code}", show_output=True)
                 errors = response.json()
                 return errors
             except Exception as e:
