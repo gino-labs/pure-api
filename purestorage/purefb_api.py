@@ -87,6 +87,7 @@ class FlashBladeAPI:
             err_code = f"Error Status Code: {response.status_code}"
             self.logger.write_log(err_code, show_output=True)
             self.logger.write_log(response.text, show_output=True)
+            print(json.dumps(err_json, indent=4))
             return None
 
     # Parse json data or rest request items
