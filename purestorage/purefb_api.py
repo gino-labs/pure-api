@@ -530,10 +530,10 @@ class FlashBladeAPI:
 
         return self.Parse_Data(data, dump=dumpjson)
 
-    # Delete a filesystem replica link (ID only)
-    def delete_filesystem_replica_link(self, local_filesystem_id, dumpjson=True):
-        url = self.baseurl + f"file-system-replica-links?ids={local_filesystem_id}&cancel_in_progress_transfers=true"
-        msg = f"filesystem replica link ID: {local_filesystem_id}"
+    # Delete a filesystem replica link
+    def delete_filesystem_replica_link(self, filesystem, remote_array, dumpjson=True):
+        url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}&remote_file_system_names={filesystem}&remote_names={remote_array}&cancel_in_progress_transfers=true"
+        msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("delete", url, msg)
 
         return self.Parse_Data(data, dump=dumpjson)
