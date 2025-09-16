@@ -112,6 +112,21 @@ for link in legacy_replica_links:
     legacy.delete_filesystem_replica_link(fs, remote_array)
 
 # Promote / Enable each file system on S200
+for fs in legacy_filesystems:
+    if fs["name"] in s200_filesystem_names:
+        promote_payload = {
+            "nfs": {
+                "v3_enabled": fs["nfs"]["v3_enabled"],
+                "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
+                "rules": fs["nfs"]["rules"]
+            },
+            "http": {
+                "enabled": fs["http"]["enabled"]
+            },
+            "writable": True,
+            "requested_promotion_state": "promoted"
+        }
+        s200.patch_filesystem(fs["name"], promote_payload)
 
 # Run ansible playbook with nfs client inventory and production IP variable
 
