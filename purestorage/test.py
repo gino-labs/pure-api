@@ -25,4 +25,4 @@ if __name__ == "__main__":
         "requested_promotion_state": "promoted"
     }
 
-    legacy.patch_filesystem("test", promote_payload)
+    legacy.patch_filesystem("testing_fail", promote_payload)
