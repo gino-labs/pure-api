@@ -85,42 +85,33 @@ class FlashBladeAPI:
         else:
             err_json = json.loads(response.text)
             err_code = f"Error Status Code: {response.status_code}"
-            self.logger.write_log(err_code)
-            self.logger.write_log(response.text)
-            print(err_code)
-            print(response.text)
-            print()
+            self.logger.write_log(err_code, show_output=True)
+            self.logger.write_log(response.text, show_output=True)
             return None
 
     # Parse json data or rest request items
     def Parse_Data(self, data, dump=False):
-        def log_print(msg, show_data=None, debug=dump):
-            if debug:
-                if show_data is not None:
-                    self.logger.write_log(msg, jsondata=show_data)
-                    print(msg)
-                    print(json.dumps(show_data, indent=4))
-                    print()
-                else:
-                    self.logger.write_log(msg)
-                    print(msg)
-                    print()
-
         if data is not None:
             try:
                 if len(data["items"]) == 1:
-                    log_print("DEBUG: See parsed data", show_data=data["items"][0])
+                    if dump:
+                        self.logger.write_log("Debug: See parsed data.", jsondata=data["items"][0], show_output=dump)
                     return data["items"][0]
-                log_print("DEBUG: See parsed data", show_data=data["items"])
-                return data["items"]
+                elif len(data["items"]) == 0:
+                    self.logger.write_log("Zero items returned from parsed data list.", show_output=True)
+                    return data["items"]
+                else:
+                    if dump:
+                        self.logger.write_log("Debug: See parsed data.", jsondata=data["items"], show_output=dump)
+                    return data["items"]
             except Exception as e:
-                log_print(f"Exception has occured:\n {e}", debug=True)
-                log_print("Returning full unparsed json data insead", debug=True)
+                self.logger.write_log(f"Exception has occured:\n {e}", show_output=True)
+                self.logger.write_log("Returning full unparsed json data.", show_output=True)
                 if dump:
-                    log_print("Json output for data", show_data=data, debug=True)
+                    self.logger.write_log("Json output for data", jsondata=data, show_output=dump)
                 return data
         else:
-            log_print("Data returned is None. Please check endpoint or call.")
+            self.logger.write_log("Data is None. Nothing to parse. Please check API endpoint requested.")
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):
