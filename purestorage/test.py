@@ -22,6 +22,6 @@ if __name__ == "__main__":
         if link["local_file_system"]["name"] not in fs_names:
             print(link["local_file_system"]["name"])
         else:
-            print(f"{link["local_file_system"]["name"]} is in list.")
+            print(f"{link['local_file_system']['name']} is in list.")
 
     print(json.dumps(fs_names, indent=4))
