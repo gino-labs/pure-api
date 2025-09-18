@@ -13,8 +13,13 @@ if __name__ == "__main__":
     purelog = pl.PureLog()
 
     filesystems = legacy.get_filesystems()
+    print(f"Length of filesystems: {len(filesystems)}")
+    print()
 
     replica_links = legacy.get_filesytem_replica_links()
+    print(f"Length of replica links: {len(replica_links)}")
+    
+
 
     fs_names = [fs["name"] for fs in filesystems]
 
