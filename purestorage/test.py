@@ -12,7 +12,12 @@ if __name__ == "__main__":
 
     purelog = pl.PureLog()
 
-    auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)
-    auth_token_s200 = pv3.Get_Session_Token(pv3.API_TOKEN_S200, pv3.PB2_MGT)
+    filesystems = legacy.get_filesystems()
 
-    connections = legacy.get_array_connections(dumpjson=True)
+    replica_links = legacy.get_filesytem_replica_links()
+
+    fs_names = [fs["name"] for fs in filesystems]
+
+    for link in replica_links:
+        if link["local_file_system"]["name"] not in fs_names:
+            print(link["local_file_system"]["name"])
