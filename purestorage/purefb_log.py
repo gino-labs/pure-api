@@ -58,7 +58,7 @@ class Stopwatch:
             elapsed_time_dict = {
                 "hours": (self.end_time - self.start_time) // 3600,
                 "minutes": ((self.end_time - self.start_time) % 3600) // 60,
-                "seconds": (self.end_time - self.start_time) % 60
+                "seconds": round((self.end_time - self.start_time) % 60, 2)
             }
             return elapsed_time_dict
         else:
