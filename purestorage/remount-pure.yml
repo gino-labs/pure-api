@@ -6,8 +6,9 @@
   tasks:
     - name: Get list of mounts using PureStorage
       shell: |
-        findmnt -t nfs,nfs4 -o target,options | awk '/{{ pure_ips }}/ { print $1 }'
+        findmnt -n -t nfs,nfs4 -o target,options | awk '/{{ pure_ips }}/ { print $1 }'
       register: pure_mounts
+      changed_when: False
 
     - name: Restart the mount units
       command: umount -l "{{ item }}"
