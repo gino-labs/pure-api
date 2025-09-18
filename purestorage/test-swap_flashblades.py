@@ -7,6 +7,7 @@ import os
 
 # Logger object
 scriptlog = pfl.PureLog()
+stopwatch = pfl.Stopwatch()
 
 # FlashBlade API Object Instances
 legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
@@ -126,7 +127,9 @@ scriptlog.write_log("Promote S200 file systems.", show_output=True)
 # Run ansible playbook with nfs client inventory and production IP variable
 scriptlog.write_log(f"Simulate (ping only) runnning ansible playbook to handle remounting nfs clients in create inventory, pass egrep string: {production_ips}", jsondata=inventory, show_output=True)
 print("Enter root password for ansible playbook.")
+stopwatch.start_stopwatch()
 subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-k", "client-pings.yml"])
+stopwatch.end_stopwatch()
 
 # Clean up
 scriptlog.write_log("Clean up, remove files if needed.", show_output=True)
