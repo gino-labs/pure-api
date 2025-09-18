@@ -18,9 +18,8 @@ if __name__ == "__main__":
 
     replica_links = legacy.get_filesytem_replica_links()
     print(f"Length of replica links: {len(replica_links)}")
+    print()
     
-
-
     fs_names = [fs["name"] for fs in filesystems]
 
     for link in replica_links:
