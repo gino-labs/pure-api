@@ -1,4 +1,5 @@
 import os
+import time
 import json
 from datetime import datetime
 
@@ -31,4 +32,38 @@ class PureLog:
             if show_output:
                 print(json.dumps(jsondata, indent=4))
                 print()
+
+class Stopwatch:
+    def __init__(self):
+        start_time = None
+        end_time = None
+
+    def start_stopwatch(self):
+        self.start_time = time.time()
         
+    def end_stopwatch(self):
+        self.end_time = time.time()
+
+    def get_time_elapsed(self, dictionary=False):
+        if not self.start_time or not self.end_time:
+            return 0
+        
+        if dictionary:
+            elapsed_time_dict = {
+                "hours": (self.end_time - self.start_time) // 3600,
+                "minutes": ((self.end_time - self.start_time) % 3600) // 60,
+                "seconds": (self.end_time - self.start_time) % 60
+            }
+            return elapsed_time_dict
+        else:
+            return self.end_time - self.start_time
+        
+    def show_time_elapsed(self):
+        time_elapsed = self.get_time_elapsed(dictionary=True)
+        time_string = "Time elapsed: "
+        
+        if time_elapsed.get("hours") > 0:
+            time_string += f"{time_elapsed.get("hours")}h "
+        
+        time_string += f"{time_elapsed.get("minutes")}m {time_elapsed.get("seconds")}s"
+        print(time_string)
