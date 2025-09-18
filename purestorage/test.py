@@ -11,7 +11,9 @@ if __name__ == "__main__":
     s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
     purelog = pl.PureLog()
+    watch = pl.Stopwatch()
 
+    watch.start_stopwatch()
     filesystems = legacy.get_filesystems()
     print(f"Length of filesystems: {len(filesystems)}")
     print()
@@ -29,3 +31,4 @@ if __name__ == "__main__":
             print(f"{link['local_file_system']['name']} is in list.")
 
     print(json.dumps(fs_names, indent=4))
+    watch.stop_stopwatch()
