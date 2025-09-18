@@ -35,16 +35,15 @@ class PureLog:
 
 class Stopwatch:
     def __init__(self):
-        start_time = None
-        end_time = None
+        self.start_time = None
+        self.end_time = None
+        self.todays_log = PureLog()
 
     def start_stopwatch(self, show_start_time=True):
         self.start_time = time.time()
         if show_start_time:
             formatted = time.strftime("%H:%M:%S", time.localtime(self.start_time))
-            print(f"Stopwatch started: {formatted}")
-            print()
-
+            self.todays_log.write_log(f"Stopwatch started: {formatted}", show_output=True)
         
     def end_stopwatch(self, showtime=True):
         self.end_time = time.time()
@@ -73,4 +72,4 @@ class Stopwatch:
             time_string += f"{time_elapsed.get('hours')}h "
         
         time_string += f"{time_elapsed.get('minutes')}m {time_elapsed.get('seconds')}s"
-        print(time_string)
+        self.todays_log.write_log(time_string, show_output=True)
