@@ -38,8 +38,13 @@ class Stopwatch:
         start_time = None
         end_time = None
 
-    def start_stopwatch(self):
+    def start_stopwatch(self, show_start_time=True):
         self.start_time = time.time()
+        if show_start_time:
+            formatted = time.strftime("%H:%M:%S", time.localtime(self.start_time))
+            print(f"Stopwatch started: {formatted}")
+            print()
+
         
     def end_stopwatch(self, showtime=True):
         self.end_time = time.time()
@@ -65,7 +70,7 @@ class Stopwatch:
         time_string = "Time elapsed: "
         
         if time_elapsed.get("hours") > 0:
-            time_string += f"{time_elapsed.get("hours")}h "
+            time_string += f"{time_elapsed.get('hours')}h "
         
-        time_string += f"{time_elapsed.get("minutes")}m {time_elapsed.get("seconds")}s"
+        time_string += f"{time_elapsed.get('minutes')}m {time_elapsed.get('seconds')}s"
         print(time_string)
