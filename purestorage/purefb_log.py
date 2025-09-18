@@ -69,10 +69,10 @@ class Stopwatch:
         time_string = "Time elapsed: "
         
         if time_elapsed.get("hours") > 0:
-            time_string += f"{time_elapsed.get('hours')}hours, "
+            time_string += f"{time_elapsed.get('hours')} hours, "
         
         if time_elapsed.get("minutes"):
-            time_string += f"{time_elapsed.get('minutes')}minutes, "
+            time_string += f"{time_elapsed.get('minutes')} minutes, "
         
-        time_string += f"{time_elapsed.get('seconds')}seconds"
+        time_string += f"{time_elapsed.get('seconds')} seconds"
         self.todays_log.write_log(time_string, show_output=True)
