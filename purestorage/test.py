@@ -31,4 +31,4 @@ if __name__ == "__main__":
             print(f"{link['local_file_system']['name']} is in list.")
 
     print(json.dumps(fs_names, indent=4))
-    watch.stop_stopwatch()
+    watch.end_stopwatch()
