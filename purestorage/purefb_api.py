@@ -5,6 +5,7 @@ import json
 import urllib3
 import requests
 import purefb_log as pfl
+from purefb_log import ApiError
 
 # Disabling Insecure Requests Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)

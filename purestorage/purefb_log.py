@@ -76,3 +76,11 @@ class Stopwatch:
         
         time_string += f"{time_elapsed.get('seconds')} seconds"
         self.todays_log.write_log(time_string, show_output=True)
+
+class ApiError(Exception):
+    def __init__(self, message, code=None, context=None,):
+        self.code = code
+        self.context = context
+        self.message = message
+        super()._init__(message)
+
