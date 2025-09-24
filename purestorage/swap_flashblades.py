@@ -19,9 +19,22 @@ legacy_filesystems = legacy.get_filesystems()
 # Get S200 file systems
 s200_filesystems = s200.get_filesystems()
 
-s200_filesystem_names = [fs["name"] for fs in s200_filesystems]
+s200_promo_payloads = {}
+for fs in s200_filesystems:
+    s200_promo_payloads[fs["name"]] = {
+        "nfs": {
+            "v3_enabled": fs["nfs"]["v3_enabled"],
+            "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
+            "rules": fs["nfs"]["rules"]
+        },
+        "http": {
+            "enabled": fs["http"]["enabled"]
+        },
+        "writable": True,
+        "requested_promotion_state": "promoted" 
+    }
 
-scriptlog.write_log("S200 file system names list", jsondata=s200_filesystem_names, show_output=True)
+scriptlog.write_log("S200 file system promotion data from legacy", jsondata=s200_promo_payloads, show_output=True)
 
 # Get Legacy interfaces' info
 legacy_interfaces = legacy.get_interfaces()
@@ -81,6 +94,7 @@ for fs in legacy_filesystems:
 scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...")
 time.sleep(30)
 
+# TODO Don't/Can't demote if no replication link/not replication snapshot
 # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
 for fs in legacy_filesystems:
     demote_payload = {
@@ -92,7 +106,7 @@ for fs in legacy_filesystems:
 
 # Patch Legacy IPs to S200
 for iface in legacy_interfaces:
-    if iface["name"] in s200_filesystem_names:
+    if iface["name"] in s200_data_iface_names:
         payload = { "address": iface["address"] }
         s200.patch_interface(iface["name"], payload)
 
@@ -112,21 +126,9 @@ for link in legacy_replica_links:
     legacy.delete_filesystem_replica_link(fs, remote_array)
 
 # Promote / Enable each file system on S200
-for fs in legacy_filesystems:
-    if fs["name"] in s200_filesystem_names:
-        promote_payload = {
-            "nfs": {
-                "v3_enabled": fs["nfs"]["v3_enabled"],
-                "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
-                "rules": fs["nfs"]["rules"]
-            },
-            "http": {
-                "enabled": fs["http"]["enabled"]
-            },
-            "writable": True,
-            "requested_promotion_state": "promoted"
-        }
-        s200.patch_filesystem(fs["name"], promote_payload)
+for fs in s200_filesystems:
+    if fs["name"] in s200_promo_payloads and fs["destroyed"] != True:       
+        s200.patch_filesystem(fs["name"], s200_promo_payloads[fs["name"]])
 
 # Run ansible playbook with nfs client inventory and production IP variable
 print("Enter root password for ansible playbook.")
