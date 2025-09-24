@@ -83,7 +83,7 @@ class ApiError(Exception):
         self.context = context
         self.message = message
         self.logger = PureLog()
-        super()._init__(message)
+        super().__init__(message)
 
     def log_details(self, show_output=True):
         self.logger.write_log(f"API Error. Code: {self.code}; Context: {self.context}", show_output=show_output)
