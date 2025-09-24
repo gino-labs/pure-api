@@ -66,6 +66,7 @@ class FlashBladeAPI:
     # Function to prompt user whether or not to continue
     def continue_check(self, post_msg=None):
         user_input = input("Would you like to continue? (y/n) ")[:1].lower()
+        print()
         while user_input not in ("y", "n"):
             user_input = input("Please enter y/n to stop or continue the script: ")[:1].lower()
         if user_input == "n":
