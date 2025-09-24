@@ -21,9 +21,4 @@ if __name__ == "__main__":
     }
     test = s200.patch_filesystem("test", promo_test, dumpjson=True)
 
-    if test["errors"][0]["code"] == 7:
-        print("Error code 7 found, file system is destroyed.")
-    else:
-        print("Errors not found.")
-
     watch.end_stopwatch()
