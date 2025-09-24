@@ -64,13 +64,16 @@ class FlashBladeAPI:
         return headers
     
     # Function to prompt user whether or not to continue
-    def continue_check(self):
-        user_input = input("Would you like to continue? y/n ")[:1].lower()
+    def continue_check(self, post_msg=None):
+        user_input = input("Would you like to continue? (y/n) ")[:1].lower()
         while user_input not in ("y", "n"):
             user_input = input("Please enter y/n to stop or continue the script: ")[:1].lower()
         if user_input == "n":
+            print("Exiting script...")
             sys.exit(1)
         else:
+            if post_msg:
+                self.logger.write_log(post_msg, show_output=True)
             return True
 
     # Make a api request
@@ -129,9 +132,14 @@ class FlashBladeAPI:
                     self.logger.write_log("Json output for data", jsondata=data, show_output=dump)
                 return data
         else:
-            self.logger.write_log("Bad request, following errors detected:", jsondata=data, show_output=True)
-            self.continue_check()
-            return data
+            errors = {
+                "error_code": data["errors"][0]["code"],
+                "error_context": data["errors"][0]["context"],
+                "error_message": data["errors"][0]["message"]
+            }
+            self.logger.write_log("Bad request, following errors detected:", jsondata=errors, show_output=True)
+            self.continue_check(post_msg=f"Continuing script after encountering errors for the following context: {errors['error_context']}")
+            return errors
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):
