@@ -4,7 +4,7 @@ import sys
 import json
 import urllib3
 import requests
-import purefb_log as pfl
+from purefb_log import PureLog
 from purefb_log import ApiError
 
 # Disabling Insecure Requests Warning
@@ -32,7 +32,7 @@ class FlashBladeAPI:
             self.baseurl = f"https://{mgt_ip}/api/2.latest/"
             self.auth_token = self.Get_Session_Token()
             self.auth_headers = self.Set_Auth_Headers()
-            self.logger = pfl.PureLog()
+            self.logger = PureLog()
         except requests.RequestException as e:
             e_msg = f"\nError RequestException occured. Please check your environment variables are correctly set."
             print(f"{e_msg}")
@@ -139,9 +139,9 @@ class FlashBladeAPI:
                 "error_context": data["errors"][0]["context"],
                 "error_message": data["errors"][0]["message"]
             }
-            self.logger.write_log("Bad request, following errors detected:", jsondata=errors, show_output=True)
-            self.continue_check(post_msg=f"Continuing script after encountering errors for the following context: {errors['error_context']}")
-            return errors
+            #self.logger.write_log("Bad request, following errors detected:", jsondata=errors, show_output=True)
+            #self.continue_check(post_msg=f"Continuing script after encountering errors for the following context: {errors['error_context']}")
+            raise ApiError(errors["error_message"], errors["error_code"], errors["error_context"])
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):
