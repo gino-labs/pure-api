@@ -9,6 +9,10 @@ import os
 # Logger object
 scriptlog = pfl.PureLog()
 
+# Initialize Stopwatch object then start
+timer = pfl.Stopwatch()
+timer.start_stopwatch()
+
 # FlashBlade API Object Instances
 legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
 s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
@@ -67,6 +71,7 @@ scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_n
 
 # Get file system replica links on Legacy
 legacy_replica_links = legacy.get_filesytem_replica_links()
+replication_filesystems = [link["local_file_system"]["name"] for link in legacy_replica_links]
 
 # Get active NFS clients before swapping
 scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
@@ -88,7 +93,7 @@ with open(f"logs/{inventory_filename}", "w") as inv_file:
 
 # Create final snapshots on Legacy and wait 30 seconds for them to settle
 for fs in legacy_filesystems:
-    if fs["promotion_status"] == "promoted":
+    if fs["promotion_status"] == "promoted" and fs["name"] in replication_filesystems:
         legacy.post_filesystem_snapshot(fs["name"], "pre-swap")
 
 scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...")
