@@ -21,6 +21,6 @@ if __name__ == "__main__":
     try:
         test = s200.patch_filesystem("test", promo_test, dumpjson=True)
     except ApiError as err:
-        err.log_details(show_output=True)
+        err.check_details(show_output=True)
 
     watch.end_stopwatch()
