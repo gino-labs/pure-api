@@ -96,11 +96,12 @@ class ApiError(Exception):
             print("Exiting script...")
             sys.exit(1)
         else:
-            self.logger.write_log(f"Continuing with script after encountering error related to: {self.context}", show_output=True)
+            self.logger.write_log(f"Continuing with script after encountering error related to: \"{self.context}\"", show_output=True)
             return True
 
     def check_details(self, show_output=True, skip_ask_to_continue=False):
-        self.logger.write_log(f"API Error: [Code: {self.code}, Context: {self.context}]\n{self.message}", show_output=show_output)
+        self.logger.write_log(f"API Error: [Code: {self.code}, Context: \"{self.context}\"]", show_output=show_output)
+        self.logger.write_log(f"API Error Message: {self.message}", show_output=show_output)
         if self.ask_to_continue and not skip_ask_to_continue:
             self.ask_to_continue_loop()
 
