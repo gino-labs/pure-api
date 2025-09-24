@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 import purefb_api as pfa
-import purefb_log as pfl
+from purefb_log import *
 import subprocess
 import time
 import json
 import os
 
 # Logger object
-scriptlog = pfl.PureLog()
+scriptlog = PureLog()
 
 # Initialize Stopwatch object then start
-timer = pfl.Stopwatch()
+timer = Stopwatch()
 timer.start_stopwatch()
 
 # FlashBlade API Object Instances
@@ -102,12 +102,21 @@ time.sleep(30)
 # TODO Don't/Can't demote if no replication link/not replication snapshot
 # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
 for fs in legacy_filesystems:
-    demote_payload = {
-        "writable": False,
-        "requested_promotion_state": "demoted"
-    }
-    
-    legacy.patch_filesystem(fs["name"], demote_payload)
+    try:
+        demote_payload = {
+            "writable": False,
+            "requested_promotion_state": "demoted"
+        }
+        legacy.patch_filesystem(fs["name"], demote_payload)
+    except ApiError as err:
+        err.check_details(skip_ask_to_continue=True)
+        if err.code == 32:
+            demote_payload = {
+                "writable": False
+            }
+            legacy.patch_filesystem(fs["name"], demote_payload)
+        else:
+            scriptlog.write_log(f"Other error occurred with code: {err.code}", show_output=True)
 
 # Patch Legacy IPs to S200
 for iface in legacy_interfaces:
