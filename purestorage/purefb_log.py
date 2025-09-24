@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import json
 from datetime import datetime
@@ -78,14 +79,29 @@ class Stopwatch:
         self.todays_log.write_log(time_string, show_output=True)
 
 class ApiError(Exception):
-    def __init__(self, message, code, context,):
+    def __init__(self, message, code, context, ask_to_continue=True):
         self.code = code
         self.context = context
         self.message = message
+        self.ask_to_continue = ask_to_continue
         self.logger = PureLog()
         super().__init__(message)
 
-    def log_details(self, show_output=True):
-        self.logger.write_log(f"API Error. Code: {self.code}; Context: {self.context}", show_output=show_output)
-        self.logger.write_log(self.message, show_output=show_output)
+    def ask_to_continue_loop(self):
+        user_input = input("Would you like to continue? (y/n): ")[:1].lower()
+        while user_input not in ("y", "n"):
+            user_input = input("Please enter y/n to stop or continue the script: ")[:1].lower()
+        print()
+        if user_input == "n":
+            print("Exiting script...")
+            sys.exit(1)
+        else:
+            self.logger.write_log(f"Continuing with script after encountering error related to: {self.context}", show_output=True)
+            return True
+
+    def check_details(self, show_output=True, skip_ask_to_continue=False):
+        self.logger.write_log(f"API Error: [Code: {self.code}, Context: {self.context}]\n{self.message}", show_output=show_output)
+        if self.ask_to_continue and not skip_ask_to_continue:
+            self.ask_to_continue_loop()
+
 
