@@ -14,21 +14,16 @@ if __name__ == "__main__":
     watch = pl.Stopwatch()
 
     watch.start_stopwatch()
-    filesystems = legacy.get_filesystems()
-    print(f"Length of filesystems: {len(filesystems)}")
-    print()
-
-    replica_links = legacy.get_filesytem_replica_links()
-    print(f"Length of replica links: {len(replica_links)}")
-    print()
     
-    fs_names = [fs["name"] for fs in filesystems]
+    promo_test = {    
+        "writable": True,
+        "requested_promotion_state": "promoted" 
+    }
+    test = s200.patch_filesystem("test", promo_test, dumpjson=True)
 
-    for link in replica_links:
-        if link["local_file_system"]["name"] not in fs_names:
-            print(link["local_file_system"]["name"])
-        else:
-            print(f"{link['local_file_system']['name']} is in list.")
+    if "errors" in test:
+        print("Errors found.")
+    else:
+        print("Errors not found.")
 
-    print(json.dumps(fs_names, indent=4))
     watch.end_stopwatch()
