@@ -93,13 +93,12 @@ with open(f"logs/{inventory_filename}", "w") as inv_file:
 
 # Create final snapshots on Legacy and wait 30 seconds for them to settle
 for fs in legacy_filesystems:
-    if fs["promotion_status"] == "promoted" and fs["name"] in replication_filesystems:
+    if fs["promotion_status"] == "promoted":
         legacy.post_filesystem_snapshot(fs["name"], "pre-swap")
 
 scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...")
 time.sleep(30)
 
-# TODO Don't/Can't demote if no replication link/not replication snapshot
 # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
 for fs in legacy_filesystems:
     try:
