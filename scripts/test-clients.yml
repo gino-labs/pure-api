@@ -7,3 +7,13 @@
     - name: Ping Clients for Testing
       ping:
         
+    - name: Get list of mounts using FlashBlade
+      shell: |
+        findmnt -n -t nfs,nfs4 -o target,options | awk '/{{ pure_ips }}/ { print $1 }'
+      register: pure_mounts
+      changed_when: False
+
+    - name: "FlashBlade Mounts found on {{ inventory_hostname }}"
+      debug:
+        msg: "Lazy umount for {{ item }} would occur here."
+      loop: pure_mounts
