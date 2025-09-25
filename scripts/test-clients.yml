@@ -16,4 +16,4 @@
     - name: "FlashBlade Mounts found on {{ inventory_hostname }}"
       debug:
         msg: "Lazy umount for {{ item }} would occur here."
-      loop: pure_mounts
+      loop: "{{ pure_mounts.stdout_lines }}"
