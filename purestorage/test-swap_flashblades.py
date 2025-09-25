@@ -24,7 +24,7 @@ legacy_filesystems = legacy.get_filesystems()
 s200_filesystems = s200.get_filesystems()
 
 s200_promo_payloads = {}
-for fs in s200_filesystems:
+for fs in legacy_filesystems:
     s200_promo_payloads[fs["name"]] = {
         "nfs": {
             "v3_enabled": fs["nfs"]["v3_enabled"],
