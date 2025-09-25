@@ -21,15 +21,20 @@ def check_replica_links_filesystems():
     legacy_filesystems = legacy.get_filesystems()
     legacy_replica_links = legacy.get_filesytem_replica_links()
 
-    legacy_fs_list = [fs["name"] for fs in legacy_filesystems]
     legacy_replica_fs_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
 
-    non_replica_fs_list = list(set(legacy_fs_list) - set(legacy_replica_fs_list))
+    non_replica_fs_list = []
+    for fs in legacy_filesystems:
+        if fs["name"] in legacy_replica_fs_list:
+            temp_dict = {
+                "name": fs["name"],
+                "space": fs["space"]["total_physical"],
+                "writable": fs["writable"]
+            }
+            non_replica_fs_list.append(temp_dict)
 
-    logger.write_log("FlashBlade migration check: File systems present on Legacy FB with no replication link", jsondata=non_replica_fs_list, show_output=True)
-    logger.write_log("FlashBlade file systems will not be able to be demoted if snapshot is taken and is non-replication", show_output=True)
+    logger.write_log("Filesystems with no replication links", jsondata=non_replica_fs_list, show_output=True)
 
-    test_fs = s200.get_filesystems(filesystems="test", dumpjson=True)
 
 if __name__ == "__main__":
     check_replica_links_filesystems()
