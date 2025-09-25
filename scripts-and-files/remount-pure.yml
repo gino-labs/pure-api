@@ -1,0 +1,15 @@
+---
+- name: Play to remount nfs mounts from purestorage
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Get list of mounts using PureStorage
+      shell: |
+        findmnt -n -t nfs,nfs4 -o target,options | awk '/{{ pure_ips }}/ { print $1 }'
+      register: pure_mounts
+      changed_when: False
+
+    - name: Restart the mount units
+      command: umount -l "{{ item }}"
+      loop: "{{ pure_mounts.stdout_lines }}"
