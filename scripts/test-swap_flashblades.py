@@ -61,7 +61,7 @@ else:
     print()
 
 scriptlog.write_log("Legacy data interface names list", jsondata=legacy_data_iface_names, show_output=True)
-scriptlog.write_log("Legacy production IP list", jsondata=legacy_data_ips, show_output=True)
+scriptlog.write_log(f"Legacy production IP list and ansible var {production_ips}", jsondata=legacy_data_ips, show_output=True)
 
 # Get S200 interfaces' info
 s200_interfaces = s200.get_interfaces()

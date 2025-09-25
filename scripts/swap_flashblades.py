@@ -6,21 +6,21 @@ import time
 import json
 import os
 
-# Logger object
+# Logger object #
 scriptlog = PureLog()
 
-# Initialize Stopwatch object then start
+# Initialize Stopwatch object then start #
 timer = Stopwatch()
 timer.start_stopwatch()
 
-# FlashBlade API Object Instances
+# FlashBlade API Object Instances #
 legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
 s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
 
-# Get Legacy file systems
+# Get Legacy file systems #
 legacy_filesystems = legacy.get_filesystems()
 
-# Get S200 file systems
+# Get S200 file systems #
 s200_filesystems = s200.get_filesystems()
 
 s200_promo_payloads = {}
@@ -38,9 +38,9 @@ for fs in legacy_filesystems:
         "requested_promotion_state": "promoted" 
     }
 
-scriptlog.write_log("S200 file system promotion data from legacy", jsondata=s200_promo_payloads, show_output=True)
+scriptlog.write_log("S200 file system promotion data from legacy", jsondata=s200_promo_payloads)
 
-# Get Legacy interfaces' info
+# Get Legacy interfaces' info #
 legacy_interfaces = legacy.get_interfaces()
 
 legacy_data_iface_names = []
@@ -51,7 +51,7 @@ for iface in legacy_interfaces:
         legacy_data_iface_names.append(iface["name"])
         legacy_data_ips.append(iface["address"])
 
-# Store Production IPs in variable to pass to ansible playbook later
+# Store Production IPs in variable to pass to ansible playbook later #
 if len(legacy_data_ips) > 1:
     production_ips = "|".join(legacy_data_ips)
 elif len(legacy_data_ips) == 1:
