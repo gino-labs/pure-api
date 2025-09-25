@@ -130,6 +130,22 @@ legacy_ifaces_updated = { "Legacy_Updated_Interfaces": legacy_iface_json_list }
 
 scriptlog.write_log(f"Legacy interfaces to be updated with S200 IPs: {len(legacy_iface_json_list)}", jsondata=legacy_ifaces_updated, show_output=True)
 
+# Replication links that would be deleted
+legacy_array_connections = legacy.get_array_connections()
+
+remote_array = legacy_array_connections["remote"]["name"]
+
+fs_del_replica_list = []
+for link in legacy_replica_links:
+    fs = link["local_file_system"]["name"]
+    tmp_dict = {
+        "remote_array": remote_array,
+        "local_file_system": fs
+    }
+    fs_del_replica_list.append(tmp_dict)
+
+scriptlog.write_log(f"Legacy file system replica links that would be deleted: {len(fs_del_replica_list)}", jsondata=fs_del_replica_list, show_output=True)
+
 
 
 
