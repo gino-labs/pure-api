@@ -111,26 +111,24 @@ scriptlog.write_log(f"File systems that would be demoted: {len(demo_fs_list)}", 
 scriptlog.write_log(f"File systems that would NOT be demoted because no replication snapshots: {len(non_demo_fs_list)}", jsondata=non_demo_fs_list, show_output=True)
 
 # IPs that would be patched to s200
-s200_iface_json = {}
+s200_iface_json_list = []
 for iface in legacy_interfaces:
     if iface["name"] in s200_data_iface_names:
-        print(iface["name"])
-        s200_iface_json = { iface["name"]: { "address": iface["address"] } }
+        s200_iface_json_list.append({iface["name"]: {"address": iface["address"]}})
 
-s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json }
+s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json_list }
 
-scriptlog.write_log(f"S200 interfaces to be updated with legacy IPs: {len(s200_iface_json)}", jsondata=s200_ifaces_updated, show_output=True)
+scriptlog.write_log(f"S200 interfaces to be updated with legacy IPs: {len(s200_iface_json_list)}", jsondata=s200_ifaces_updated, show_output=True)
 
 # IPs that would be patched to legacy
-legacy_iface_json = {}
+legacy_iface_json_list = []
 for iface in s200_interfaces:
     if iface["name"] in legacy_data_iface_names:
-        print(iface["name"])
-        legacy_iface_json = { iface["name"]: { "address": iface["address"] } }
+        legacy_iface_json_list.append({iface["name"]: {"address": iface["address"]}})
 
-legacy_ifaces_updated = { "Legacy_Updated_Interfaces": legacy_iface_json }
+legacy_ifaces_updated = { "Legacy_Updated_Interfaces": legacy_iface_json_list }
 
-scriptlog.write_log(f"Legacy interfaces to be updated with S200 IPs: {len(legacy_iface_json)}", jsondata=legacy_ifaces_updated, show_output=True)
+scriptlog.write_log(f"Legacy interfaces to be updated with S200 IPs: {len(legacy_iface_json_list)}", jsondata=legacy_ifaces_updated, show_output=True)
 
 
 
