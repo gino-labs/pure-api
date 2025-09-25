@@ -30,7 +30,7 @@ if __name__ == "__main__":
                     "writable": False
                 }
                 legacy.patch_filesystem(fs["name"], demote_payload)
-                purelog.write_log(f"Unable to demote file system: {fs['name']}, setting to unwritable", show_output=True)
+                purelog.write_log(f"Unable to demote file system: {fs['name']} - Setting to unwritable instead.", show_output=True)
             else:
                 purelog.write_log(f"Other error occurred with code: {err.code}")
 
