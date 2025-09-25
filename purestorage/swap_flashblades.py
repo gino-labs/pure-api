@@ -115,7 +115,7 @@ for fs in legacy_filesystems:
             }
             legacy.patch_filesystem(fs["name"], demote_payload)
         else:
-            scriptlog.write_log(f"Other error occurred with code: {err.code}", show_output=True)
+            scriptlog.write_log(f"Other error occurred with code: {err.code}")
 
 # Patch Legacy IPs to S200
 for iface in legacy_interfaces:
