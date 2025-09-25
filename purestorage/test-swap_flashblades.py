@@ -114,6 +114,7 @@ scriptlog.write_log(f"File systems that would NOT be demoted because no replicat
 s200_iface_json = {}
 for iface in legacy_interfaces:
     if iface["name"] in s200_data_iface_names:
+        print(iface["name"])
         s200_iface_json = { iface["name"]: { "address": iface["address"] } }
 
 s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json }
@@ -124,6 +125,7 @@ scriptlog.write_log(f"S200 interfaces to be updated with legacy IPs: {len(s200_i
 legacy_iface_json = {}
 for iface in s200_interfaces:
     if iface["name"] in legacy_data_iface_names:
+        print(iface["name"])
         legacy_iface_json = { iface["name"]: { "address": iface["address"] } }
 
 legacy_ifaces_updated = { "Legacy_Updated_Interfaces": legacy_iface_json }
