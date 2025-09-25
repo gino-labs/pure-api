@@ -70,7 +70,7 @@ class Stopwatch:
             sys.stdout.write(f"\rCountdown: {i:02d}")
             sys.stdout.flush()
             time.sleep(1)
-        print("Time Elapsed. Continuing...")
+        print("\nTime Elapsed. Continuing...")
         print()
         
     def show_time_elapsed(self):

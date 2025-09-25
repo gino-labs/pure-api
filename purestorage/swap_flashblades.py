@@ -96,7 +96,7 @@ for fs in legacy_filesystems:
     if fs["promotion_status"] == "promoted":
         legacy.post_filesystem_snapshot(fs["name"], "pre-swap")
 
-scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...")
+scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...", show_output=True)
 timer.countdown(30)
 
 # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
