@@ -65,6 +65,14 @@ class Stopwatch:
         else:
             return self.end_time - self.start_time
         
+    def countdown(self, seconds):
+        for i in range(seconds, 0, -1):
+            sys.stdout.write(f"\rCountdown: {i:02d}")
+            sys.stdout.flush()
+            time.sleep(1)
+        print("Time Elapsed. Continuing...")
+        print()
+        
     def show_time_elapsed(self):
         time_elapsed = self.get_time_elapsed(dictionary=True)
         time_string = "Time elapsed: "

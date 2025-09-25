@@ -102,5 +102,4 @@ for fs in legacy_filesystems:
 scriptlog.write_log(f"File systems that would get pre-swap snapshot: {len(promoted_fs_list)}", jsondata=promoted_fs_list, show_output=True)
 
 scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...")
-time.sleep(30)
-
+timer.countdown(30)
