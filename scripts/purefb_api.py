@@ -100,8 +100,8 @@ class FlashBladeAPI:
         else:
             try:
                 msg = f"{method.upper()} failure for {message}"
-                self.logger.write_log(msg, show_output=True)
-                self.logger.write_log(f"Error Status Code: {response.status_code}", show_output=True)
+                self.logger.write_log(msg, show_output=True, end_print="\n")
+                self.logger.write_log(f"HTTP Response Status Code: {response.status_code}", show_output=True)
                 errors = response.json()
                 return errors
             except Exception as e:
