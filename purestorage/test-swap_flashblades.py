@@ -150,7 +150,7 @@ scriptlog.write_log(f"Legacy file system replica links that would be deleted: {l
 fs_promotions = {"promotion_due": [], "destroyed": []}
 for fs in s200_filesystems:
     if fs["name"] in s200_promo_payloads and fs["destroyed"] != True:       
-        fs_promotions["promotion_due"].append(fs["name"])
+        fs_promotions["promotion_due"].append({fs["name"]: s200_promo_payloads[fs["name"]]})
     if fs["destroyed"]:
         fs_promotions["destroyed"].append(fs["name"])
 
