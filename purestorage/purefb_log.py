@@ -66,7 +66,7 @@ class Stopwatch:
             return self.end_time - self.start_time
         
     def countdown(self, seconds):
-        for i in range(seconds, 0, -1):
+        for i in range(seconds, -1, -1):
             sys.stdout.write(f"\rCountdown: {i:02d}")
             sys.stdout.flush()
             time.sleep(1)
