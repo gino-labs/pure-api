@@ -99,6 +99,6 @@ for fs in legacy_filesystems:
     if fs["promotion_status"] == "promoted":
         promoted_fs_list.append(fs["name"])
 
-scriptlog.write_log("File systems that would get pre-swap snapshot:", jsondata=promoted_fs_list, show_output=True)
+scriptlog.write_log(f"File systems that would get pre-swap snapshot: {len(promoted_fs_list)}", jsondata=promoted_fs_list, show_output=True)
 
 
