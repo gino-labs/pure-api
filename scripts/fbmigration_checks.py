@@ -25,7 +25,7 @@ def check_replica_links_filesystems():
 
     non_replica_fs_list = []
     for fs in legacy_filesystems:
-        if fs["name"] in legacy_replica_fs_list:
+        if fs["name"] not in legacy_replica_fs_list:
             temp_dict = {
                 "name": fs["name"],
                 "space": fs["space"]["total_physical"],
