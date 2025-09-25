@@ -2,7 +2,6 @@
 import purefb_api as pfa
 from purefb_log import *
 import subprocess
-import time
 import json
 import os
 
@@ -23,6 +22,7 @@ legacy_filesystems = legacy.get_filesystems()
 # Get S200 file systems #
 s200_filesystems = s200.get_filesystems()
 
+# Create promotion payloads using corresponding legacy file system
 s200_promo_payloads = {}
 for fs in legacy_filesystems:
     s200_promo_payloads[fs["name"]] = {
@@ -71,14 +71,12 @@ scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_n
 
 # Get file system replica links on Legacy #
 legacy_replica_links = legacy.get_filesytem_replica_links()
-replication_filesystems = [link["local_file_system"]["name"] for link in legacy_replica_links]
 
 # Get active NFS clients before swapping #
 scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
 hosts = legacy.get_nfs_clients()
 
 # Create inventory file with NFS clients obtained #
-
 inventory = {
     "all": {
         "hosts": {host["name"].split(":")[0]: None for host in hosts["items"] if "172.20." not in host["name"]}
@@ -150,4 +148,5 @@ for fs in s200_filesystems:
 print("Enter root password for ansible playbook.")
 subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"])
 
+# End stopwatch for script run time
 timer.end_stopwatch()
