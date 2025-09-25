@@ -116,6 +116,7 @@ for fs in legacy_filesystems:
                 "writable": False
             }
             legacy.patch_filesystem(fs["name"], demote_payload)
+            scriptlog.write_log(f"Unable to demote {fs['name']}, alternatively making file system unwritable", show_output=True)
         else:
             scriptlog.write_log(f"Other error occurred with code: {err.code}")
 
