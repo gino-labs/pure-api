@@ -14,13 +14,6 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
     
-    promo_test = {    
-        "writable": True,
-        "requested_promotion_state": "promoted" 
-    }
-    try:
-        test = s200.patch_filesystem("test", promo_test, dumpjson=True)
-    except ApiError as err:
-        err.check_details(show_output=True)
+    
 
     watch.end_stopwatch()
