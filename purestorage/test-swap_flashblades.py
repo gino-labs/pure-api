@@ -156,7 +156,9 @@ for fs in s200_filesystems:
 
 scriptlog.write_log(f"File systems that would be promoted: {len(fs_promotions['promotion_due'])}, or not if destroyed: {len(fs_promotions['destroyed'])}", jsondata=fs_promotions, show_output=True)
 
-
+# Test ansible play connectivity to nfs client inventory
+print("Enter root password for ansible playbook.")
+subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-k", "test-clients.yml"])
 
 
         

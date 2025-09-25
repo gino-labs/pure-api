@@ -1,9 +1,0 @@
----
-- name: Play to remount nfs mounts from purestorage
-  hosts: all
-  become: yes
-  gather_facts: no
-  tasks:
-    - name: Ping Clients for Testing
-      ping:
-        
