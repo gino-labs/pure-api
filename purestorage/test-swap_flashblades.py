@@ -91,6 +91,7 @@ os.makedirs("logs", exist_ok=True)
 with open(f"logs/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
+scriptlog.write_log(f"Inventory created with name logs/{inventory_filename}", jsondata=inventory, show_output=True)
 
 # File systems that would be snapshotted
 promoted_fs_list = []
