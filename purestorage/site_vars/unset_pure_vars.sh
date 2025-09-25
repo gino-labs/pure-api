@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-unset PB1
-unset PB2
-unset PB1_MGT
-unset PB2_MGT
-unset LOCAL_IP
-unset API_TOKEN
-unset API_TOKEN_S200
-unset REPLICATION_CUTOFF
