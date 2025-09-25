@@ -60,24 +60,24 @@ else:
     print("No data interfaces.")
     print()
 
-scriptlog.write_log("Legacy data interface names list", jsondata=legacy_data_iface_names, show_output=True)
-scriptlog.write_log("Legacy production IP list", jsondata=legacy_data_ips, show_output=True)
+scriptlog.write_log("Legacy data interface names list", jsondata=legacy_data_iface_names)
+scriptlog.write_log("Legacy production IP list", jsondata=legacy_data_ips)
 
-# Get S200 interfaces' info
+# Get S200 interfaces' info #
 s200_interfaces = s200.get_interfaces()
 
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["name"]]
-scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_names, show_output=True)
+scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_names)
 
-# Get file system replica links on Legacy
+# Get file system replica links on Legacy #
 legacy_replica_links = legacy.get_filesytem_replica_links()
 replication_filesystems = [link["local_file_system"]["name"] for link in legacy_replica_links]
 
-# Get active NFS clients before swapping
+# Get active NFS clients before swapping #
 scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
 hosts = legacy.get_nfs_clients()
 
-# Create inventory file with NFS clients obtained
+# Create inventory file with NFS clients obtained #
 
 inventory = {
     "all": {
@@ -91,7 +91,9 @@ os.makedirs("logs", exist_ok=True)
 with open(f"logs/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
-# Create final snapshots on Legacy and wait 30 seconds for them to settle
+scriptlog.write_log(f"Inventory created: logs/{inventory_filename}", jsondata=inventory, show_output=True)
+
+# Create final snapshots on Legacy and wait 30 seconds for them to settle #
 for fs in legacy_filesystems:
     if fs["promotion_status"] == "promoted":
         legacy.post_filesystem_snapshot(fs["name"], "pre-swap")
