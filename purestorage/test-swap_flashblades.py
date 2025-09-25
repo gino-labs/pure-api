@@ -81,7 +81,7 @@ hosts = legacy.get_nfs_clients()
 
 inventory = {
     "all": {
-        "hosts": {host["name"].split(":")[0]: None for host in hosts["items"] if "172.20." not in host}
+        "hosts": {host["name"].split(":")[0]: None for host in hosts["items"] if "172.20." not in host["name"]}
     }
 }
 
