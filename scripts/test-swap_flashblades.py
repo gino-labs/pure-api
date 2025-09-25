@@ -158,7 +158,7 @@ scriptlog.write_log(f"File systems that would be promoted: {len(fs_promotions['p
 
 # Test ansible play connectivity to nfs client inventory
 print("Enter root password for ansible playbook.")
-subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-k", "test-clients.yml"])
+subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "test-clients.yml"])
 
 timer.end_stopwatch()
         
