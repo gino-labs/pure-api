@@ -463,8 +463,8 @@ class FlashBladeAPI:
     # Patch a filesystem
     def patch_filesystem(self, filesystem, payload, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}"
-        if payload["requested_promotion_state"] == "demoted":
-            url = url + "&discard_non_snapshotted_data=true"
+        if payload.get("requested_promotion_state") == "demoted":
+            url += "&discard_non_snapshotted_data=true"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("patch", url, msg, payload=payload)
 
