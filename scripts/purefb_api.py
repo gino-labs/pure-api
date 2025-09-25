@@ -101,7 +101,7 @@ class FlashBladeAPI:
             try:
                 msg = f"{method.upper()} failure for {message}"
                 self.logger.write_log(msg, show_output=True, end_print="\n")
-                self.logger.write_log(f"HTTP Response Status Code: {response.status_code}", show_output=True)
+                self.logger.write_log(f"HTTP response status code: {response.status_code}", show_output=True)
                 errors = response.json()
                 return errors
             except Exception as e:
@@ -139,8 +139,6 @@ class FlashBladeAPI:
                 "error_context": data["errors"][0]["context"],
                 "error_message": data["errors"][0]["message"]
             }
-            #self.logger.write_log("Bad request, following errors detected:", jsondata=errors, show_output=True)
-            #self.continue_check(post_msg=f"Continuing script after encountering errors for the following context: {errors['error_context']}")
             raise ApiError(errors["error_message"], errors["error_code"], errors["error_context"])
 
     # Helper function to return a csv string or single string
