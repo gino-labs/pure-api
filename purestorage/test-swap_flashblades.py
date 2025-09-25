@@ -160,5 +160,5 @@ scriptlog.write_log(f"File systems that would be promoted: {len(fs_promotions['p
 print("Enter root password for ansible playbook.")
 subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-k", "test-clients.yml"])
 
-
+timer.end_stopwatch()
         

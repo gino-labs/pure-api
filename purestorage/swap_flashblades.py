@@ -147,3 +147,4 @@ for fs in s200_filesystems:
 print("Enter root password for ansible playbook.")
 subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"])
 
+timer.end_stopwatch()
