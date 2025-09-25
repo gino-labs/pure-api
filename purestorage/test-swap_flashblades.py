@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 import purefb_api as pfa
-import purefb_log as pfl
+from purefb_log import *
 import subprocess
+import time
 import json
 import os
 
 # Logger object
-scriptlog = pfl.PureLog()
-stopwatch = pfl.Stopwatch()
+scriptlog = PureLog()
+
+# Initialize Stopwatch object then start
+timer = Stopwatch()
+timer.start_stopwatch()
 
 # FlashBlade API Object Instances
 legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
@@ -19,9 +23,22 @@ legacy_filesystems = legacy.get_filesystems()
 # Get S200 file systems
 s200_filesystems = s200.get_filesystems()
 
-s200_filesystem_names = [fs["name"] for fs in s200_filesystems]
+s200_promo_payloads = {}
+for fs in s200_filesystems:
+    s200_promo_payloads[fs["name"]] = {
+        "nfs": {
+            "v3_enabled": fs["nfs"]["v3_enabled"],
+            "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
+            "rules": fs["nfs"]["rules"]
+        },
+        "http": {
+            "enabled": fs["http"]["enabled"]
+        },
+        "writable": True,
+        "requested_promotion_state": "promoted" 
+    }
 
-scriptlog.write_log("S200 file system names list", jsondata=s200_filesystem_names, show_output=True)
+scriptlog.write_log("S200 file system promotion data from legacy", jsondata=s200_promo_payloads, show_output=True)
 
 # Get Legacy interfaces' info
 legacy_interfaces = legacy.get_interfaces()
@@ -54,6 +71,7 @@ scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_n
 
 # Get file system replica links on Legacy
 legacy_replica_links = legacy.get_filesytem_replica_links()
+replication_filesystems = [link["local_file_system"]["name"] for link in legacy_replica_links]
 
 # Get active NFS clients before swapping
 scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
@@ -63,7 +81,7 @@ hosts = legacy.get_nfs_clients()
 
 inventory = {
     "all": {
-        "hosts": {host["name"].split(":")[0]: None for host in hosts["items"] if "172.20." not in host["name"]}
+        "hosts": {host["name"].split(":")[0]: None for host in hosts["items"] if "172.20." not in host}
     }
 }
 
@@ -73,63 +91,13 @@ os.makedirs("logs", exist_ok=True)
 with open(f"logs/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
-# Create final snapshots on Legacy and wait 30 seconds for them to settle
-fs_snapshot_list = [fs["name"] for fs in legacy_filesystems if fs["promotion_status"] == "promoted"]
-scriptlog.write_log("Create snapshots for promoted file systems and wait 30 seconds. (See JSON data)", jsondata=fs_snapshot_list, show_output=True)
 
-# Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
-demote_payload = {
-    "writable": False,
-    "requested_promotion_state": "demoted"
-}
-scriptlog.write_log("Using demote payload", jsondata=demote_payload, show_output=True)
+# File systems that would be snapshotted
+promoted_fs_list = []
+for fs in legacy_filesystems:
+    if fs["promotion_status"] == "promoted":
+        promoted_fs_list.append(fs["name"])
 
-fs_demote_list = [fs["name"] for fs in legacy_filesystems]
-scriptlog.write_log("Demote Legacy filesystems, handle non replication snapshots.", jsondata=fs_demote_list, show_output=True)
+scriptlog.write_log("File systems that would get pre-swap snapshot:", jsondata=promoted_fs_list, show_output=True)
 
-# Patch Legacy IPs to S200
-scriptlog.write_log("Patch Legacy IPs to S200.", show_output=True)
-s200_new_ips = [iface["address"] for iface in legacy_interfaces if "data" in iface["services"]]
 
-# Patch S200 IPs to Legacy
-scriptlog.write_log("Patch S200 IPs to Legacy.", show_output=True)
-legacy_new_ips = [iface["address"] for iface in s200_interfaces if "data" in iface["services"]]
-
-ips_swapped = {
-    "s200": s200_new_ips,
-    "legacy": legacy_new_ips
-}
-scriptlog.write_log("New IPs that would be after swap.", jsondata=ips_swapped, show_output=True)
-
-# Delete replica links on Legacy
-fs_del_links_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
-scriptlog.write_log("Delete replica links on Legacy.", jsondata=fs_del_links_list, show_output=True)
-
-# Promote / Enabled each file system on S200
-promote_payload = {
-    "nfs": {
-        "v3_enabled": "enabled",
-        "v4_1_enabled": "enabled",
-        "rules": "(rules-here)"
-    },
-    "http": {
-        "enabled": "disabled"
-    },
-    "writable": True,
-    "requested_promotion_state": "promoted"
-}
-
-scriptlog.write_log("Using promote payload.", jsondata=promote_payload, show_output=True)
-
-fs_promote_list = [fs["name"] for fs in s200_filesystems]
-scriptlog.write_log("Promote S200 file systems.", show_output=True)
-
-# Run ansible playbook with nfs client inventory and production IP variable
-scriptlog.write_log(f"Simulate (ping only) runnning ansible playbook to handle remounting nfs clients in create inventory, pass egrep string: {production_ips}", jsondata=inventory, show_output=True)
-print("Enter root password for ansible playbook.")
-stopwatch.start_stopwatch()
-subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-k", "client-pings.yml"])
-stopwatch.end_stopwatch()
-
-# Clean up
-scriptlog.write_log("Clean up, remove files if needed.", show_output=True)
