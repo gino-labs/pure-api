@@ -108,8 +108,7 @@ class ApiError(Exception):
             return True
 
     def check_details(self, show_output=True, skip_ask_to_continue=False):
-        self.logger.write_log(f"API error: [Code: {self.code}, Context: \"{self.context}\"]", show_output=show_output)
-        self.logger.write_log(f"API error message: \"{self.message}\"", show_output=show_output)
+        self.logger.write_log(f"API error: Code: {self.code}, Context: \"{self.context}\", Message: \"{self.message}\"", show_output=show_output)
         if self.ask_to_continue and not skip_ask_to_continue:
             self.ask_to_continue_loop()
 
