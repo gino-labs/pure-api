@@ -103,3 +103,11 @@ scriptlog.write_log(f"File systems that would get pre-swap snapshot: {len(promot
 
 scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...", show_output=True)
 timer.countdown(30)
+
+# File systems that would be demoted or not demoted
+demo_fs_list = [fs["name"] for fs in legacy_filesystems if fs["name"] in replication_filesystems]
+non_demo_fs_list = [fs["name"] for fs in legacy_filesystems if fs["name"] not in replication_filesystems]
+scriptlog.write_log("File systems that would be demoted.", jsondata=demo_fs_list, show_output=True)
+scriptlog.write_log("File systems that would NOT be demoted because no replication snapshots.", jsondata=non_demo_fs_list, show_output=True)
+
+
