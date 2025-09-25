@@ -14,7 +14,7 @@ class PureLog:
         formatted_timestamp = f"{now.strftime('%d%b%Y-%H:%M:%S')}"
         return formatted_timestamp
 
-    def write_log(self, message, jsondata=None, show_output=False):
+    def write_log(self, message, jsondata=None, show_output=False, end_print="\n\n"):
         os.makedirs(self.logdir, exist_ok=True)
         todays_log = os.path.join(self.logdir, self.logfile)
         stamp = self.timestamp()
@@ -23,8 +23,7 @@ class PureLog:
             log.write(f"[{stamp}] {message}\n")
 
         if show_output:
-            print(message)
-            print()
+            print(message, end=end_print)
 
         if jsondata:
             with open(todays_log, 'a') as log:
