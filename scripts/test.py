@@ -13,7 +13,24 @@ if __name__ == "__main__":
     watch = Stopwatch()
 
     watch.start_stopwatch()
+
+    legacy_filesystems = [legacy.get_filesystems(filesystems="test")]
     
-    
+    for fs in legacy_filesystems:
+        try:
+            demote_payload = {
+                "writable": False,
+                "requested_promotion_state": "demoted"
+            }
+            legacy.patch_filesystem(fs["name"], demote_payload)
+        except ApiError as err:
+            err.check_details(skip_ask_to_continue=True)
+            if err.code == 32:
+                demote_payload = {
+                    "writable": False
+                }
+                legacy.patch_filesystem(fs["name"], demote_payload)
+            else:
+                purelog.write_log(f"Other error occurred with code: {err.code}")
 
     watch.end_stopwatch()
