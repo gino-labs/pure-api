@@ -154,7 +154,7 @@ for fs in s200_filesystems:
     if fs["destroyed"]:
         fs_promotions["destroyed"].append(fs["name"])
 
-scriptlog.write_log(f"File systems that would be promoted: {len(fs_promotions['promotion_due'])}, or not if destroyed: {len(fs_promotions['destroyed'])}", jsondata=fs_promotions)
+scriptlog.write_log(f"File systems that would be promoted: {len(fs_promotions['promotion_due'])}, or not if destroyed: {len(fs_promotions['destroyed'])}", jsondata=fs_promotions, show_output=True)
 
 
 
