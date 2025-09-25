@@ -146,6 +146,16 @@ for link in legacy_replica_links:
 
 scriptlog.write_log(f"Legacy file system replica links that would be deleted: {len(fs_del_replica_list)}", jsondata=fs_del_replica_list, show_output=True)
 
+# File systems that would be promoted on S200
+fs_promotions = {"promotion_due": [], "destroyed": []}
+for fs in s200_filesystems:
+    if fs["name"] in s200_promo_payloads and fs["destroyed"] != True:       
+        fs_promotions["promotion_due"].append(fs["name"])
+    if fs["destroyed"]:
+        fs_promotions["destroyed"].append(fs["name"])
+
+scriptlog.write_log(f"File systems that would be promoted: {len(fs_promotions["promotion_due"])}, or not if destroyed: {len(fs_promotions["destroyed"])}", jsondata=fs_promotions)
+
 
 
 
