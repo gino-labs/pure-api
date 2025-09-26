@@ -17,6 +17,7 @@ logger = purefb_log.PureLog()
 legacy = purefb_api.FlashBladeAPI(purefb_api.PB1, purefb_api.PB1_MGT, purefb_api.API_TOKEN)
 s200 = purefb_api.FlashBladeAPI(purefb_api.PB2, purefb_api.PB2_MGT, purefb_api.API_TOKEN_S200)
 
+# Check if replica links are present for each file system on Legacy
 def check_replica_links_filesystems():
     legacy_filesystems = legacy.get_filesystems()
     legacy_replica_links = legacy.get_filesytem_replica_links()
@@ -35,6 +36,18 @@ def check_replica_links_filesystems():
 
     logger.write_log("Filesystems with no replication links", jsondata=non_replica_fs_list, show_output=True)
 
+# Check for non replication snapshot policies from legacy on s200 
+def check_snapshot_policies():
+    legacy_policies = set([pol["name"] for pol in legacy.get_snapshot_policies() if "5_min" not in pol["name"]])
+    s200_policies = set([pol["name"] for pol in s200.get_snapshot_policies() if "5_min" not in pol["name"]])
+
+    if legacy_policies.issubset(s200_policies):
+        logger.write_log("All snapshot polices from legacy are present on s200", jsondata=list(legacy_policies))
+    else:
+        diff_policies = legacy_policies - s200_policies
+        logger.write_log("Polices on Legacy not found on S200", jsondata=list(diff_policies))
+
 
 if __name__ == "__main__":
     check_replica_links_filesystems()
+    check_snapshot_policies()
