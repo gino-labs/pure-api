@@ -80,6 +80,23 @@ def check_matching_attached_snapshot_policies():
             diff_members = legacy_members - s200_members
             logger.write_log(f"Attached snapshot policy \"{pol}\" has MISSING filesystem members on s200.", jsondata=list(diff_members), show_output=True)
 
+# Check subnets names and vlans match for data interfaces
+
+# Verify network interfaces (data matches, mgmt present)
+
+# Check NFS Rules match Legacy
+
+# Check object storage components match (Accounts, Buckets, Users)
+
+# Check if object replication in place per bucket
+
+# Check Directory Services point to valid LDAPS server on S200
+
+# Check DNS settings point to valid DNS server on S200
+
+# Check NTP settings point to valid NTP server on S200
+
+# Check certificates/groups are valid on S200
 
 if __name__ == "__main__":
     check_replica_links_filesystems()
