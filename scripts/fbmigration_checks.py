@@ -61,7 +61,7 @@ def check_matching_attached_snapshot_policies():
     logger.write_log("Policies and members for Legacy...", jsondata=legacy_policy_and_members, show_output=True)
 
     s200_policy_and_members = {}
-    for fs_pol in legacy_fs_attch_pols:
+    for fs_pol in s200_fs_attch_pols:
         if fs_pol["policy"]["name"] not in s200_policy_and_members:
             s200_policy_and_members[fs_pol["policy"]["name"]] = []
         s200_policy_and_members[fs_pol["policy"]["name"]].append(fs_pol["member"]["name"])
