@@ -125,8 +125,7 @@ class FlashBladeAPI:
                 else:
                     if dump:
                         self.logger.write_log("Debug: See parsed data.", jsondata=data["items"], show_output=dump)
-                    else:
-                        return data["items"]
+                    return data["items"]
             except Exception as e:
                 self.logger.write_log(f"Exception has occured: {type(e).__name__} -> {e}", show_output=True)
                 self.logger.write_log("Returning full unparsed json data.", show_output=True)
