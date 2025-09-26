@@ -58,3 +58,4 @@ def check_matching_attached_snapshot_policies():
 if __name__ == "__main__":
     check_replica_links_filesystems()
     check_snapshot_policies()
+    check_matching_attached_snapshot_policies()
