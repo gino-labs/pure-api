@@ -36,12 +36,15 @@ if __name__ == "__main__":
     logger.write_log("S200 file system promotion data from legacy", jsondata=s200_promo_payloads)
 
     count = 0
+    destroyed_found = []
     for fs in s200_filesystems:
         if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
             logger.write_log(f"Filesystem {fs['name']} would be promoted", jsondata=s200_promo_payloads[fs["name"]], show_output=True)
             count += 1
         if fs["destroyed"]:
-            logger.write_log(f"The following filesystem will not be promoted because it is destroyed: {fs['name']}")
+            destroyed_found.append(fs["name"])
+
+    logger.write_log("The following filesystems will not be promoted because they are destroyed:", jsondata=destroyed_found)
     print(f"Non destroyed filesystem count: {count}")
 
     watch.end_stopwatch()
