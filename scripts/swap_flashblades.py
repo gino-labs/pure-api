@@ -85,11 +85,11 @@ inventory = {
 
 inventory_filename = s200.mgt_ip[:2] + "_inventory.json"
 
-os.makedirs("logs", exist_ok=True)
-with open(f"logs/{inventory_filename}", "w") as inv_file:
+os.makedirs("ansible/inventory", exist_ok=True)
+with open(f"ansible/inventory/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
-scriptlog.write_log(f"Inventory created: logs/{inventory_filename}", jsondata=inventory, show_output=True)
+scriptlog.write_log(f"Inventory created: ansible/inventory/{inventory_filename}", jsondata=inventory, show_output=True)
 
 # Create final snapshots on Legacy and wait 30 seconds for them to settle #
 for fs in legacy_filesystems:
@@ -146,7 +146,7 @@ for fs in s200_filesystems:
 
 # Run ansible playbook with nfs client inventory and production IP variable
 print("Enter root password for ansible playbook.")
-subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"])
+subprocess.run(["ansible-playbook", "-i", f"inventory/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"])
 
 # End stopwatch for script run time
 timer.end_stopwatch()
