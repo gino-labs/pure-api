@@ -38,9 +38,9 @@ if __name__ == "__main__":
     count = 0
     destroyed_found = []
     for fs in s200_filesystems:
+        count += 1
         if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
-            logger.write_log(f"Filesystem {fs['name']} would be promoted", jsondata=s200_promo_payloads[fs["name"]], show_output=True)
-            count += 1
+            logger.write_log(f"Filesystem {fs['name']} would be promoted: {count}", jsondata=s200_promo_payloads[fs["name"]], show_output=True)
         if fs["destroyed"]:
             destroyed_found.append(fs["name"])
 
