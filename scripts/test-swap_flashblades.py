@@ -87,11 +87,11 @@ inventory = {
 
 inventory_filename = s200.mgt_ip[:2] + "_inventory.json"
 
-os.makedirs("logs", exist_ok=True)
-with open(f"logs/{inventory_filename}", "w") as inv_file:
+os.makedirs("ansible/inventory", exist_ok=True)
+with open(f"ansible/inventory/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
-scriptlog.write_log(f"Inventory created with name logs/{inventory_filename}", jsondata=inventory, show_output=True)
+scriptlog.write_log(f"Inventory created with name ansible/inventory/{inventory_filename}", jsondata=inventory, show_output=True)
 
 # File systems that would be snapshotted
 promoted_fs_list = []
@@ -158,7 +158,7 @@ scriptlog.write_log(f"File systems that would be promoted: {len(fs_promotions['p
 
 # Test ansible play connectivity to nfs client inventory
 print("Enter root password for ansible playbook.")
-subprocess.run(["ansible-playbook", "-i", f"logs/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "test-clients.yml"])
+subprocess.run(["ansible-playbook", "-i", f"inventory/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "test-clients.yml"], cwd="ansible")
 
 timer.end_stopwatch()
         
