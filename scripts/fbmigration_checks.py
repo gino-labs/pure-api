@@ -47,6 +47,13 @@ def check_snapshot_policies():
         diff_policies = legacy_policies - s200_policies
         logger.write_log("Polices on Legacy not found on S200", jsondata=list(diff_policies), show_output=True)
 
+# Check that file systems on both legacy and s200 have same snapshot polices
+def check_matching_attached_snapshot_policies():
+    legacy_fs_attch_pols = legacy.get_filesystems_attached_to_snapshot_policy(dumpjson=True)
+    s200_fs_attch_pols = s200.get_filesystems_attached_to_snapshot_policy(dumpjson=True)
+
+
+
 
 if __name__ == "__main__":
     check_replica_links_filesystems()
