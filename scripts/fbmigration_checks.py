@@ -49,8 +49,8 @@ def check_snapshot_policies():
 
 # Check that file systems on both legacy and s200 have same snapshot polices
 def check_matching_attached_snapshot_policies():
-    legacy_fs_attch_pols = legacy.get_filesystems_attached_to_snapshot_policy(dumpjson=True)
-    s200_fs_attch_pols = s200.get_filesystems_attached_to_snapshot_policy(dumpjson=True)
+    legacy_fs_attch_pols = legacy.get_filesystems_attached_to_snapshot_policy()
+    s200_fs_attch_pols = s200.get_filesystems_attached_to_snapshot_policy()
 
     legacy_policy_and_members = {}
     for fs_pol in legacy_fs_attch_pols:
