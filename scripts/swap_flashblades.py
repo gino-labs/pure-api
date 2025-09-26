@@ -89,7 +89,7 @@ os.makedirs("ansible/inventory", exist_ok=True)
 with open(f"ansible/inventory/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
-scriptlog.write_log(f"Inventory created: ansible/inventory/{inventory_filename}", jsondata=inventory, show_output=True)
+scriptlog.write_log(f"Inventory created: ansible/inventory/{inventory_filename}", show_output=True)
 
 # Create final snapshots on Legacy and wait 30 seconds for them to settle #
 for fs in legacy_filesystems:
@@ -116,7 +116,7 @@ for fs in legacy_filesystems:
             scriptlog.write_log(f"Unable to demote file system: {fs['name']} - Setting to unwritable instead.", show_output=True)
             legacy.patch_filesystem(fs["name"], demote_payload)
         else:
-            scriptlog.write_log(f"Other error occurred with code: {err.code}")
+            scriptlog.write_log(f"Other error occurred with code: {err.code}", show_output=True)
 
 # Patch Legacy IPs to S200
 for iface in legacy_interfaces:
@@ -146,7 +146,7 @@ for fs in s200_filesystems:
 
 # Run ansible playbook with nfs client inventory and production IP variable
 print("Enter root password for ansible playbook.")
-subprocess.run(["ansible-playbook", "-i", f"inventory/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"])
+subprocess.run(["ansible-playbook", "-i", f"inventory/{inventory_filename}", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"], cwd="ansible")
 
 # End stopwatch for script run time
 timer.end_stopwatch()
