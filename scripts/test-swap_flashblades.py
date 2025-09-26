@@ -2,7 +2,6 @@
 import purefb_api as pfa
 from purefb_log import *
 import subprocess
-import time
 import json
 import os
 
