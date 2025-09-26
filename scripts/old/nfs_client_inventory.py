@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import json
-import pure_migration_v3 as pv3
+import scripts.old.pure_migration_v3 as pv3
 
 
 def get_inventory(s200=False):

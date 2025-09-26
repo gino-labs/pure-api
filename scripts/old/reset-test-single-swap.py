@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import time
-import pure_migration_v3 as pv3
+import scripts.old.pure_migration_v3 as pv3
 
 if __name__ == "__main__":
     auth_token = pv3.Get_Session_Token(pv3.API_TOKEN, pv3.PB1_MGT)

@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-import pure_migration_v3 as pv3
+import scripts.old.pure_migration_v3 as pv3
 
 ### Filesystem migration ###
 

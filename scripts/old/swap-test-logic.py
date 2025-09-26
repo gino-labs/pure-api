@@ -3,7 +3,7 @@ import json
 import time
 import purefb_log as pl
 import purefb_api as pfa
-import pure_migration_v3 as pv3
+import scripts.old.pure_migration_v3 as pv3
 
 
 if __name__ == "__main__":
