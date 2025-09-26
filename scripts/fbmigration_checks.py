@@ -52,7 +52,13 @@ def check_matching_attached_snapshot_policies():
     legacy_fs_attch_pols = legacy.get_filesystems_attached_to_snapshot_policy(dumpjson=True)
     s200_fs_attch_pols = s200.get_filesystems_attached_to_snapshot_policy(dumpjson=True)
 
+    policy_and_members = []
+    for fs_pol in legacy_fs_attch_pols:
+        if fs_pol["policy"]["name"] not in policy_and_members:
+            policy_and_members.append({fs_pol["policy"]["name"]: []})
+        policy_and_members[fs_pol["policy"]["name"]].append(fs_pol["member"]["name"])
 
+    logger.write_log("Policies and members for Legacy...", jsondata=policy_and_members, show_output=True)
 
 
 if __name__ == "__main__":
