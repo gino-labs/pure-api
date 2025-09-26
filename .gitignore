@@ -17,3 +17,6 @@
 
 # Ignore logs directory
 **/logs/
+
+# Ignore dynamically created inventories
+**/inventory
