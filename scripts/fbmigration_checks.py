@@ -42,10 +42,10 @@ def check_snapshot_policies():
     s200_policies = set([pol["name"] for pol in s200.get_snapshot_policies() if "5_min" not in pol["name"]])
 
     if legacy_policies.issubset(s200_policies):
-        logger.write_log("All snapshot polices from legacy are present on s200", jsondata=list(legacy_policies))
+        logger.write_log("All snapshot polices from legacy are present on s200", jsondata=list(legacy_policies), show_output=True)
     else:
         diff_policies = legacy_policies - s200_policies
-        logger.write_log("Polices on Legacy not found on S200", jsondata=list(diff_policies))
+        logger.write_log("Polices on Legacy not found on S200", jsondata=list(diff_policies), show_output=True)
 
 
 if __name__ == "__main__":
