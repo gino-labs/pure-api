@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    policies = legacy.get_snapshot_policies(dumpjson=True)
+    policies = legacy.get_snapshot_policies()
     for pol in policies:
         print(pol["name"])
 
