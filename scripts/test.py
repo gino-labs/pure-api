@@ -38,13 +38,13 @@ if __name__ == "__main__":
     count = 0
     destroyed_found = []
     for fs in s200_filesystems:
-        count += 1
-        if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
+        if fs["name"] in s200_promo_payloads and not fs["destroyed"]:
+            count += 1       
             logger.write_log(f"Filesystem {fs['name']} would be promoted: {count}", jsondata=s200_promo_payloads[fs["name"]], show_output=True)
         if fs["destroyed"]:
             destroyed_found.append(fs["name"])
 
-    logger.write_log("The following filesystems will not be promoted because they are destroyed:", jsondata=destroyed_found)
+    logger.write_log("The following filesystems will not be promoted because they are destroyed:", jsondata=destroyed_found, show_output=True)
     print(f"Non destroyed filesystem count: {count}")
 
     watch.end_stopwatch()
