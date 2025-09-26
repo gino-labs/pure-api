@@ -141,7 +141,7 @@ for link in legacy_replica_links:
 
 # Promote / Enable each file system on S200
 for fs in s200_filesystems:
-    if fs["name"] in s200_promo_payloads and fs["destroyed"] != True:       
+    if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
         s200.patch_filesystem(fs["name"], s200_promo_payloads[fs["name"]])
 
 # Run ansible playbook with nfs client inventory and production IP variable
