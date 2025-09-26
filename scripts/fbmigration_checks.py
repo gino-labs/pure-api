@@ -75,10 +75,10 @@ def check_matching_attached_snapshot_policies():
         s200_members = set(s200_policy_and_members[pol])
 
         if legacy_members.issubset(s200_members):
-            logger.write_log(f"Attached snapshot policy has matching filesystem members for \"{pol}\" on both FlashBlades", jsondata=member_list, show_output=True)
+            logger.write_log(f"Attached snapshot policy \"{pol}\" has matching filesystem members on both FlashBlades", jsondata=member_list, show_output=True)
         else:
             diff_members = legacy_members - s200_members
-            logger.write_log(f"Attached snapshot policy has missing filesystem members for \"{pol}\" on s200.", jsondata=list(diff_members), show_output=True)
+            logger.write_log(f"Attached snapshot policy \"{pol}\" has missing filesystem members on s200.", jsondata=list(diff_members), show_output=True)
 
 
 if __name__ == "__main__":
