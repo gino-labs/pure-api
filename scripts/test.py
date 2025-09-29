@@ -29,9 +29,9 @@ if __name__ == "__main__":
             logger.write_log(f"Replica link doesn't exist for file system {anaconda_fs['name']}. Creating non-replication snapshot.")
             legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap", replicate=False)
         elif e.code == 19:
-            logger.write_log(f"Snapshot named \"pre-swap\" already exists.")
+            logger.write_log(f"Snapshot named \"pre-swap\" already exists.", show_output=True)
         else:
             e.check_details(show_code=True)
-            logger.write_log(f"Could not create pre-swap snapshot for filesystem {anaconda_fs['name']}")
+            logger.write_log(f"Could not create pre-swap snapshot for filesystem {anaconda_fs['name']}", show_output=True)
 
     watch.end_stopwatch()
