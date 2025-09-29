@@ -67,6 +67,17 @@ class FlashBladeAPI:
             print()
             sys.exit(1)
 
+    # Get site environment variables as a dictionary
+    def get_env_vars(self):
+        env_vars = {
+            "name": self.name,
+            "data_ip": self.data_ip,
+            "mgt_ip": self.mgt_ip,
+            "api_token": self.api_token,
+            "baseurl": self.baseurl
+        }
+        return env_vars
+    
     # Get session token
     def Get_Session_Token(self):
         url = f"https://{self.mgt_ip}/api/login"
