@@ -25,6 +25,9 @@ if __name__ == "__main__":
     try:
         legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap")
     except ApiError as e:
-        e.check_details(show_code=True)
+        if e.code == 6:
+            legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap", replicate=False)
+        else:
+            logger.write_log(f"Could not create pre-swap snapshot for filesystem {anaconda_fs['name']}")
 
     watch.end_stopwatch()
