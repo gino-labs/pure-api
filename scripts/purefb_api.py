@@ -37,6 +37,30 @@ class SiteVars:
             "replication_cutoff": self.REPLICATION_CUTOFF
         }
         return site_vars
+    
+    # Return only pb1 variables
+    def get_pb1_vars(self, var_dict=False):
+        if var_dict:
+            pb1_vars = {
+                "pb1": self.PB1,
+                "pb1_mgt": self.PB1_MGT,
+                "api_token": self.API_TOKEN
+            }
+        else:
+            pb1_vars = [self.PB1, self.PB1_MGT, self.API_TOKEN]
+        return pb1_vars
+
+    # Return only pb2 variables
+    def get_pb1_vars(self, var_dict=False):
+        if var_dict:
+            pb2_vars = {
+                "pb2": self.PB2,
+                "pb2_mgt": self.PB2_MGT,
+                "api_token": self.API_TOKEN_S200
+            }
+        else:
+            pb2_vars = [self.PB2, self.PB2_MGT, self.API_TOKEN_S200]
+        return pb2_vars
 
 
 # Custom exception class built for handling api errors 
