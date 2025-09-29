@@ -30,7 +30,7 @@ def check_file_systems():
     s200_filesystems = [fs["name"] for fs in s200.get_filesystems()]
 
     s200_diffs = set(s200_filesystems) - set(legacy_filesystems)
-    legacy_diffs = set(legacy_diffs) - set(s200_diffs)
+    legacy_diffs = set(legacy_filesystems) - set(s200_filesystems)
 
     if s200_diffs:
         logger.write_log("Different file systems found on s200 with following names: ", jsondata=s200_diffs, show_output=True)
