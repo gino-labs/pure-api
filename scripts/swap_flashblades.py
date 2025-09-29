@@ -6,7 +6,7 @@ import json
 import os
 
 # Logger object #
-scriptlog = PureLog()
+logger = PureLog()
 
 # Initialize Stopwatch object then start #
 timer = Stopwatch()
@@ -43,7 +43,7 @@ for fs in legacy_filesystems:
         "requested_promotion_state": "promoted" 
     }
 
-scriptlog.write_log("S200 file system promotion data from legacy", jsondata=s200_promo_payloads)
+logger.write_log("S200 file system promotion data from legacy", jsondata=s200_promo_payloads)
 
 # Get Legacy interfaces' info #
 legacy_interfaces = legacy.get_interfaces()
@@ -65,20 +65,20 @@ else:
     print("No data interfaces.")
     print()
 
-scriptlog.write_log("Legacy data interface names list", jsondata=legacy_data_iface_names)
-scriptlog.write_log("Legacy production IP list", jsondata=legacy_data_ips)
+logger.write_log("Legacy data interface names list", jsondata=legacy_data_iface_names)
+logger.write_log("Legacy production IP list", jsondata=legacy_data_ips)
 
 # Get S200 interfaces' info #
 s200_interfaces = s200.get_interfaces()
 
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["name"]]
-scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_names)
+logger.write_log("S200 data interface names list", jsondata=s200_data_iface_names)
 
 # Get file system replica links on Legacy #
 legacy_replica_links = legacy.get_filesytem_replica_links()
 
 # Get active NFS clients before swapping #
-scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
+logger.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
 hosts = legacy.get_nfs_clients()
 
 # Create inventory file with NFS clients obtained #
@@ -94,14 +94,24 @@ os.makedirs("ansible/inventory", exist_ok=True)
 with open(f"ansible/inventory/{inventory_filename}", "w") as inv_file:
     json.dump(inventory, inv_file, indent=4)
 
-scriptlog.write_log(f"Inventory created: ansible/inventory/{inventory_filename}", show_output=True)
+logger.write_log(f"Inventory created: ansible/inventory/{inventory_filename}", show_output=True)
 
 # Create final snapshots on Legacy and wait 30 seconds for them to settle #
 for fs in legacy_filesystems:
-    if fs["promotion_status"] == "promoted":
-        legacy.post_filesystem_snapshot(fs["name"], "pre-swap")
+    try:
+        if fs["promotion_status"] == "promoted":
+            legacy.post_filesystem_snapshot(fs["name"], "pre-swap")
+    except ApiError as e:
+        if e.code == 6:
+            logger.write_log(f"Replica link doesn't exist for file system {fs['name']}. Creating non-replication snapshot.", show_output=True)
+            legacy.post_filesystem_snapshot(fs["name"], "pre-swap", replicate=False)
+        elif e.code == 19:
+            logger.write_log(f"Snapshot named \"pre-swap\" already exists.", show_output=True)
+        else:
+            e.check_details(show_code=True)
+            logger.write_log(f"Could not create pre-swap snapshot for filesystem {fs['name']}", show_output=True)
 
-scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...", show_output=True)
+logger.write_log("Waiting 30 seconds for pre-swap snapshots to settle...", show_output=True)
 timer.countdown(30)
 
 # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
@@ -118,10 +128,10 @@ for fs in legacy_filesystems:
             demote_payload = {
                 "writable": False
             }
-            scriptlog.write_log(f"Unable to demote file system: {fs['name']} - Setting to unwritable instead.", show_output=True)
+            logger.write_log(f"Unable to demote file system: {fs['name']} - Setting to unwritable instead.", show_output=True)
             legacy.patch_filesystem(fs["name"], demote_payload)
         else:
-            scriptlog.write_log(f"Other error occurred with code: {err.code}", show_output=True)
+            logger.write_log(f"Other error occurred with code: {err.code}", show_output=True)
 
 # Patch Legacy IPs to S200
 for iface in legacy_interfaces:
