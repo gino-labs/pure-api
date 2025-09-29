@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import purefb_api as pfa
+from purefb_api import *
 from purefb_log import *
 import subprocess
 import json
@@ -12,9 +12,14 @@ scriptlog = PureLog()
 timer = Stopwatch()
 timer.start_stopwatch()
 
+# Environment variables sourced from shell (site specific)
+rrc_site = SiteVars()
+pb1_vars = rrc_site.get_pb1_vars()
+pb2_vars = rrc_site.get_pb2_vars()
+
 # FlashBlade API Object Instances #
-legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+legacy = FlashBladeAPI(*pb1_vars)
+s200 = FlashBladeAPI(*pb2_vars)
 
 # Get Legacy file systems #
 legacy_filesystems = legacy.get_filesystems()
