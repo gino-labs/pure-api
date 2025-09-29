@@ -1,5 +1,5 @@
-import purefb_log
-import purefb_api
+from purefb_log import *
+from purefb_api import *
 
 '''
 What to check?
@@ -7,15 +7,38 @@ What to check?
 - Matching data interface names
 - Replication links
 - File systems without repliaction links won't be demotable if snapshot is taken.
-- Usable error code/message for exception handling?
-{"errors":[{"code":32,"context":"tools_linux_chantilly","message":"The latest snapshot tools_linux_chantilly.2025_09_12_15_09 is not a replication snapshot.
- To demote a file system it must either have no snapshots or the most recent snapshot must be a replication snapshot."}]}
 '''
 
-logger = purefb_log.PureLog()
+# Logger object for logs
+logger = PureLog()
 
-legacy = purefb_api.FlashBladeAPI(purefb_api.PB1, purefb_api.PB1_MGT, purefb_api.API_TOKEN)
-s200 = purefb_api.FlashBladeAPI(purefb_api.PB2, purefb_api.PB2_MGT, purefb_api.API_TOKEN_S200)
+# Stopwatch for script runtimes
+watch = Stopwatch()
+
+# Site environment variables sourced from shell
+rrc_site = SiteVars()
+pb1_vars = rrc_site.get_pb1_vars()
+pb2_vars = rrc_site.get_pb2_vars()
+
+# Create API object instances of each array
+legacy = FlashBladeAPI(*pb1_vars)
+s200 = FlashBladeAPI(*pb2_vars)
+
+# Check file systems match, if not show differences
+def check_file_systems():
+    legacy_filesystems = [fs["name"] for fs in legacy.get_filesystems()]
+    s200_filesystems = [fs["name"] for fs in s200.get_filesystems()]
+
+    s200_diffs = set(s200_filesystems) - set(legacy_filesystems)
+    legacy_diffs = set(legacy_diffs) - set(s200_diffs)
+
+    if s200_diffs:
+        logger.write_log("Different file systems found on s200 with following names: ", jsondata=s200_diffs, show_output=True)
+    if legacy_diffs:
+        logger.write_log("Different file systems found legacy with following names: ", jsondata=legacy_diffs, show_output=True)
+    if not s200_diffs and not legacy_diffs:
+        logger.write_log("File system names match for both legacy and s200.")
+
 
 # Check if replica links are present for each file system on Legacy
 def check_replica_links_filesystems():
