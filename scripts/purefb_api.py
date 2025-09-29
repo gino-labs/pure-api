@@ -5,7 +5,6 @@ import json
 import urllib3
 import requests
 from purefb_log import PureLog
-from purefb_log import ApiError
 
 # Disabling Insecure Requests Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -21,6 +20,35 @@ API_TOKEN_S200 = os.getenv("API_TOKEN_S200")                #
 MIGRATION_POLICY = os.getenv("MIGRATION_POLICY")            #
 REPLICATION_CUTOFF = os.getenv("REPLICATION_CUTOFF")        #
 #############################################################
+
+# Custom exception class built for handling api errors 
+class ApiError(Exception):
+    def __init__(self, message, code, context, ask_to_continue=True):
+        self.code = code
+        self.context = context
+        self.message = message
+        self.ask_to_continue = ask_to_continue
+        self.logger = PureLog()
+        super().__init__(message)
+
+    def ask_to_continue_loop(self):
+        user_input = input("Would you like to continue? (y/n): ")[:1].lower()
+        while user_input not in ("y", "n"):
+            user_input = input("Please enter y/n to stop or continue the script: ")[:1].lower()
+        print()
+        if user_input == "n":
+            print("Exiting script...")
+            sys.exit(1)
+        else:
+            self.logger.write_log(f"Continuing with script after encountering error related to: \"{self.context}\"", show_output=True)
+            return True
+
+    def check_details(self, skip_ask_to_continue=False, show_code=False, show_context=False, show_message=True):
+        self.logger.write_log(f"API error code: {self.code}", show_output=show_code, end_print="\n")
+        self.logger.write_log(f"API error context: \"{self.context}\"", show_output=show_context, end_print="\n")
+        self.logger.write_log(f"API error message: \"{self.message}\"", show_output=show_message)
+        if self.ask_to_continue and not skip_ask_to_continue:
+            self.ask_to_continue_loop()
 
 class FlashBladeAPI:
     def __init__(self, data_ip, mgt_ip, api_token):
