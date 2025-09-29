@@ -21,4 +21,6 @@ if __name__ == "__main__":
 
     anaconda_fs = legacy.get_filesystems(filesystems="anaconda_linux_tucson", dumpjson=True)
 
+    legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap")
+
     watch.end_stopwatch()
