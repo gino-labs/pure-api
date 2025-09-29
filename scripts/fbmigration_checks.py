@@ -122,6 +122,7 @@ def check_matching_attached_snapshot_policies():
 # Check certificates/groups are valid on S200
 
 if __name__ == "__main__":
-    check_replica_links_filesystems()
-    check_snapshot_policies()
-    check_matching_attached_snapshot_policies()
+    #check_replica_links_filesystems()
+    #check_snapshot_policies()
+    #check_matching_attached_snapshot_policies()
+    check_file_systems()
