@@ -51,7 +51,7 @@ class SiteVars:
         return pb1_vars
 
     # Return only pb2 variables
-    def get_pb1_vars(self, var_dict=False):
+    def get_pb2_vars(self, var_dict=False):
         if var_dict:
             pb2_vars = {
                 "pb2": self.PB2,
