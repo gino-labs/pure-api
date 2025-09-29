@@ -22,7 +22,9 @@ if __name__ == "__main__":
     # Testing snapshots, trying to reproduce error for pre-swap snapshots during migration
 
     anaconda_fs = legacy.get_filesystems(filesystems="anaconda_linux_tucson", dumpjson=True)
-
-    legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap")
+    try:
+        legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap")
+    except ApiError as e:
+        e.check_details(show_code=True)
 
     watch.end_stopwatch()
