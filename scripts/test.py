@@ -2,7 +2,7 @@
 import json
 import time
 from purefb_log import *
-import purefb_api as pfa
+from purefb_api import *
 
 
 if __name__ == "__main__":
