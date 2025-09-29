@@ -9,17 +9,35 @@ from purefb_log import PureLog
 # Disabling Insecure Requests Warning
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-################### ENVIRONMENT VARIABLES ###################  
-PB1 = os.getenv("PB1")                                      #
-PB2 = os.getenv("PB2")                                      #
-PB1_MGT = os.getenv("PB1_MGT")                              #
-PB2_MGT = os.getenv("PB2_MGT")                              #
-LOCAL_IP = os.getenv("LOCAL_IP")                            #
-API_TOKEN = os.getenv("API_TOKEN")                          #
-API_TOKEN_S200 = os.getenv("API_TOKEN_S200")                #
-MIGRATION_POLICY = os.getenv("MIGRATION_POLICY")            #
-REPLICATION_CUTOFF = os.getenv("REPLICATION_CUTOFF")        #
-#############################################################
+# Create a class for site enviornment variables
+class SiteVars:
+    def __init__(self):
+        # Environment variables sourced from shell 
+        self.PB1 = os.getenv("PB1")
+        self.PB2 = os.getenv("PB2")
+        self.PB1_MGT = os.getenv("PB1_MGT")
+        self.PB2_MGT = os.getenv("PB2_MGT")
+        self.LOCAL_IP = os.getenv("LOCAL_IP")
+        self.API_TOKEN = os.getenv("API_TOKEN")
+        self.API_TOKEN_S200 = os.getenv("API_TOKEN_S200")
+        self.MIGRATION_POLICY = os.getenv("MIGRATION_POLICY")
+        self.REPLICATION_CUTOFF = os.getenv("REPLICATION_CUTOFF")
+
+    # Return Environment variables as dictionary
+    def get_site_vars(self):
+        site_vars = {
+            "pb1": self.PB1,
+            "pb2": self.PB2,
+            "pb1_mgt": self.PB1_MGT,
+            "pb2_mgt": self.PB2_MGT,
+            "local_ip": self.LOCAL_IP,
+            "legacy_api_token": self.API_TOKEN,
+            "s200_api_token": self.API_TOKEN_S200,
+            "migration_policy": self.MIGRATION_POLICY,
+            "replication_cutoff": self.REPLICATION_CUTOFF
+        }
+        return site_vars
+
 
 # Custom exception class built for handling api errors 
 class ApiError(Exception):
