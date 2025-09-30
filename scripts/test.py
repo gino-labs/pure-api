@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     # One off config migration + testing
 
-    cfg_migrator = ConfigMigrator(legacy, s200)
+    cfg_migrator = ConfigMigrator()
 
     cfg_migrator.migrate_config_subnets()
 
