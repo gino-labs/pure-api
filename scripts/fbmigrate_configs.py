@@ -66,8 +66,7 @@ class ConfigMigrator:
             s200_subnames = s200_sub_details["s200_subnames"]
             s200_prefixes = s200_sub_details["s200_prefixes"]
             s200_vlans = s200_sub_details["s200_vlans"]
-            print(s200_subnames)
-            exit()
+
             for sub in legacy_subnets:
                 # Skip if subnet name, prefix, or vlan already exist from s200 info gathered in s200_sub_details
                 if sub["name"] in s200_subnames:
