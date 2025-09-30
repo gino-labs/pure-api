@@ -40,6 +40,8 @@ def compare_lists(list1, list2, check_one=False):
 
 # Check file systems match, if not show differences
 def check_file_systems():
+    logger.write_log("Checking if file system names match between FBs.", show_output=True)
+
     legacy_filesystems = [fs["name"] for fs in legacy.get_filesystems()]
     s200_filesystems = [fs["name"] for fs in s200.get_filesystems()]
 
@@ -54,6 +56,8 @@ def check_file_systems():
 
 # Check if replica links are present for each file system on Legacy
 def check_replica_links_filesystems(show_fs_data=False):
+    logger.write_log("Check if legacy file systems have replication links.", show_output=True)
+
     legacy_filesystems = legacy.get_filesystems()
     legacy_replica_links = legacy.get_filesytem_replica_links()
     
@@ -78,6 +82,8 @@ def check_replica_links_filesystems(show_fs_data=False):
 
 # Check for non replication snapshot policies from legacy on s200 
 def check_snapshot_policies():
+    logger.write_log("Check if snapshot policies match between FBs.", show_output=True)
+
     legacy_policies = set([pol["name"] for pol in legacy.get_snapshot_policies() if "5_min" not in pol["name"]])
     s200_policies = set([pol["name"] for pol in s200.get_snapshot_policies() if "5_min" not in pol["name"]])
 
@@ -91,6 +97,8 @@ def check_snapshot_policies():
 
 # Check that file systems on both legacy and s200 have same snapshot polices
 def check_matching_attached_snapshot_policies():
+    logger.write_log("Check if file systems have matching snapshot polices attached between FBs.", show_output=True)
+
     legacy_fs_attch_pols = legacy.get_filesystems_attached_to_snapshot_policy()
     s200_fs_attch_pols = s200.get_filesystems_attached_to_snapshot_policy()
 
@@ -126,6 +134,8 @@ def check_matching_attached_snapshot_policies():
 
 # Check subnets names and vlans match for data interfaces
 def check_subnets():
+    logger.write_log("Check if subnet names match between FBs", show_output=True)
+
     legacy_subs = [sub["name"] for sub in legacy.get_subnets()]
     s200_subs = [sub["name"] for sub in s200.get_subnets()]
 
@@ -140,6 +150,8 @@ def check_subnets():
 
 # Verify network interfaces (data matches, mgmt present)
 def check_interfaces():
+    logger.write_log("Check if network interfaces match between FBs. NOTE: Can't create matching interface without different IP address.", show_output=True)
+
     legacy_ifaces = [iface["name"] for iface in legacy.get_interfaces()]
     s200_ifaces = [iface["name"] for iface in s200.get_interfaces()]
 
