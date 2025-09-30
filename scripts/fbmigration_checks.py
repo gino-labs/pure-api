@@ -141,10 +141,10 @@ def check_subnets():
 
     diffs = compare_lists(legacy_subs, s200_subs)
 
-    if diffs["unique_to_s200"]:
-        logger.write_log(f"Unique subnets found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
     if diffs["unique_to_legacy"]:
         logger.write_log(f"Unique subnets found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+    if diffs["unique_to_s200"]:
+        logger.write_log(f"Unique subnets found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
     if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
         logger.write_log("Subnet names match for both legacy and s200.", show_output=True)
 
@@ -155,8 +155,29 @@ def check_interfaces():
     legacy_ifaces = [iface["name"] for iface in legacy.get_interfaces()]
     s200_ifaces = [iface["name"] for iface in s200.get_interfaces()]
 
+    diffs = compare_lists(legacy_ifaces, s200_ifaces)
+
+    if diffs["unique_to_legacy"]:
+        logger.write_log(f"Unique network interfaces found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+    if diffs["unique_to_s200"]:
+        logger.write_log(f"Unique network interfacess found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+    if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
+        logger.write_log("Subnet names match for both legacy and s200.", show_output=True)
+
 
 # Check NFS Rules match Legacy
+def check_filesystem_nfs_rules():
+    logger.write_log("Check if NFS rules match per file system between FBs.", show_output=True)
+
+    legacy_filesystem_names_rules = {{fs["name"]: fs["nfs"]["rules"]} for fs in legacy.get_filesystems()}
+    s200_filesystems = s200.get_filesystems()
+
+    for fs in s200_filesystems:
+        if fs["name"] in legacy_filesystem_names_rules:
+            if fs["nfs"]["rules"] in legacy_filesystem_names_rules[fs["name"]]:
+                logger.write_log("", show_output=True)
+            else:
+                logger.write_log("", show_output=True)
 
 # Check object storage components match (Accounts, Buckets, Users)
 
