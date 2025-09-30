@@ -14,11 +14,27 @@ TODO
 - Migrate/Configure Syslog Server Connections
 - Migrate/Configure Interfaces (Data/Replcation, ensure no duplicate IPs between blades)
 '''
+# Logger object for logs
+logger = PureLog()
+
+# Stopwatch for script runtimes
+watch = Stopwatch()
+
+# Site environment variables sourced from shell
+rrc_site = SiteVars()
+pb1_vars = rrc_site.get_pb1_vars()
+pb2_vars = rrc_site.get_pb2_vars()
+
+# Create API object instances of each array
+legacy = FlashBladeAPI(*pb1_vars)
+s200 = FlashBladeAPI(*pb2_vars)
 
 class ConfigMigrator:
-    def __init__(self, legacy, s200):
+    def __init__(self):
         self.legacy = legacy
         self.s200 = s200
+        self.logger = logger
+        self.watch = watch
     
     # Migrate subnets, verify name, vlan, subnet prefix
     def migrate_config_subnets(self):
