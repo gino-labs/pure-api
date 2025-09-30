@@ -122,7 +122,7 @@ def check_matching_attached_snapshot_policies():
         diffs = compare_lists(legacy_members, s200_members, check_one=True)
 
         if diffs:
-            logger.write_log(f"Attached snapshot policy \"{pol}\" has MISSING filesystem members on s200.", jsondata=list(diff_members), show_output=True)
+            logger.write_log(f"Attached snapshot policy \"{pol}\" has MISSING filesystem members on s200.", jsondata=diffs, show_output=True)
         else:
             logger.write_log(f"Attached snapshot policy \"{pol}\" has MATCHING filesystem members on both FlashBlades", jsondata=member_list, show_output=True)
 
@@ -163,8 +163,8 @@ def check_interfaces():
 # Check certificates/groups are valid on S200
 
 if __name__ == "__main__":
-    #check_replica_links_filesystems()
-    #check_snapshot_policies()
-    #check_matching_attached_snapshot_policies()
+    check_replica_links_filesystems()
+    check_snapshot_policies()
+    check_matching_attached_snapshot_policies()
     check_file_systems()
     check_subnets()
