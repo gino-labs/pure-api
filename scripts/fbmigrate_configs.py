@@ -1,3 +1,3 @@
 #!/usr/bin/env python3
-import purefb_api as pfa
-import purefb_log as pfl
+from purefb_api import *
+from purefb_log import *
