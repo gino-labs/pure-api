@@ -55,7 +55,7 @@ class ConfigMigrator:
                     s200_sub_details["s200_vlans"].append(s200_subnets["vlan"])
             else:
                 for sub in s200_subnets:
-                    if "data" in s200_subnets.get(sub["services"], []):
+                    if "data" in sub.get(["services"], []):
                         s200_sub_details["s200_subnames"].append(sub["name"])
                         s200_sub_details["s200_prefixes"].append(sub["prefix"])
                         s200_sub_details["s200_vlans"].append(sub["vlan"])
