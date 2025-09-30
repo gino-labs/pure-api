@@ -104,6 +104,10 @@ def check_matching_attached_snapshot_policies():
             logger.write_log(f"Attached snapshot policy \"{pol}\" has MISSING filesystem members on s200.", jsondata=list(diff_members), show_output=True)
 
 # Check subnets names and vlans match for data interfaces
+def check_subnets():
+    legacy_subs = legacy.get_subnets(dumpjson=True)
+    s200_subs = s200.get_subnets(dumpjson=True)
+
 
 # Verify network interfaces (data matches, mgmt present)
 
@@ -126,3 +130,4 @@ if __name__ == "__main__":
     #check_snapshot_policies()
     #check_matching_attached_snapshot_policies()
     check_file_systems()
+    check_subnets()
