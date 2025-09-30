@@ -136,7 +136,7 @@ def check_subnets():
     if diffs["unique_to_legacy"]:
         logger.write_log(f"Unique subnets found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
     if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
-        logger.write_log("Subnet names match for both legacy and s200.")
+        logger.write_log("Subnet names match for both legacy and s200.", show_output=True)
 
 # Verify network interfaces (data matches, mgmt present)
 def check_interfaces():
