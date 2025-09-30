@@ -46,9 +46,9 @@ def check_file_systems():
     diffs = compare_lists(legacy_filesystems, s200_filesystems)
 
     if diffs["unique_to_legacy"]:
-        logger.write_log(f"Different file systems found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+        logger.write_log(f"Unique file systems found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
     if diffs["unique_to_s200"]:
-        logger.write_log(f"Different file systems found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+        logger.write_log(f"Unique file systems found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
     if not diffs["unique_to_s200"] and not diffs["unique_to_legacy"]:
         logger.write_log("File system names match for both legacy and s200.")
 
@@ -62,7 +62,7 @@ def check_replica_links_filesystems(show_fs_data=False):
 
     non_replica_fs_list = compare_lists(legacy_fs_list, legacy_replica_fs_list, check_one=True)
 
-    logger.write_log(f"Filesystems with no replication links: {len(non_replica_fs_list)}", jsondata=non_replica_fs_list, show_output=True)
+    logger.write_log(f"Legacy Filesystems with no replication links: {len(non_replica_fs_list)}", jsondata=non_replica_fs_list, show_output=True)
 
     if show_fs_data:
         fs_data = []
@@ -83,9 +83,9 @@ def check_snapshot_policies():
 
     diffs = compare_lists(legacy_policies, s200_policies)
     if diffs["unique_to_legacy"]:
-        logger.write_log(f"Different snapshot policy names found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+        logger.write_log(f"Unique snapshot policy names found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
     if diffs["unique_to_s200"]:
-        logger.write_log(f"Different snapshot policy names found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+        logger.write_log(f"Unique snapshot policy names found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
     if not diffs["unique_to_s200"] and not diffs["unique_to_legacy"]:
         logger.write_log("Snapshot policy names match for both legacy and s200.")
 
@@ -132,9 +132,9 @@ def check_subnets():
     diffs = compare_lists(legacy_subs, s200_subs)
 
     if diffs["unique_to_s200"]:
-        logger.write_log(f"Different subnets found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+        logger.write_log(f"Unique subnets found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
     if diffs["unique_to_legacy"]:
-        logger.write_log(f"Different subnets found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+        logger.write_log(f"Unique subnets found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
     if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
         logger.write_log("Subnet names match for both legacy and s200.")
 
