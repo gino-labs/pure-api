@@ -77,7 +77,7 @@ class ConfigMigrator:
                     continue
                 
                 # Check services of subnet before posting
-                if not set("replication", "management", "support") & set(sub.get("services")):
+                if not set(["replication", "management", "support"]) & set(sub.get("services")):
                     payload = {
                         "gateway": sub["gateway"],
                         "link_aggregation_group": {
