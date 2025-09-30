@@ -3,6 +3,7 @@ import json
 import time
 from purefb_log import *
 from purefb_api import *
+from fbmigrate_configs import ConfigMigrator
 
 
 if __name__ == "__main__":
@@ -19,19 +20,10 @@ if __name__ == "__main__":
     legacy_filesystems = legacy.get_filesystems()
     s200_filesystems = s200.get_filesystems()
 
-    # Testing snapshots, trying to reproduce error for pre-swap snapshots during migration
+    # One off config migration + testing
 
-    anaconda_fs = legacy.get_filesystems(filesystems="anaconda_linux_tucson", dumpjson=True)
-    try:
-        legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap")
-    except ApiError as e:
-        if e.code == 6:
-            logger.write_log(f"Replica link doesn't exist for file system {anaconda_fs['name']}. Creating non-replication snapshot.")
-            legacy.post_filesystem_snapshot(anaconda_fs["name"], "pre-swap", replicate=False)
-        elif e.code == 19:
-            logger.write_log(f"Snapshot named \"pre-swap\" already exists.", show_output=True)
-        else:
-            e.check_details(show_code=True)
-            logger.write_log(f"Could not create pre-swap snapshot for filesystem {anaconda_fs['name']}", show_output=True)
+    cfg_migrator = ConfigMigrator(legacy, s200)
+
+    cfg_migrator.migrate_config_subnets()
 
     watch.end_stopwatch()
