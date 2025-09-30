@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
+import sys
 from purefb_api import *
 from purefb_log import *
-
 
 '''
 TODO
@@ -14,6 +14,7 @@ TODO
 - Migrate/Configure Syslog Server Connections
 - Migrate/Configure Interfaces (Data/Replcation, ensure no duplicate IPs between blades)
 '''
+
 # Logger object for logs
 logger = PureLog()
 
@@ -75,22 +76,21 @@ class ConfigMigrator:
                     continue
                 if sub["vlan"] in s200_vlans:
                     continue
-
-                payload = {
-                    "gateway": sub["gateway"],
-                    "link_aggregation_group": {
-                        "name": sub["link_aggregation_group"]["name"]
-                    },
-                    "mtu": sub["mtu"],
-                    "prefix": sub["prefix"],
-                    "vlan": sub["vlan"]
-                }
-                # Post subnets to s200
-                try:
-                    self.s200.post_subnet(sub["name"], payload)
-                except ApiError as e:
-                    e.check_details(show_code=True, show_context=True)
-                    print(payload["link_aggregation_group"])
-                    exit()
-
+                
+                # Check services of subnet before posting
+                if not set("replication", "management", "support") & set(sub.get("services")):
+                    payload = {
+                        "gateway": sub["gateway"],
+                        "link_aggregation_group": {
+                            "name": sub["link_aggregation_group"]["name"]
+                        },
+                        "mtu": sub["mtu"],
+                        "prefix": sub["prefix"],
+                        "vlan": sub["vlan"]
+                    }
+                    # Post subnets to s200
+                    try:
+                        self.s200.post_subnet(sub["name"], payload)
+                    except ApiError as e:
+                        e.check_details(show_code=True, show_context=True)
 
