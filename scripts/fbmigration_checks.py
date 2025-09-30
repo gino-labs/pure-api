@@ -35,7 +35,7 @@ def check_file_systems():
     if s200_diffs:
         logger.write_log("Different file systems found on s200 with following names: ", jsondata=list(s200_diffs), show_output=True)
     if legacy_diffs:
-        logger.write_log("Different file systems found legacy with following names: ", jsondata=list(legacy_diffs), show_output=True)
+        logger.write_log("Different file systems found on legacy with following names: ", jsondata=list(legacy_diffs), show_output=True)
     if not s200_diffs and not legacy_diffs:
         logger.write_log("File system names match for both legacy and s200.")
 
@@ -105,8 +105,18 @@ def check_matching_attached_snapshot_policies():
 
 # Check subnets names and vlans match for data interfaces
 def check_subnets():
-    legacy_subs = legacy.get_subnets(dumpjson=True)
-    s200_subs = s200.get_subnets(dumpjson=True)
+    legacy_subs = [sub["name"] for sub in legacy.get_subnets()]
+    s200_subs = [sub["name"] for sub in s200.get_subnets()]
+
+    legacy_diffs = set(legacy_subs) - set(s200_subs)
+    s200_diffs = set(s200_subs) - set(legacy_subs)
+
+    if s200_diffs:
+        logger.write_log("Different subnets found on s200 with following names: ", jsondata=list(s200_diffs), show_output=True)
+    if legacy_diffs:
+        logger.write_log("Different subnets found on legacy with following names: ", jsondata=list(legacy_diffs), show_output=True)
+    if not s200_diffs and not legacy_diffs:
+        logger.write_log("Subnet names match for both legacy and s200.")
 
 
 # Verify network interfaces (data matches, mgmt present)
