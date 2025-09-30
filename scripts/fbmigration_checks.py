@@ -24,6 +24,17 @@ pb2_vars = rrc_site.get_pb2_vars()
 legacy = FlashBladeAPI(*pb1_vars)
 s200 = FlashBladeAPI(*pb2_vars)
 
+# Helper function to compare list items from legacy and s200
+def compare_lists(legacy_list, s200_list):
+    legacy_diffs = set(legacy_list) - set(s200_list)
+    s200_diffs = set(s200_list) - set(legacy_list)
+
+    diffs = {
+        "unique_to_legacy": list(legacy_diffs or []),
+        "unique_to_s200": list(s200_diffs or [])
+    }
+    return diffs
+
 # Check file systems match, if not show differences
 def check_file_systems():
     legacy_filesystems = [fs["name"] for fs in legacy.get_filesystems()]
@@ -38,7 +49,6 @@ def check_file_systems():
         logger.write_log(f"Different file systems found on legacy: {len(legacy_diffs)}", jsondata=list(legacy_diffs), show_output=True)
     if not s200_diffs and not legacy_diffs:
         logger.write_log("File system names match for both legacy and s200.")
-
 
 # Check if replica links are present for each file system on Legacy
 def check_replica_links_filesystems():
@@ -120,6 +130,10 @@ def check_subnets():
 
 
 # Verify network interfaces (data matches, mgmt present)
+def check_interfaces():
+    legacy_ifaces = [iface["name"] for iface in legacy.get_interfaces()]
+    s200_ifaces = [iface["name"] for iface in s200.get_interfaces()]
+
 
 # Check NFS Rules match Legacy
 
