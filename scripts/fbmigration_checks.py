@@ -101,7 +101,7 @@ def check_matching_attached_snapshot_policies():
             legacy_policy_and_members[fs_pol["policy"]["name"]] = []
         legacy_policy_and_members[fs_pol["policy"]["name"]].append(fs_pol["member"]["name"])
 
-    logger.write_log("Policies and members for Legacy...", jsondata=legacy_policy_and_members, show_output=True)
+    logger.write_log("Policies and members for Legacy...", jsondata=legacy_policy_and_members)
 
     # Build out dictionary containing s200 policies and associated file system members
     s200_policy_and_members = {}
@@ -110,7 +110,7 @@ def check_matching_attached_snapshot_policies():
             s200_policy_and_members[fs_pol["policy"]["name"]] = []
         s200_policy_and_members[fs_pol["policy"]["name"]].append(fs_pol["member"]["name"])
 
-    logger.write_log("Policies and members for S200...", jsondata=s200_policy_and_members, show_output=True)
+    logger.write_log("Policies and members for S200...", jsondata=s200_policy_and_members)
 
     # Compare policies and members from each each 
     for pol, member_list in legacy_policy_and_members.items():
@@ -123,8 +123,6 @@ def check_matching_attached_snapshot_policies():
 
         if diffs:
             logger.write_log(f"Attached snapshot policy \"{pol}\" has MISSING filesystem members on s200.", jsondata=diffs, show_output=True)
-        else:
-            logger.write_log(f"Attached snapshot policy \"{pol}\" has MATCHING filesystem members on both FlashBlades", jsondata=member_list, show_output=True)
 
 # Check subnets names and vlans match for data interfaces
 def check_subnets():
