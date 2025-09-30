@@ -78,7 +78,9 @@ class ConfigMigrator:
 
                 payload = {
                     "gateway": sub["gateway"],
-                    #"link_aggregation_group": sub["link_aggregation_group"]["name"],
+                    "link_aggregation_group": {
+                        "name": sub["link_aggregation_group"]["name"]
+                    },
                     "mtu": sub["mtu"],
                     "prefix": sub["prefix"],
                     "vlan": sub["vlan"]
