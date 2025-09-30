@@ -33,9 +33,9 @@ def check_file_systems():
     legacy_diffs = set(legacy_filesystems) - set(s200_filesystems)
 
     if s200_diffs:
-        logger.write_log("Different file systems found on s200 with following names: ", jsondata=list(s200_diffs), show_output=True)
+        logger.write_log(f"Different file systems found on s200: {len(s200_diffs)}", jsondata=list(s200_diffs), show_output=True)
     if legacy_diffs:
-        logger.write_log("Different file systems found on legacy with following names: ", jsondata=list(legacy_diffs), show_output=True)
+        logger.write_log(f"Different file systems found on legacy: {len(legacy_diffs)}", jsondata=list(legacy_diffs), show_output=True)
     if not s200_diffs and not legacy_diffs:
         logger.write_log("File system names match for both legacy and s200.")
 
@@ -112,9 +112,9 @@ def check_subnets():
     s200_diffs = set(s200_subs) - set(legacy_subs)
 
     if s200_diffs:
-        logger.write_log("Different subnets found on s200 with following names: ", jsondata=list(s200_diffs), show_output=True)
+        logger.write_log(f"Different subnets found on s200: {len(s200_diffs)}", jsondata=list(s200_diffs), show_output=True)
     if legacy_diffs:
-        logger.write_log("Different subnets found on legacy with following names: ", jsondata=list(legacy_diffs), show_output=True)
+        logger.write_log(f"Different subnets found on legacy: {len(legacy_diffs)}", jsondata=list(legacy_diffs), show_output=True)
     if not s200_diffs and not legacy_diffs:
         logger.write_log("Subnet names match for both legacy and s200.")
 
