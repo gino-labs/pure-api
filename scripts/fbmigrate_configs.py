@@ -49,13 +49,13 @@ class ConfigMigrator:
         }   
         if s200_subnets:
             if isinstance(s200_subnets, dict):
-                if "data" in s200_sub_details.get(s200_subnets["services"]):
+                if "data" in s200_sub_details.get(s200_subnets["services"], []) or s200_sub_details.get(s200_subnets["services"]) == []:
                     s200_sub_details["s200_subnames"].append(s200_subnets["name"])
                     s200_sub_details["s200_prefixes"].append(s200_subnets["prefix"])
                     s200_sub_details["s200_vlans"].append(s200_subnets["vlan"])
             else:
                 for sub in s200_subnets:
-                    if "data" in sub.get("services", []):
+                    if "data" in sub.get("services", []) or sub.get("services", []) == []:
                         s200_sub_details["s200_subnames"].append(sub["name"])
                         s200_sub_details["s200_prefixes"].append(sub["prefix"])
                         s200_sub_details["s200_vlans"].append(sub["vlan"])
