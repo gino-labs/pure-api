@@ -62,7 +62,7 @@ def check_replica_links_filesystems(show_fs_data=False):
 
     non_replica_fs_list = compare_lists(legacy_fs_list, legacy_replica_fs_list, check_one=True)
 
-    logger.write_log("Filesystems with no replication links", jsondata=non_replica_fs_list, show_output=True)
+    logger.write_log(f"Filesystems with no replication links: {len(non_replica_fs_list)}", jsondata=non_replica_fs_list, show_output=True)
 
     if show_fs_data:
         fs_data = []
