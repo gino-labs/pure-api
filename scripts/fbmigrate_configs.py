@@ -84,6 +84,11 @@ class ConfigMigrator:
                     "vlan": sub["vlan"]
                 }
                 # Post subnets to s200
-                self.s200.post_subnet(sub["name"], payload)
+                try:
+                    self.s200.post_subnet(sub["name"], payload)
+                except ApiError as e:
+                    e.check_details(show_code=True, show_context=True)
+                    print(payload["link_aggregation_group"])
+                    exit()
 
 
