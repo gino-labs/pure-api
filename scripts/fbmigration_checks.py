@@ -169,7 +169,7 @@ def check_interfaces():
 def check_filesystem_nfs_rules():
     logger.write_log("Check if NFS rules match per file system between FBs.", show_output=True)
 
-    legacy_filesystem_names_rules = {{fs["name"]: fs["nfs"]["rules"]} for fs in legacy.get_filesystems()}
+    legacy_filesystem_names_rules = {fs["name"]: fs["nfs"]["rules"] for fs in legacy.get_filesystems()}
     s200_filesystems = s200.get_filesystems()
 
     non_matches = {}
