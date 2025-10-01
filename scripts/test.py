@@ -8,9 +8,11 @@ from fbmigrate_configs import ConfigMigrator
 
 if __name__ == "__main__":
     rrc_site = SiteVars()
-    site_vars = rrc_site.get_site_vars() 
-    legacy = FlashBladeAPI(site_vars["pb1"], site_vars["pb1_mgt"], site_vars["legacy_api_token"])
-    s200 = FlashBladeAPI(site_vars["pb2"], site_vars["pb2_mgt"], site_vars["s200_api_token"])
+    pb1_vars = rrc_site.get_pb1_vars()
+    pb2_vars = rrc_site.get_pb2_vars()
+
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
 
     logger = PureLog()
     watch = Stopwatch()
@@ -19,11 +21,7 @@ if __name__ == "__main__":
 
     legacy_filesystems = legacy.get_filesystems()
     s200_filesystems = s200.get_filesystems()
-
-    # One off config migration + testing
-
-    cfg_migrator = ConfigMigrator()
-
-    cfg_migrator.migrate_config_subnets()
+    
+    anaconda_fs = s200.get_filesystems(filesystems="anaconda_linux_tucson", dumpjson=True)
 
     watch.end_stopwatch()
