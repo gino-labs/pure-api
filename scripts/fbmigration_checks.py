@@ -364,7 +364,7 @@ def check_certificates(show_only_diffs=True):
     logger.write_log("Check if certificates are valid for s200.", show_output=True)
 
     legacy_certs = legacy.get_certificates()
-    s200_certs = s200.get_certificates
+    s200_certs = s200.get_certificates()
 
     final_dict = {
         "legacy_certs": {
