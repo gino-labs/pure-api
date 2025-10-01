@@ -381,17 +381,22 @@ def check_certificates(show_only_diffs=True):
         if cert["certificate_type"] == "array":
             final_dict["legacy_certs"]["array"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
         elif cert["certificate_type"] == "external":
-            final_dict["legacy_certs"]["array"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
+            final_dict["legacy_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
 
     for cert in s200_certs:
         if cert["certificate_type"] == "array":
-            final_dict["s200_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
+            final_dict["s200_certs"]["array"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
         elif cert["certificate_type"] == "external":
             final_dict["s200_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
 
     if show_only_diffs:
-        legacy_list = [final_dict["legacy_certs"]["array"] + final_dict["legacy_certs"]["external"]]
-        s200_list = [final_dict["legacy_certs"]["array"] + final_dict["legacy_certs"]["external"]]
+        legacy_array_certs = [cert["name"] for cert in final_dict["legacy_certs"]["array"]]
+        legacy_external_certs = [cert["name"] for cert in final_dict["legacy_certs"]["external"]]
+        s200_array_certs = [cert["name"] for cert in final_dict["s200_certs"]["array"]]
+        s200_external_certs = [cert["name"] for cert in final_dict["s200_certs"]["external"]]
+
+        legacy_list = [legacy_array_certs + legacy_external_certs]
+        s200_list = [s200_array_certs + s200_external_certs]
 
         diffs = compare_lists(legacy_list, s200_list)
 
