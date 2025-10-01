@@ -397,7 +397,7 @@ def check_certificates(show_only_diffs=True):
 
         legacy_list = legacy_array_certs + legacy_external_certs
         s200_list = s200_array_certs + s200_external_certs
-        
+
         diffs = compare_lists(legacy_list, s200_list)
 
         if diffs["unique_to_legacy"]:
@@ -406,11 +406,11 @@ def check_certificates(show_only_diffs=True):
             logger.write_log(f"Unique certificate names found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
         if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
             logger.write_log("Certificate names match for both legacy and s200.", show_output=True)
-
-    if (diffs["unique_to_legacy"] or diffs["unique_to_s200"]) and not show_only_diffs:
-        logger.write_log("Some certificates don't match between FBs.", jsondata=final_dict, show_output=True)
     else:
-        logger.write_log("Certificates match for both legacy and s200.", show_output=True)
+        if (diffs["unique_to_legacy"] or diffs["unique_to_s200"]):
+            logger.write_log("Some certificates don't match between FBs.", jsondata=final_dict, show_output=True)
+        else:
+            logger.write_log("Certificates match for both legacy and s200.", show_output=True)
 
 if __name__ == "__main__":
     check_file_systems()
