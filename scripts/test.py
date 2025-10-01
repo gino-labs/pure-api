@@ -22,7 +22,7 @@ if __name__ == "__main__":
     legacy_filesystems = legacy.get_filesystems()
     s200_filesystems = s200.get_filesystems()
     
-    anaconda_fs = s200.get_filesystems(filesystems="anaconda_linux_tucson", dumpjson=True)
-    pascal_fs = s200.get_filesystems(filesystems="pascal_linux_tucson", dumpjson=True)
+    legacy.get_directory_services(dumpjson=True)
+    s200.get_directory_services(dumpjson=True)
 
     watch.end_stopwatch()
