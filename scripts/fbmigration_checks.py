@@ -220,7 +220,6 @@ def check_object_store_users():
 
     diffs = compare_lists(legacy_obj_users, s200_obj_users)
 
-    
     if diffs["unique_to_legacy"]:
         logger.write_log(f"Unique object store users found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
     if diffs["unique_to_s200"]:
@@ -229,6 +228,20 @@ def check_object_store_users():
         logger.write_log("Object store users match for both legacy and s200.", show_output=True)
 
 # Check object store buckets
+def check_object_buckets():
+    logger.write_log("Check if buckets match between FBs.", show_output=True)
+
+    legacy_buckets = [buck["name"] for buck in legacy.get_buckets()]
+    s200_buckets = [buck["name"] for buck in s200.get_buckets()]
+
+    diffs = compare_lists(legacy_buckets, s200_buckets)
+
+    if diffs["unique_to_legacy"]:
+        logger.write_log(f"Unique bucket names found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+    if diffs["unique_to_s200"]:
+        logger.write_log(f"Unique bucket names found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+    if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
+        logger.write_log("Bucket names match for both legacy and s200.", show_output=True)
 
 # Check if object replication in place per bucket
 
@@ -249,3 +262,4 @@ if __name__ == "__main__":
     check_filesystem_nfs_rules()
     check_object_store_accounts()
     check_object_store_users()
+    check_object_buckets()
