@@ -195,7 +195,25 @@ def check_filesystem_nfs_rules(fs_only_list=True):
     logger.write_log(f"File systems that don't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
 
 
-# Check object storage components match (Accounts, Buckets, Users)
+# Check object store accounts
+def check_object_store_accounts():
+    logger.write_log("Check if object store accounts match between FBs.", show_output=True)
+
+    legacy_obj_accounts = [acct["name"] for acct in legacy.get_object_store_accounts()]
+    s200_obj_accounts = [acct["name"] for acct in s200.get_object_store_accounts()]
+
+    diffs = compare_lists(legacy_obj_accounts, s200_obj_accounts)
+
+    if diffs["unique_to_legacy"]:
+        logger.write_log(f"Unique object store accounts found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+    if diffs["unique_to_s200"]:
+        logger.write_log(f"Unique object store accounts found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+    if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
+        logger.write_log("Unique object store account names match for both legacy and s200.", show_output=True)
+
+# Check object store users
+
+# Check object store buckets
 
 # Check if object replication in place per bucket
 
@@ -214,3 +232,4 @@ if __name__ == "__main__":
     check_file_systems()
     check_subnets()
     check_filesystem_nfs_rules()
+    check_object_store_accounts()
