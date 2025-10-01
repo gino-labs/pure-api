@@ -360,7 +360,7 @@ def check_arrays(show_only_diffs=True):
         logger.write_log("Array configurations match for both legacy and s200.", show_output=True)
 
 # Check certificates are valid on S200 (1 global, 2 external)
-def check_certificates(show_only_diffs=False):
+def check_certificates(show_only_diffs=True):
     logger.write_log("Check if certificates are valid for s200.", show_output=True)
 
     legacy_certs = legacy.get_certificates()
