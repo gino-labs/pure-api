@@ -359,7 +359,53 @@ def check_arrays(show_only_diffs=True):
     else:
         logger.write_log("Array configurations match for both legacy and s200.", show_output=True)
 
-# Check certificates/groups are valid on S200
+# Check certificates are valid on S200 (1 global, 2 external)
+def check_certificates(show_only_diffs=True):
+    logger.write_log("Check if certificates are valid for s200.", show_output=True)
+
+    legacy_certs = legacy.get_certificates()
+    s200_certs = s200.get_certificates
+
+    final_dict = {
+        "legacy_certs": {
+            "array": [],
+            "external": [],
+        },
+        "s200_certs": {
+            "array": [],
+            "external": [],
+        }
+    }
+
+    for cert in legacy_certs:
+        if cert["certificate_type"] == "array":
+            final_dict["legacy_certs"]["array"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
+        elif cert["certificate_type"] == "external":
+            final_dict["legacy_certs"]["array"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
+
+    for cert in s200_certs:
+        if cert["certificate_type"] == "array":
+            final_dict["s200_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
+        elif cert["certificate_type"] == "external":
+            final_dict["s200_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
+
+    if show_only_diffs:
+        legacy_list = [final_dict["legacy_certs"]["array"].keys() + final_dict["legacy_certs"]["external"].keys()]
+        s200_list = [final_dict["legacy_certs"]["array"].keys() + final_dict["legacy_certs"]["external"].keys()]
+
+        diffs = compare_lists(legacy_list, s200_list)
+
+        if diffs["unique_to_legacy"]:
+            logger.write_log(f"Unique certificate names found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+        if diffs["unique_to_s200"]:
+            logger.write_log(f"Unique certificate names found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+        if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
+            logger.write_log("Certificate names match for both legacy and s200.", show_output=True)
+
+    if (diffs["unique_to_legacy"] or diffs["unique_to_s200"]) and not show_only_diffs:
+        logger.write_log("Some certificates don't match between FBs.", jsondata=final_dict, show_output=True)
+    else:
+        logger.write_log("Certificates match for both legacy and s200.", show_output=True)
 
 if __name__ == "__main__":
     check_file_systems()
@@ -376,3 +422,4 @@ if __name__ == "__main__":
     check_directory_services()
     check_dns()
     check_arrays()
+    check_certificates()
