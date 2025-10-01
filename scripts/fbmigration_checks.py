@@ -268,7 +268,7 @@ def check_directory_services(show_only_diffs=True):
         },
         "s200_directory_services": {
             "enabled": s200_ds["enabled"],
-            "base_dn": s200_ds["base"],
+            "base_dn": s200_ds["base_dn"],
             "bind_user": s200_ds["bind_user"],
             "uris": s200_ds["uris"]
         }
