@@ -253,6 +253,37 @@ def check_bucket_replica_links():
     logger.write_log(f"Legacy buckets with no replication links: {len(buckets_no_replicas)}", jsondata=buckets_no_replicas, show_output=True)
 
 # Check Directory Services point to valid LDAPS server on S200
+def check_directory_services(show_only_diffs=True):
+    logger.write_log("Check if directory services configured are valid for s200.")
+
+    legacy_ds = legacy.get_directory_services()
+    s200_ds = s200.get_directory_services()
+
+    final_dict = {
+        "legacy_directory_services": {
+            "enabled": legacy_ds["enabled"],
+            "base_dn": legacy_ds["base"],
+            "bind_user": legacy_ds["bind_user"],
+            "uris": legacy_ds["uris"]
+        },
+        "s200_directory_services": {
+            "enabled": s200_ds["enabled"],
+            "base_dn": s200_ds["base"],
+            "bind_user": s200_ds["bind_user"],
+            "uris": s200_ds["uris"]
+        }
+    }
+    if show_only_diffs:
+        for key, val in final_dict["legacy_directory_services"].items():
+            if val == final_dict["s200_directory_services"][key]:
+                del final_dict["legacy_directory_services"][key]
+                del final_dict["s200_directory_services"][key]
+
+    if final_dict["legacy_directory_services"] or final_dict["s200_directory_services"]:
+        logger.write_log("Directory service items don't match between FBs.", jsondata=final_dict, show_output=True)
+    else:
+        logger.write_log("Directory services match for both legacy and s200.", show_output=True)
+
 
 # Check DNS settings point to valid DNS server on S200
 
@@ -272,3 +303,4 @@ if __name__ == "__main__":
     check_object_store_users()
     check_buckets()
     check_bucket_replica_links()
+    check_directory_services()
