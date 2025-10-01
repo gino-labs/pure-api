@@ -262,7 +262,7 @@ def check_directory_services(show_only_diffs=True):
     final_dict = {
         "legacy_directory_services": {
             "enabled": legacy_ds["enabled"],
-            "base_dn": legacy_ds["base"],
+            "base_dn": legacy_ds["base_dn"],
             "bind_user": legacy_ds["bind_user"],
             "uris": legacy_ds["uris"]
         },
