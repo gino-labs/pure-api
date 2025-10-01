@@ -166,7 +166,7 @@ def check_interfaces():
 
 
 # Check NFS Rules match Legacy
-def check_filesystem_nfs_rules():
+def check_filesystem_nfs_rules(fs_only_list=True):
     logger.write_log("Check if NFS rules match per file system between FBs.", show_output=True)
 
     legacy_filesystem_names_rules = {fs["name"]: fs["nfs"]["rules"] for fs in legacy.get_filesystems()}
@@ -189,7 +189,10 @@ def check_filesystem_nfs_rules():
                 }
                 non_matches[fs["name"]] = temp_dict
 
-    logger.write_log("File systems that didn't have matching NFS rules between FBs.", jsondata=non_matches, show_output=True)
+    if fs_only_list:
+        non_matches = [fs for fs in non_matches.keys()]
+
+    logger.write_log(f"File systems that didn't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
 
 
 # Check object storage components match (Accounts, Buckets, Users)
