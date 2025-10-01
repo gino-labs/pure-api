@@ -440,6 +440,13 @@ class FlashBladeAPI:
         msg = "DNS"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get array configurations
+    def get_array_configurations(self, dumpjson=False):
+        url = self.baseurl + "arrays"
+        msg = "array configurations"
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
         
     ########################
     ### POST API Section ###
