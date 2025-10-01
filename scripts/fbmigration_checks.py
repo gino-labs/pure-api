@@ -290,6 +290,36 @@ def check_directory_services(show_only_diffs=True):
 
 
 # Check DNS settings point to valid DNS server on S200
+def check_dns(show_only_diffs=True):
+    logger.write_log("Check if DNS configurations are valid for s200.")
+
+    legacy_dns = legacy.get_dns()
+    s200_dns = s200.get_dns()
+
+    final_dict = {
+        "legacy_dns": {
+            "domain": legacy_dns["domain"],
+            "nameservers": legacy_dns["nameservers"]
+        },
+        "s200_dns": {
+            "domain": s200_dns["domain"],
+            "nameservers": s200_dns["nameservers"]
+        }
+    }
+    if show_only_diffs:
+        keys_to_delete = [key for key, val in final_dict["legacy_dns"].items() if val == final_dict["s200_dns"][key]]
+    else:
+        keys_to_delete = None
+
+    if keys_to_delete:
+        for key in keys_to_delete:
+            del final_dict["legacy_dns"][key]
+            del final_dict["s200_dns"][key]
+
+    if final_dict["legacy_dns"] or final_dict["s200_dns"]:
+        logger.write_log("Some DNS items don't match between FBs.", jsondata=final_dict, show_output=True)
+    else:
+        logger.write_log("DNS configurations match for both legacy and s200.", show_output=True)
 
 # Check NTP settings point to valid NTP server on S200
 
@@ -308,3 +338,4 @@ if __name__ == "__main__":
     check_buckets()
     check_bucket_replica_links()
     check_directory_services()
+    check_dns()
