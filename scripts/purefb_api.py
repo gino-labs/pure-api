@@ -426,6 +426,13 @@ class FlashBladeAPI:
         msg = "array connections"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get directory services
+    def get_directory_services(self, dumpjson=False):
+        url = self.baseurl + "directory-services"
+        msg = "directory services"
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
         
         
     ########################
