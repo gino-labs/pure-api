@@ -281,7 +281,7 @@ def check_directory_services(show_only_diffs=True):
         del final_dict["s200_directory_services"][key]
 
     if final_dict["legacy_directory_services"] or final_dict["s200_directory_services"]:
-        logger.write_log("Directory service items don't match between FBs.", jsondata=final_dict, show_output=True)
+        logger.write_log("Some directory service items don't match between FBs.", jsondata=final_dict, show_output=True)
     else:
         logger.write_log("Directory services match for both legacy and s200.", show_output=True)
 
