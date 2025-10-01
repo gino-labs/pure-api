@@ -192,7 +192,7 @@ def check_filesystem_nfs_rules(fs_only_list=True):
     if fs_only_list:
         non_matches = [fs for fs in non_matches.keys()]
 
-    logger.write_log(f"File systems that didn't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
+    logger.write_log(f"File systems that don't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
 
 
 # Check object storage components match (Accounts, Buckets, Users)
