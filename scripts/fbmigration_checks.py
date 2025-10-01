@@ -276,9 +276,10 @@ def check_directory_services(show_only_diffs=True):
     if show_only_diffs:
         keys_to_delete = [key for key, val in final_dict["legacy_directory_services"].items() if val == final_dict["s200_directory_services"][key]]
 
-    for key in keys_to_delete:
-        del final_dict["legacy_directory_services"][key]
-        del final_dict["s200_directory_services"][key]
+    if keys_to_delete:
+        for key in keys_to_delete:
+            del final_dict["legacy_directory_services"][key]
+            del final_dict["s200_directory_services"][key]
 
     if final_dict["legacy_directory_services"] or final_dict["s200_directory_services"]:
         logger.write_log("Some directory service items don't match between FBs.", jsondata=final_dict, show_output=True)
