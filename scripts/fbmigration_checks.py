@@ -243,7 +243,14 @@ def check_buckets():
 
 # Check if object replication in place per bucket
 def check_bucket_replica_links():
-    logger.write_log("Check if bucket replica links")
+    logger.write_log("Check if legacy buckets have replication links.", show_output=True)
+
+    legacy_replica_buckets = [link["local_bucket"]["name"] for link in legacy.get_bucket_replia_links()]
+    legacy_buckets = [buck["name"] for buck in legacy.get_buckets()]
+
+    buckets_no_replicas = compare_lists(legacy_buckets, legacy_replica_buckets, check_one=True)
+
+    logger.write_log(f"Legacy buckets with no replication links: {len(buckets_no_replicas)}", jsondata=buckets_no_replicas, show_output=True)
 
 # Check Directory Services point to valid LDAPS server on S200
 
@@ -264,3 +271,4 @@ if __name__ == "__main__":
     check_object_store_accounts()
     check_object_store_users()
     check_buckets()
+    check_bucket_replica_links()
