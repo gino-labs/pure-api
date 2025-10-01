@@ -397,7 +397,8 @@ def check_certificates(show_only_diffs=True):
 
         legacy_list = [legacy_array_certs + legacy_external_certs]
         s200_list = [s200_array_certs + s200_external_certs]
-
+        print(legacy_list)
+        print(s200_list)
         diffs = compare_lists(legacy_list, s200_list)
 
         if diffs["unique_to_legacy"]:
