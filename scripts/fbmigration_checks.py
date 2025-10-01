@@ -54,8 +54,37 @@ def check_file_systems():
     if not diffs["unique_to_s200"] and not diffs["unique_to_legacy"]:
         logger.write_log("File system names match for both legacy and s200.")
 
+# Check NFS Rules match Legacy
+def check_filesystem_nfs_rules(fs_only_list=True):
+    logger.write_log("Check if NFS rules match per file system between FBs.", show_output=True)
+
+    legacy_filesystem_names_rules = {fs["name"]: fs["nfs"]["rules"] for fs in legacy.get_filesystems()}
+    s200_filesystems = s200.get_filesystems()
+
+    non_matches = {}
+    for fs in s200_filesystems:
+        if fs["name"] in legacy_filesystem_names_rules:
+            if fs["nfs"]["rules"] not in legacy_filesystem_names_rules[fs["name"]]:
+                temp_dict = {
+                        "s200_rules": fs["nfs"]["rules"],
+                        "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
+                    }
+                non_matches[fs["name"]] = temp_dict
+            elif fs["nfs"]["export_policy"]["name"]:
+                temp_dict = {
+                    
+                    "s200_export_policy": fs["nfs"]["export_policy"]["name"],
+                    "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
+                }
+                non_matches[fs["name"]] = temp_dict
+
+    if fs_only_list:
+        non_matches = [fs for fs in non_matches.keys()]
+
+    logger.write_log(f"File systems that don't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
+
 # Check if replica links are present for each file system on Legacy
-def check_replica_links_filesystems(show_fs_data=False):
+def check_filesystems_replica_links(show_fs_data=False):
     logger.write_log("Check if legacy file systems have replication links.", show_output=True)
 
     legacy_filesystems = legacy.get_filesystems()
@@ -164,37 +193,6 @@ def check_interfaces():
     if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
         logger.write_log("Subnet names match for both legacy and s200.", show_output=True)
 
-
-# Check NFS Rules match Legacy
-def check_filesystem_nfs_rules(fs_only_list=True):
-    logger.write_log("Check if NFS rules match per file system between FBs.", show_output=True)
-
-    legacy_filesystem_names_rules = {fs["name"]: fs["nfs"]["rules"] for fs in legacy.get_filesystems()}
-    s200_filesystems = s200.get_filesystems()
-
-    non_matches = {}
-    for fs in s200_filesystems:
-        if fs["name"] in legacy_filesystem_names_rules:
-            if fs["nfs"]["rules"] not in legacy_filesystem_names_rules[fs["name"]]:
-                temp_dict = {
-                        "s200_rules": fs["nfs"]["rules"],
-                        "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
-                    }
-                non_matches[fs["name"]] = temp_dict
-            elif fs["nfs"]["export_policy"]["name"]:
-                temp_dict = {
-                    
-                    "s200_export_policy": fs["nfs"]["export_policy"]["name"],
-                    "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
-                }
-                non_matches[fs["name"]] = temp_dict
-
-    if fs_only_list:
-        non_matches = [fs for fs in non_matches.keys()]
-
-    logger.write_log(f"File systems that don't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
-
-
 # Check object store accounts
 def check_object_store_accounts():
     logger.write_log("Check if object store accounts match between FBs.", show_output=True)
@@ -228,7 +226,7 @@ def check_object_store_users():
         logger.write_log("Object store users match for both legacy and s200.", show_output=True)
 
 # Check object store buckets
-def check_object_buckets():
+def check_buckets():
     logger.write_log("Check if buckets match between FBs.", show_output=True)
 
     legacy_buckets = [buck["name"] for buck in legacy.get_buckets()]
@@ -244,6 +242,8 @@ def check_object_buckets():
         logger.write_log("Bucket names match for both legacy and s200.", show_output=True)
 
 # Check if object replication in place per bucket
+def check_bucket_replica_links():
+    logger.write_log("Check if bucket replica links")
 
 # Check Directory Services point to valid LDAPS server on S200
 
@@ -254,12 +254,13 @@ def check_object_buckets():
 # Check certificates/groups are valid on S200
 
 if __name__ == "__main__":
-    check_replica_links_filesystems()
+    check_file_systems()
+    check_filesystem_nfs_rules()
+    check_filesystems_replica_links()
     check_snapshot_policies()
     check_matching_attached_snapshot_policies()
-    check_file_systems()
     check_subnets()
-    check_filesystem_nfs_rules()
+    check_interfaces()
     check_object_store_accounts()
     check_object_store_users()
-    check_object_buckets()
+    check_buckets()
