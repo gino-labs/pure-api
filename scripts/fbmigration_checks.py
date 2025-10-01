@@ -317,11 +317,47 @@ def check_dns(show_only_diffs=True):
             del final_dict["s200_dns"][key]
 
     if final_dict["legacy_dns"] or final_dict["s200_dns"]:
-        logger.write_log("Some DNS items don't match between FBs.", jsondata=final_dict, show_output=True)
+        logger.write_log("Some DNS configurations don't match between FBs.", jsondata=final_dict, show_output=True)
     else:
         logger.write_log("DNS configurations match for both legacy and s200.", show_output=True)
 
 # Check NTP settings point to valid NTP server on S200
+def check_arrays(show_only_diffs=True):
+    logger.write_log("Check if array configurations are valid for s200.")
+
+    legacy_array = legacy.get_array_configurations()
+    s200_array = s200.get_array_configurations()
+
+    final_dict = {
+        legacy_array["name"]: {
+            "banner": legacy_array["banner"],
+            "idle_timeout": legacy_array["idle_timeout"],
+            "ntp_servers": legacy_array["ntp_servers"],
+            "time_zone": legacy_array["time_zone"],
+            "encryption_at_rest": legacy_array["encryption"]["data_at_rest"]["enabled"]
+        },
+        s200_array["name"]: {
+            "banner": s200_array["banner"],
+            "idle_timeout": s200_array["idle_timeout"],
+            "ntp_servers": s200_array["ntp_servers"],
+            "time_zone": s200_array["time_zone"],
+            "encryption_at_rest": s200_array["encryption"]["data_at_rest"]["enabled"]
+        }
+    }
+    if show_only_diffs:
+        keys_to_delete = [key for key, val in final_dict["legacy_array"].items() if val == final_dict["s200_array"][key]]
+    else:
+        keys_to_delete = None
+
+    if keys_to_delete:
+        for key in keys_to_delete:
+            del final_dict["legacy_array"][key]
+            del final_dict["s200_array"][key]
+
+    if final_dict["legacy_array"] or final_dict["s200_array"]:
+        logger.write_log("Some array configurations don't match between FBs.", jsondata=final_dict, show_output=True)
+    else:
+        logger.write_log("Array configurations match for both legacy and s200.", show_output=True)
 
 # Check certificates/groups are valid on S200
 
@@ -339,3 +375,4 @@ if __name__ == "__main__":
     check_bucket_replica_links()
     check_directory_services()
     check_dns()
+    check_arrays()
