@@ -172,12 +172,18 @@ def check_filesystem_nfs_rules():
     legacy_filesystem_names_rules = {{fs["name"]: fs["nfs"]["rules"]} for fs in legacy.get_filesystems()}
     s200_filesystems = s200.get_filesystems()
 
+    non_matches = {}
     for fs in s200_filesystems:
         if fs["name"] in legacy_filesystem_names_rules:
-            if fs["nfs"]["rules"] in legacy_filesystem_names_rules[fs["name"]]:
-                logger.write_log("", show_output=True)
-            else:
-                logger.write_log("", show_output=True)
+            if fs["nfs"]["rules"] not in legacy_filesystem_names_rules[fs["name"]]:
+                temp_dict = {
+                        "s200_rules": fs["nfs"]["rules"],
+                        "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
+                    }
+                non_matches[fs["name"]] = temp_dict
+
+    logger.write_log("File systems that didn't have matching NFS rules between FBs.", jsondata=non_matches, show_output=True)
+
 
 # Check object storage components match (Accounts, Buckets, Users)
 
@@ -197,3 +203,4 @@ if __name__ == "__main__":
     check_matching_attached_snapshot_policies()
     check_file_systems()
     check_subnets()
+    check_filesystem_nfs_rules()
