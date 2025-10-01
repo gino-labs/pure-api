@@ -447,6 +447,14 @@ class FlashBladeAPI:
         msg = "array configurations"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get certifcates
+    def get_certificates(self, dumpjson=False):
+        url = self.baseurl + "arrays"
+        msg = "certifcates"
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+
         
     ########################
     ### POST API Section ###
