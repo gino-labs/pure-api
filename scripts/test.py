@@ -23,5 +23,6 @@ if __name__ == "__main__":
     s200_filesystems = s200.get_filesystems()
     
     anaconda_fs = s200.get_filesystems(filesystems="anaconda_linux_tucson", dumpjson=True)
+    pascal_fs = s200.get_filesystems(filesystems="pascal_linux_tucson", dumpjson=True)
 
     watch.end_stopwatch()
