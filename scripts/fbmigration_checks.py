@@ -181,6 +181,13 @@ def check_filesystem_nfs_rules():
                         "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
                     }
                 non_matches[fs["name"]] = temp_dict
+            elif fs["nfs"]["export_policy"]["name"]:
+                temp_dict = {
+                    
+                    "s200_export_policy": fs["nfs"]["export_policy"]["name"],
+                    "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
+                }
+                non_matches[fs["name"]] = temp_dict
 
     logger.write_log("File systems that didn't have matching NFS rules between FBs.", jsondata=non_matches, show_output=True)
 
