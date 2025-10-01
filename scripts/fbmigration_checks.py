@@ -307,4 +307,4 @@ if __name__ == "__main__":
     check_object_store_users()
     check_buckets()
     check_bucket_replica_links()
-    check_directory_services(show_only_diffs=False)
+    check_directory_services()
