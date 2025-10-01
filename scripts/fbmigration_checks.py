@@ -360,7 +360,7 @@ def check_arrays(show_only_diffs=True):
         logger.write_log("Array configurations match for both legacy and s200.", show_output=True)
 
 # Check certificates are valid on S200 (1 global, 2 external)
-def check_certificates(show_only_diffs=True):
+def check_certificates(show_only_diffs=False):
     logger.write_log("Check if certificates are valid for s200.", show_output=True)
 
     legacy_certs = legacy.get_certificates()
@@ -389,7 +389,6 @@ def check_certificates(show_only_diffs=True):
         elif cert["certificate_type"] == "external":
             final_dict["s200_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
 
-    if show_only_diffs:
         legacy_array_certs = [cert["name"] for cert in final_dict["legacy_certs"]["array"]]
         legacy_external_certs = [cert["name"] for cert in final_dict["legacy_certs"]["external"]]
         s200_array_certs = [cert["name"] for cert in final_dict["s200_certs"]["array"]]
@@ -400,6 +399,7 @@ def check_certificates(show_only_diffs=True):
 
         diffs = compare_lists(legacy_list, s200_list)
 
+    if show_only_diffs:
         if diffs["unique_to_legacy"]:
             logger.write_log(f"Unique certificate names found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
         if diffs["unique_to_s200"]:
