@@ -209,9 +209,24 @@ def check_object_store_accounts():
     if diffs["unique_to_s200"]:
         logger.write_log(f"Unique object store accounts found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
     if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
-        logger.write_log("Unique object store account names match for both legacy and s200.", show_output=True)
+        logger.write_log("Object store account names match for both legacy and s200.", show_output=True)
 
 # Check object store users
+def check_object_store_users():
+    logger.write_log("Check if object store users match between FBs.", show_output=True)
+
+    legacy_obj_users = [user["name"] for user in legacy.get_object_store_users()]
+    s200_obj_users = [user["name"] for user in s200.get_object_store_users()]
+
+    diffs = compare_lists(legacy_obj_users, s200_obj_users)
+
+    
+    if diffs["unique_to_legacy"]:
+        logger.write_log(f"Unique object store users found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
+    if diffs["unique_to_s200"]:
+        logger.write_log(f"Unique object store users found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
+    if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
+        logger.write_log("Object store users match for both legacy and s200.", show_output=True)
 
 # Check object store buckets
 
@@ -233,3 +248,4 @@ if __name__ == "__main__":
     check_subnets()
     check_filesystem_nfs_rules()
     check_object_store_accounts()
+    check_object_store_users()
