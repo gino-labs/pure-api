@@ -450,7 +450,7 @@ class FlashBladeAPI:
     
     # Get certifcates
     def get_certificates(self, dumpjson=False):
-        url = self.baseurl + "certifcates"
+        url = self.baseurl + "certificates"
         msg = "certifcates"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
