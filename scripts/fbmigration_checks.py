@@ -275,6 +275,8 @@ def check_directory_services(show_only_diffs=True):
     }
     if show_only_diffs:
         keys_to_delete = [key for key, val in final_dict["legacy_directory_services"].items() if val == final_dict["s200_directory_services"][key]]
+    else:
+        keys_to_delete = None
 
     if keys_to_delete:
         for key in keys_to_delete:
