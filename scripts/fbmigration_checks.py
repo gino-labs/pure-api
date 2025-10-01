@@ -345,7 +345,7 @@ def check_arrays(show_only_diffs=True):
         }
     }
     if show_only_diffs:
-        keys_to_delete = [key for key, val in final_dict["legacy_array"].items() if val == final_dict["s200_array"][key]]
+        keys_to_delete = [key for key, val in final_dict[legacy_array["name"]].items() if val == final_dict[s200_array["name"]][key]]
     else:
         keys_to_delete = None
 
