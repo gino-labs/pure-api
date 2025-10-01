@@ -390,8 +390,8 @@ def check_certificates(show_only_diffs=True):
             final_dict["s200_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
 
     if show_only_diffs:
-        legacy_list = [final_dict["legacy_certs"]["array"].keys() + final_dict["legacy_certs"]["external"].keys()]
-        s200_list = [final_dict["legacy_certs"]["array"].keys() + final_dict["legacy_certs"]["external"].keys()]
+        legacy_list = [final_dict["legacy_certs"]["array"] + final_dict["legacy_certs"]["external"]]
+        s200_list = [final_dict["legacy_certs"]["array"] + final_dict["legacy_certs"]["external"]]
 
         diffs = compare_lists(legacy_list, s200_list)
 
