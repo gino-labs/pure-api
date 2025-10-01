@@ -256,8 +256,8 @@ def check_bucket_replica_links():
 def check_directory_services(show_only_diffs=True):
     logger.write_log("Check if directory services configured are valid for s200.")
 
-    legacy_ds = legacy.get_directory_services()
-    s200_ds = s200.get_directory_services()
+    legacy_ds = next((ds for ds in legacy.get_directory_services() if "management" in ds["services"]), None)
+    s200_ds = next((ds for ds in s200.get_directory_services() if "management" in ds["services"]), None)
 
     final_dict = {
         "legacy_directory_services": {
