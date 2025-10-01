@@ -22,7 +22,7 @@ if __name__ == "__main__":
     legacy_filesystems = legacy.get_filesystems()
     s200_filesystems = s200.get_filesystems()
     
-    legacy.get_directory_services(dumpjson=True)
-    s200.get_directory_services(dumpjson=True)
+    legacy.get_dns(dumpjson=True)
+    s200.get_dns(dumpjson=True)
 
     watch.end_stopwatch()

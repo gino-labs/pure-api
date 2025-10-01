@@ -433,7 +433,13 @@ class FlashBladeAPI:
         msg = "directory services"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
-        
+    
+    # Get DNS configuration
+    def get_dns(self, dumpjson=False):
+        url = self.baseurl + "dns"
+        msg = "DNS"
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
         
     ########################
     ### POST API Section ###
