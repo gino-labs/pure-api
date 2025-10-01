@@ -351,10 +351,10 @@ def check_arrays(show_only_diffs=True):
 
     if keys_to_delete:
         for key in keys_to_delete:
-            del final_dict["legacy_array"][key]
-            del final_dict["s200_array"][key]
+            del final_dict[legacy_array["name"]][key]
+            del final_dict[s200_array["name"]][key]
 
-    if final_dict["legacy_array"] or final_dict["s200_array"]:
+    if final_dict[legacy_array["name"]] or final_dict[s200_array["name"]]:
         logger.write_log("Some array configurations don't match between FBs.", jsondata=final_dict, show_output=True)
     else:
         logger.write_log("Array configurations match for both legacy and s200.", show_output=True)
