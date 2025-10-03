@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-class FilsystemSubprocess:
+class PureSubprocessor:
     def __init__(self, filesystem, src_ip, dest_ip):
         self.filesystem = filesystem
         self.src_ip = src_ip
