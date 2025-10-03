@@ -30,7 +30,7 @@ pb2_vars = rrc_site.get_pb2_vars()
 legacy = FlashBladeAPI(*pb1_vars)
 s200 = FlashBladeAPI(*pb2_vars)
 
-class ConfigMigrator:
+class FlashBladeMigrator:
     def __init__(self):
         self.legacy = legacy
         self.s200 = s200
@@ -93,3 +93,4 @@ class ConfigMigrator:
                     except ApiError as e:
                         e.check_details(show_code=True, show_context=True)
 
+    # Migrate NFS

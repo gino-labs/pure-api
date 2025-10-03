@@ -1,18 +1,26 @@
 #!/usr/bin/env python3
 from jinja2 import Environment, FileSystemLoader
-from datetime import datetime
-import purefb_api as pfa
-import purefb_log as pfl
+from purefb_api import *
+from purefb_log import *
 import subprocess
 import json
 import os
 
-script_logger = pfl.PureLog()
+# Logging object
+logger = PureLog()
+
+# Stopwatch for script runtimes
+watch = Stopwatch()
+
+# Site environment variables sourced from shell
+rrc_site = SiteVars()
+pb1_vars = rrc_site.get_pb1_vars()
+pb2_vars = rrc_site.get_pb2_vars()
 
 # Migrate object store accounts
 def migrate_object_store_accounts():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Object store accounts")
     print()
 
@@ -52,8 +60,8 @@ def migrate_object_store_accounts():
 
 # Migrate buckets
 def migrate_buckets():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Migrate buckets")
     print()
 
@@ -101,8 +109,8 @@ def migrate_buckets():
         
 # Migrate object store users
 def migrate_object_store_users():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Migrate Users")
     print()
 
@@ -124,8 +132,8 @@ def migrate_object_store_users():
 
 # Create new object store access/secret keys for users on both FBs (Save secrets for s200)
 def create_new_s200_access_keys():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("New s200 access keys")
     print()
 
@@ -186,8 +194,7 @@ def create_new_s200_access_keys():
 
 # Create temporary users on legacy for migrating objects
 def create_migration_legacy_users_and_keys():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
     print("Create legacy migration users and keys")
     print()
 
@@ -227,8 +234,8 @@ def create_migration_legacy_users_and_keys():
 
 # Migrate object storage using rclone
 def rclone_object_storage_buckets():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Rclone object storage")
     print()
 
@@ -299,7 +306,7 @@ def rclone_object_storage_buckets():
             subprocess.run(rclone_cmd)
             print()
             msg = f"Rclone success for {bucket['name']}"
-            script_logger.write_log(msg, show_output=True)
+            logger.write_log(msg, show_output=True)
         except Exception as e:
             print(f"Exception has occured trying to rclone {bucket['name']}: {e}")
             print()
@@ -309,7 +316,7 @@ def rclone_object_storage_buckets():
 
 # Remove temporary object store users on legacy used for rclone
 def remove_temporary_migration_users():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
+    legacy = FlashBladeAPI(*pb1_vars)
     print("Remove temporary migration users on legacy")
     print()
 
@@ -322,8 +329,8 @@ def remove_temporary_migration_users():
 
 # Add remote credentials from s200 to source
 def add_remote_credentials():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Add remote credentials from s200 to legacy")
     print()
 
@@ -364,8 +371,8 @@ def add_remote_credentials():
 
 # Establish bucket replica links, enable object versioning on buckets
 def create_bucket_replica_links():
-    legacy = pfa.FlashBladeAPI(pfa.PB1, pfa.PB1_MGT, pfa.API_TOKEN)
-    s200 = pfa.FlashBladeAPI(pfa.PB2, pfa.PB2_MGT, pfa.API_TOKEN_S200)
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Create bucket replica links")
     print()
 
