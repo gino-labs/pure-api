@@ -620,7 +620,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Patch filesystem nfs rule if only if it doesn't already exist
-    def patch_nfs_rule(self, filesystem, rule, add_on_rules=True, dumpjson=True):
+    def patch_nfs_rule(self, filesystem, rule, dumpjson=True):
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem ({filesystem}) NFS rule: {rule}"
         target_fs = self.get_filesystems(filesystems=filesystem)

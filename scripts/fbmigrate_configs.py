@@ -93,4 +93,15 @@ class FlashBladeMigrator:
                     except ApiError as e:
                         e.check_details(show_code=True, show_context=True)
 
-    # Migrate NFS
+    # Migrate NFS rules
+    def migrate_nfs_rules(self):
+        legacy_filesystems = legacy.get_filesystems()
+
+        for fs in legacy_filesystems:
+            nfs_config = fs["nfs"]
+            payload = {
+                "nfs": {
+                    "rules": nfs_config["rules"]
+                }
+            }
+            s200.patch_filesystem(fs["name"], payload)
