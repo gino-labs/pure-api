@@ -620,14 +620,10 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Patch filesystem nfs rule if only if it doesn't already exist
-    def patch_nfs_rule(self, filesystem, rule, dumpjson=True):
+    def patch_nfs_rule(self, filesystem, rule, add_on_rules=True, dumpjson=True):
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem ({filesystem}) NFS rule: {rule}"
         target_fs = self.get_filesystems(filesystems=filesystem)
-        if not target_fs["nfs"]["rules"] and target_fs["export_policy"]:
-            policy = target_fs["export_policy"]["name"]
-
-
         if rule in target_fs["nfs"]["rules"]:
             self.logger.write_log(f"Rule {rule} for filesystem {filesystem} already exists.", show_output=True)
             return
@@ -639,6 +635,31 @@ class FlashBladeAPI:
             }
             data = self.REST_Request("patch", url, msg, payload=payload)
             return self.Parse_Data(data, dump=dumpjson)
+
+    # Patch nfs rule to an export policy
+    def patch_nfs_rule_to_policy(self, policy, perms="ro", client="*", access="no-squash", dumpjson=True):
+        target_pol = self.get_nfs_export_policies(policies=policy)
+        for rule in target_pol["rules"]:
+            del rule["name"]
+            del rule["id"]
+            del rule["policy"]
+            del rule["index"]
+            del rule["policy_version"]
+        rules = target_pol["rules"]
+        
+        rules.append(
+            {
+            "access": access,
+            "client": client,
+            "permission": perms
+            }
+        )
+        url = self.baseurl + f"nfs-export-policies?names={policy}"
+        msg = f"policy: {policy}"
+        data = self.REST_Request("patch", url, msg, payload=rules)
+        
+        return self.Parse_Data(data, dump=dumpjson)
+
 
     # Patch a network interface
     def patch_interface(self, interface, payload, dumpjson=False):

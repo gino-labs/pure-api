@@ -20,27 +20,7 @@ if __name__ == "__main__":
     watch.start_stopwatch()
 
     test_pol = s200.get_nfs_export_policies(policies="test", dumpjson=True)
-    rules = test_pol["rules"]
-    for rule in rules:
-        del rule["name"]
-        del rule["id"]
-        del rule["policy"]
-        del rule["index"]
-        del rule["policy_version"]
-    new_rules = [rule for rule in rules]
-    
-    new_rule = {
-        "access": "no-squash",
-        "client": "172.16.203.133",
-        "permission": "rw"
-        }
-    new_rules.append(new_rule)
-    
-    payload = { 
-        "rules": new_rules
-    }
 
-
-    s200.patch_nfs_export_policy("test", payload, dumpjson=True)
+    s200.patch_nfs_rule_to_policy("test", client="172.16.206.149")
 
     watch.end_stopwatch()
