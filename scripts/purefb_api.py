@@ -636,7 +636,7 @@ class FlashBladeAPI:
             data = self.REST_Request("patch", url, msg, payload=payload)
             return self.Parse_Data(data, dump=dumpjson)
 
-    # Patch nfs rule to an export policy
+    # Patch nfs rule to an export policy ### FIXME ###
     def patch_nfs_rule_to_policy(self, policy, perms="ro", client="*", access="no-squash", dumpjson=True):
         target_pol = self.get_nfs_export_policies(policies=policy)
         for rule in target_pol["rules"]:
