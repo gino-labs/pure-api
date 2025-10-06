@@ -22,7 +22,7 @@ if __name__ == "__main__":
     legacy_filesystems = legacy.get_filesystems()
     s200_filesystems = s200.get_filesystems()
     
-    legacy.get_certificates(dumpjson=True)
-    s200.get_certificates(dumpjson=True)
+    print(json.dumps(legacy_filesystems[3], indent=4))
+    print(json.dumps(s200_filesystems[9], indent=4))
 
     watch.end_stopwatch()
