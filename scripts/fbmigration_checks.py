@@ -80,8 +80,10 @@ def check_filesystem_nfs_rules(fs_only_list=True):
 
     if fs_only_list:
         non_matches = [fs for fs in non_matches.keys()]
-
-    logger.write_log(f"File systems that don't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
+    if non_matches:
+        logger.write_log(f"File systems that don't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
+    else:
+        logger.write_log(f"All file systems have matching NFS rules between FBs", show_output=True)
 
 # Check if replica links are present for each file system on Legacy
 def check_filesystems_replica_links(show_fs_data=False):
