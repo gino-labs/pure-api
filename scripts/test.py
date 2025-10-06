@@ -19,6 +19,19 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    pols = s200.get_nfs_export_policies(dumpjson=True)
+    test_pol = s200.get_nfs_export_policies(policies="test", dumpjson=True)
+
+    payload = {
+        "enabled": True,
+        "rules": [
+            {
+                "access": "no-squash",
+                "client": rrc_site.get_local_ip(),
+                "permission": "rw"
+            },
+        ]
+    }
+
+    s200.patch_nfs_export_policy("policy", payload, dumpjson=True)
 
     watch.end_stopwatch()
