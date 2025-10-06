@@ -105,3 +105,10 @@ class FlashBladeMigrator:
                 }
             }
             s200.patch_filesystem(fs["name"], payload)
+
+
+
+if __name__ == "__main__":
+    migrator = FlashBladeMigrator()
+
+    migrator.migrate_nfs_rules()
