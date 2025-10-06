@@ -626,6 +626,7 @@ class FlashBladeAPI:
         target_fs = self.get_filesystems(filesystems=filesystem)
         if not target_fs["nfs"]["rules"] and target_fs["export_policy"]:
             policy = target_fs["export_policy"]["name"]
+            
 
         if rule in target_fs["nfs"]["rules"]:
             self.logger.write_log(f"Rule {rule} for filesystem {filesystem} already exists.", show_output=True)
