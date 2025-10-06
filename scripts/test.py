@@ -21,6 +21,12 @@ if __name__ == "__main__":
 
     test_pol = s200.get_nfs_export_policies(policies="test", dumpjson=True)
     cur_rules = test_pol["rules"]
+    for rule in cur_rules:
+        del rule["name"]
+        del rule["id"]
+        del rule["policy"]
+        del rule["index"]
+        del rule["policy_version"]
     new_rule = {
         "rules": [
             {
@@ -31,9 +37,6 @@ if __name__ == "__main__":
         ]
     }
     
-    print(json.dumps(cur_rules, indent=4))
-    print(json.dumps(new_rule, indent=4))
-
     payload = { 
         "rules": cur_rules + new_rule
     }
