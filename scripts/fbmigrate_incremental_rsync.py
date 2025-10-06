@@ -2,6 +2,7 @@
 from purefb_api import *
 from purefb_log import *
 from purefb_subprocess import PureSubprocessor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Initialize objects
 
@@ -54,10 +55,11 @@ def get_filesystems_to_rsync():
 
 # Main
 if __name__ == "__main__":
-    ls = get_filesystems_to_rsync()
-    print(len(ls))
-    print (ls)
+    
+    test_fs = ["anaconda_linux_tucson", "rhel6_repos_linux_tucson", "docushare-backup"]
 
-
-
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = [executor.submit(rsync_filesystem, fs) for fs in test_fs]
+        for f in as_completed(futures):
+            print(f.result())
 
