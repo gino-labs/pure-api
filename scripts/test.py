@@ -20,6 +20,7 @@ if __name__ == "__main__":
     watch.start_stopwatch()
 
     test_pol = s200.get_nfs_export_policies(policies="test", dumpjson=True)
+    cur_rules = test_pol["rules"]
     new_rule = {
         "rules": [
             {
@@ -29,11 +30,12 @@ if __name__ == "__main__":
             },
         ]
     }
-    test_pol["rules"].append(new_rule)
-    print(json.dumps(test_pol, indent=4))
+    
+    print(json.dumps(cur_rules, indent=4))
+    print(json.dumps(new_rule, indent=4))
 
     payload = { 
-        "rules": test_pol["rules"]
+        "rules": cur_rules + new_rule
     }
 
 
