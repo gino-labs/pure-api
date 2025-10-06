@@ -30,15 +30,10 @@ if __name__ == "__main__":
     new_rules = [rule for rule in rules]
     
     new_rule = {
-        "rules": [
-
-            {
-                "access": "no-squash",
-                "client": "172.16.203.133",
-                "permission": "rw"
-            },
-        ]
-    }
+        "access": "no-squash",
+        "client": "172.16.203.133",
+        "permission": "rw"
+        }
     new_rules.append(new_rule)
     
     payload = { 
