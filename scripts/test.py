@@ -34,7 +34,7 @@ if __name__ == "__main__":
     payload = { 
         "rules": test_pol["rules"]
     }
-
+    print(json.dumps(payload, indent=4))
 
     s200.patch_nfs_export_policy("test", payload, dumpjson=True)
 
