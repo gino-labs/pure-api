@@ -168,7 +168,7 @@ class FlashBladeAPI:
             return True
 
     # Make a api request
-    def REST_Request(self, method, url, message, payload=None):
+    def REST_Request(self, method, url, message, payload=None, show_output=True):
         method = str(method).lower()
         if method == "get":
             response = requests.get(url, headers=self.auth_headers, verify=False)
@@ -181,7 +181,7 @@ class FlashBladeAPI:
     
         if response.status_code == 200:
             msg = f"{method.upper()} success for {message}"
-            self.logger.write_log(msg, show_output=True)
+            self.logger.write_log(msg, show_output=show_output)
             if method == "delete":
                 return {"status_code": response.status_code, "text": response.text}
             else:
@@ -583,6 +583,23 @@ class FlashBladeAPI:
         data = self.REST_Request("patch", url, msg, payload=payload)
 
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Patch filesystem nfs rule if only if it doesn't already exist
+    def patch_nfs_rule(self, filesystem, rule, dumpjson=True):
+        url = self.baseurl + f"file-systems?names={filesystem}"
+        msg = f"filesystem ({filesystem}) NFS rule: {rule}"
+        target_fs = self.get_filesystems(filesystems=filesystem)
+        if rule in target_fs["nfs"]["rules"]:
+            self.logger.write_log(f"Rule {rule} for filesystem {filesystem} already exists.", show_output=True)
+            return
+        else:
+            payload = {
+                "nfs": {
+                    "add_rules": rule
+                }
+            }
+            data = self.REST_Request("patch", url, msg, payload=payload)
+            return self.Parse_Data(data, dump=dumpjson)
 
     # Patch a network interface
     def patch_interface(self, interface, payload, dumpjson=False):
