@@ -206,6 +206,8 @@ class FlashBladeAPI:
         if "errors" not in data:
             try:
                 if "items" not in data:
+                    if dump:
+                        self.logger.write_log("Items not found. See below.", jsondata=data, show_output=dump)
                     return data
                 elif len(data["items"]) == 1:
                     if dump:
@@ -670,7 +672,7 @@ class FlashBladeAPI:
     
 
     # Delete a filesytem
-    def delete_filesystem(self, filesystem, dumpjson=True):
+    def delete_filesystem(self, filesystem, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("delete", url, msg)
@@ -678,7 +680,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete an object store user
-    def delete_object_store_user(self, object_user, dumpjson=True):
+    def delete_object_store_user(self, object_user, dumpjson=False):
         url = self.baseurl + f"object-store-users?names={object_user}"
         msg = f"object store user: {object_user}"
         data = self.REST_Request("delete", url, msg)
@@ -686,7 +688,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete an object store access key
-    def delete_object_store_access_key(self, access_key, dumpjson=True):
+    def delete_object_store_access_key(self, access_key, dumpjson=False):
         url = self.baseurl + f"object-store-access-keys?names={access_key}"
         msg = f"access key: {access_key}"
         data = self.REST_Request("delete", url, msg)
@@ -694,7 +696,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete an object store remote credential
-    def delete_object_store_remote_credential(self, credential_name, dumpjson=True):
+    def delete_object_store_remote_credential(self, credential_name, dumpjson=False):
         url = self.baseurl + f"object-store-remote_credentials?names={credential_name}"
         msg = f"credential name: {credential_name}"
         data = self.REST_Request("delete", url, msg)
@@ -702,7 +704,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Delete a bucket replica link
-    def delete_bucket_replica_link(self, local_bucket, dumpjson=True):
+    def delete_bucket_replica_link(self, local_bucket, dumpjson=False):
         url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}"
         msg = f"bucket replica link: {local_bucket}"
         data = self.REST_Request("delete", url, msg)
@@ -710,7 +712,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete a filesystem replica link
-    def delete_filesystem_replica_link(self, filesystem, remote_array, dumpjson=True):
+    def delete_filesystem_replica_link(self, filesystem, remote_array, dumpjson=False):
         url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}&remote_file_system_names={filesystem}&remote_names={remote_array}&cancel_in_progress_transfers=true"
         msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("delete", url, msg)
@@ -718,7 +720,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete a filesystem snapshot
-    def delete_filesystem_snapshot(self, snapshot, dumpjson=True):
+    def delete_filesystem_snapshot(self, snapshot, dumpjson=False):
         url = self.baseurl + f"file-system-snapshots?names={snapshot}"
         msg = f"snapshot: {snapshot}"
         data = self.REST_Request("delete", url, msg)
@@ -726,7 +728,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Delete a NFS export policy
-    def delete_nfs_export_policy(self, policy, dumpjson=True):
+    def delete_nfs_export_policy(self, policy, dumpjson=False):
         url = self.baseurl + f"nfs-export-policy?names={policy}"
         msg = f"NFS export policy: {policy}"
         data = self.REST_Request("delete", url, msg)
