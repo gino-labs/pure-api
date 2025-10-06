@@ -83,7 +83,7 @@ class ApiError(Exception):
         self.message = message
         self.ask_to_continue = ask_to_continue
         self.logger = PureLog()
-        super().__init__(message)
+        super().__init__(f"[Code: {code}] {message}")
 
     def ask_to_continue_loop(self):
         user_input = input("Would you like to continue? (y/n): ")[:1].lower()
