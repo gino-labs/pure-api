@@ -40,6 +40,24 @@ def rsync_filesystem(filesystem):
     fs_processor.umount()
 
 # Define file systems that need to be migrated (Non-replication)
+def get_filesystems_to_rsync():
+    legacy_replica_links = legacy.get_filesytem_replica_links()
+    legacy_filesystems = legacy.get_filesystems()
+
+    legacy_fs_list = [fs["name"] for fs in legacy_filesystems]
+    legacy_replica_fs_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
+
+    rsync_list = [fs["name"] for fs in legacy_fs_list if fs["name"] not in legacy_replica_fs_list]
+
+    return rsync_list
+
+
+# Main
+if __name__ == "__main__":
+    ls = get_filesystems_to_rsync()
+    print(len(ls))
+    print (ls)
+
 
 
 
