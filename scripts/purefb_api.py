@@ -69,6 +69,10 @@ class SiteVars:
     # Get pb2 data ip
     def get_pb2_data_ip(self):
         return self.PB2
+    
+    # Get local ip of host executing scripts
+    def get_local_ip(self):
+        return self.LOCAL_IP
 
 
 # Custom exception class built for handling api errors 
