@@ -476,7 +476,7 @@ class FlashBladeAPI:
             url = self.baseurl + f"nfs-export-policies?names={pol_list}"
             msg = f"nfs export policies: {pol_list}"
         else:
-            url = self.baseurl + "policies"
+            url = self.baseurl + "nfs-export-policies"
             msg = "nfs export policies"
         
         data = self.REST_Request("get", url, msg)
@@ -626,7 +626,7 @@ class FlashBladeAPI:
         target_fs = self.get_filesystems(filesystems=filesystem)
         if not target_fs["nfs"]["rules"] and target_fs["export_policy"]:
             policy = target_fs["export_policy"]["name"]
-            
+
 
         if rule in target_fs["nfs"]["rules"]:
             self.logger.write_log(f"Rule {rule} for filesystem {filesystem} already exists.", show_output=True)
