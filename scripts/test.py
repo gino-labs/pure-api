@@ -31,7 +31,7 @@ if __name__ == "__main__":
     }
     test_pol["rules"].append(new_rule)
 
-    payload = test_pol["rules"]
+    payload = { test_pol["rules"] }
 
 
     s200.patch_nfs_export_policy("test", payload, dumpjson=True)
