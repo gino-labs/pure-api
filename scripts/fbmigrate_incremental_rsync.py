@@ -47,9 +47,9 @@ def get_filesystems_to_rsync():
     legacy_fs_list = [fs["name"] for fs in legacy_filesystems]
     legacy_replica_fs_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
 
-    rsync_list = [fs["name"] for fs in legacy_fs_list if fs["name"] not in legacy_replica_fs_list]
+    rsync_list = set(legacy_fs_list) - set(legacy_replica_fs_list)
 
-    return rsync_list
+    return list(rsync_list)
 
 
 # Main
