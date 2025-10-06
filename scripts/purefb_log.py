@@ -13,6 +13,9 @@ class PureLog:
         now = datetime.now()
         formatted_timestamp = f"{now.strftime('%d%b%Y-%H:%M:%S')}"
         return formatted_timestamp
+    
+    def set_logfile(self, logfile):
+        self.logfile = f"{logfile}-{datetime.now().strftime('%d%b%Y')}"
 
     def write_log(self, message, jsondata=None, show_output=False, end_print="\n\n"):
         os.makedirs(self.logdir, exist_ok=True)
