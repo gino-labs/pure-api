@@ -19,10 +19,6 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    legacy_filesystems = legacy.get_filesystems()
-    s200_filesystems = s200.get_filesystems()
-    
-    print(json.dumps(legacy_filesystems[3], indent=4))
-    print(json.dumps(s200_filesystems[9], indent=4))
+    pols = s200.get_nfs_export_policies(dumpjson=True)
 
     watch.end_stopwatch()
