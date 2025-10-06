@@ -404,7 +404,7 @@ class FlashBladeAPI:
         if policies is not None:
             pol_list = self.to_csv(policies)
             url = self.baseurl + f"policies?names={pol_list}"
-            msg = f"filesystem snapshot policys: {pol_list}"
+            msg = f"filesystem snapshot policies: {pol_list}"
         else:
             url = self.baseurl + "policies"
             msg = "filesystem snapshot policies"
@@ -466,6 +466,20 @@ class FlashBladeAPI:
         msg = "certifcates"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get NFS export policies
+    def get_nfs_export_policies(self, policies=None, dumpjson=False):
+        if policies is not None:
+            pol_list = self.to_csv(policies)
+            url = self.baseurl + f"nfs-export-policies?names={pol_list}"
+            msg = f"nfs export policies: {pol_list}"
+        else:
+            url = self.baseurl + "policies"
+            msg = "nfs export policies"
+        
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+
 
         
     ########################
@@ -571,6 +585,14 @@ class FlashBladeAPI:
         data = self.REST_Request("post", url, msg)
 
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Post NFS export policy
+    def post_nfs_export_policy(self, policy, payload, dumpjson=False):
+        url = self.baseurl + f"nfs-export-policies?names={policy}"
+        msg = f"NFS export policiy: {policy}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+
+        return self.Parse_Data(data, dump=dumpjson)
 
 
     #########################
@@ -588,6 +610,13 @@ class FlashBladeAPI:
 
         return self.Parse_Data(data, dump=dumpjson)
     
+    def patch_nfs_export_policy(self, policy, payload, dumpjson=False):
+        url = self.baseurl + f"nfs-export-policies?names={policy}"
+        msg = f"NFS export policy: {policy}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+
+        return self.Parse_Data(data, dump=dumpjson)
+    
     # Patch filesystem nfs rule if only if it doesn't already exist
     def patch_nfs_rule(self, filesystem, rule, dumpjson=True):
         url = self.baseurl + f"file-systems?names={filesystem}"
@@ -595,7 +624,7 @@ class FlashBladeAPI:
         target_fs = self.get_filesystems(filesystems=filesystem)
         if not target_fs["nfs"]["rules"] and target_fs["export_policy"]:
             policy = target_fs["export_policy"]["name"]
-            
+
         if rule in target_fs["nfs"]["rules"]:
             self.logger.write_log(f"Rule {rule} for filesystem {filesystem} already exists.", show_output=True)
             return
@@ -692,6 +721,14 @@ class FlashBladeAPI:
     def delete_filesystem_snapshot(self, snapshot, dumpjson=True):
         url = self.baseurl + f"file-system-snapshots?names={snapshot}"
         msg = f"snapshot: {snapshot}"
+        data = self.REST_Request("delete", url, msg)
+
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete a NFS export policy
+    def delete_nfs_export_policy(self, policy, dumpjson=True):
+        url = self.baseurl + f"nfs-export-policy?names={policy}"
+        msg = f"NFS export policy: {policy}"
         data = self.REST_Request("delete", url, msg)
 
         return self.Parse_Data(data, dump=dumpjson)
