@@ -32,6 +32,6 @@ if __name__ == "__main__":
         ]
     }
 
-    s200.patch_nfs_export_policy("policy", payload, dumpjson=True)
+    s200.patch_nfs_export_policy("test", payload, dumpjson=True)
 
     watch.end_stopwatch()
