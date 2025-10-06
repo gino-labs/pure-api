@@ -20,15 +20,18 @@ if __name__ == "__main__":
     watch.start_stopwatch()
 
     test_pol = s200.get_nfs_export_policies(policies="test", dumpjson=True)
-    cur_rules = test_pol["rules"]
-    for rule in cur_rules:
+    rules = test_pol["rules"]
+    for rule in rules:
         del rule["name"]
         del rule["id"]
         del rule["policy"]
         del rule["index"]
         del rule["policy_version"]
+    new_rules = [rule for rule in rules]
+    
     new_rule = {
         "rules": [
+
             {
                 "access": "no-squash",
                 "client": "172.16.203.133",
@@ -36,9 +39,10 @@ if __name__ == "__main__":
             },
         ]
     }
+    new_rules.append(new_rule)
     
     payload = { 
-        "rules": cur_rules + new_rule
+        "rules": new_rules
     }
 
 
