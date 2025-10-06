@@ -61,6 +61,14 @@ class SiteVars:
         else:
             pb2_vars = [self.PB2, self.PB2_MGT, self.API_TOKEN_S200]
         return pb2_vars
+    
+    # Get pb1 data ip
+    def get_pb1_data_ip(self):
+        return self.PB1
+
+    # Get pb2 data ip
+    def get_pb2_data_ip(self):
+        return self.PB2
 
 
 # Custom exception class built for handling api errors 
