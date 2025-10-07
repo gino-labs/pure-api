@@ -26,7 +26,7 @@ def rsync_filesystem(filesystem):
     # Logger Instance
     fs_logger =  PureLog()
     fs_logger.set_logdir(f"{filesystem}-logs")
-    fs_logger.set_logfile(f"{filesystem}-rsync")
+    fs_logger.set_logfile(f"{filesystem}-scriptlog")
 
     # Stopwatch Instance
     watch = Stopwatch()
@@ -55,7 +55,7 @@ def rsync_filesystem(filesystem):
 
     # Rsync file systems
     fs_logger.write_log(f"Beginning rsync of file system {filesystem} from legacy to s200")
-    rsync_args = ["--delete", "--exclude", ".snapshot/"]
+    rsync_args = ["--delete", "--log-file", f"{fs_logger.get_log_path()}/{filesystem}-rsync.log", "--exclude", ".snapshot/", "--exclude", "*/.snapshot/***"]
     if "home" in filesystem:
         rsync_args = rsync_args + ["--exclude", "*/.cache/"]
     result = fs_processor.rsync()
