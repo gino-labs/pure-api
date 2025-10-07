@@ -7,10 +7,10 @@ class PureSubprocessor:
         self.filesystem = filesystem
         self.src_ip = src_ip
         self.src_export = f"{src_ip}:/{filesystem}"
-        self.src_mount = f"/mnt/pure_migration/{filesystem}_src"
+        self.src_mount = f"/mnt/pure_migration/{filesystem}_src/"
         self.dest_ip = dest_ip
         self.dest_export = f"{dest_ip}:/{filesystem}"
-        self.dest_mount = f"/mnt/pure_migration/{filesystem}_dest"
+        self.dest_mount = f"/mnt/pure_migration/{filesystem}_dest/"
 
     # Make directories for mount points
     def mkdir(self, src=True, dest=True):
