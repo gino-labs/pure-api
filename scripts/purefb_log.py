@@ -20,8 +20,11 @@ class PureLog:
     def set_logdir(self, logdir):
         self.logdir = f"logs/{logdir}"
 
-    def get_log_path(self):
+    def get_logfile_path(self):
         return f"{self.logdir}/{self.logfile}"
+    
+    def get_logdir_path(self):
+        return self.logdir
 
     def write_log(self, message, jsondata=None, show_output=False, end_print="\n\n"):
         os.makedirs(self.logdir, exist_ok=True)
