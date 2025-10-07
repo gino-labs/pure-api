@@ -172,7 +172,7 @@ def migrate_object_store_users():
     return users_migrated
 
 # Create new object store access/secret keys for users on both FBs (Save secrets for s200)
-def create_new_s200_access_keys(existing_users_list):
+def create_new_s200_access_keys():
     print("New s200 access keys")
     print()
 
@@ -195,23 +195,17 @@ def create_new_s200_access_keys(existing_users_list):
                 double_access_key_list.append(key["user"]["name"])
             else:
                 single_access_key_list.append(key["user"]["name"])
+
+    # Check if keys already exist for user
+    if s200_keys:
+        key_user_list = [key["user"]["name"] for key in s200_keys]
         
-    key_data= []
+    new_key_data= []
     # Post new access keys from migrated users
     for user in s200_users:
-        if user in existing_users_list:
-            continue
-        if os.path.exists(f".secrets/{s200.name}_s200_access_keys.json"):
-            with open(f".secrets/{s200.name}_s200_access_keys.json", "r") as f:
-                s200_keys = json.load(f)
-            match_found = next((key for key in s200_keys if key["user"]["name"] == user["name"]), None)
-            if match_found:
-                continue
-
-        if user["name"] in double_access_key_list:
-            print(f"Error: User {user['name']} already has two access keys, please delete one to continue.")
+        if user["name"] in key_user_list:
+            print(f"User {user['name']} already has an access key.")
             print()
-            exit()
         if user["name"] in legacy_user_names:
             payload = {
                 "user": {
@@ -220,11 +214,19 @@ def create_new_s200_access_keys(existing_users_list):
             }
             # Post new access key and append to list
             new_key_entry = s200.post_object_store_access_key(user["name"], payload)
-            key_data.append(new_key_entry)
+            new_key_data.append(new_key_entry)    
 
-    # Save key data to file in .secrets directory
     os.makedirs(".secrets", exist_ok=True)
-    if key_data:
+    
+    if new_key_data:
+        if os.path.exists(f".secrets/{s200.name}_s200_access_keys.json"):
+            with open(f".secrets/{s200.name}_s200_access_keys.json", "r") as f:
+                existing_keys = json.load(f)    
+            key_data = [key for key in existing_keys]
+            for key in new_key_data:
+                key_data.append(key)
+        else:
+            key_data = new_key_data
         with open(f".secrets/{s200.name}_s200_access_keys.json", "a") as file:
             json.dump(key_data, file, indent=4)
         print(f"S200 keys have been saved to .secrets/{s200.name}_s200_access_keys.json.")
@@ -389,6 +391,11 @@ def add_remote_credentials():
         access_key = cred["name"]
         secret_key = cred["secret_access_key"]
         account_user = cred["user"]["name"].replace("/", "-")
+
+        # Idempotent check
+        if cred_name in cred_remote_names:
+            continue
+
         print(f"Posting remote credential from s200 to legacy: {account_user}")
         print()
 
@@ -401,8 +408,6 @@ def add_remote_credentials():
         remote_name = legacy_array_connections["remote"]["name"]
         cred_name = f"{remote_name}/{account_user}"
 
-        if cred_name in cred_remote_names:
-            continue
 
         legacy.post_object_store_remote_credential(cred_name, payload)
 
