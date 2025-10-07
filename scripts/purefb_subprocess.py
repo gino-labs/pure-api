@@ -63,11 +63,12 @@ class PureSubprocessor:
 
         if src_rc == 0 and dest_rc == 0:
             if extra_args:
-                rsync_args = ["rsync", "-havH"] + extra_args + [self.src_mount, self.dest_mount]
-                subprocess.run(rsync_args)
+                rsync_args = ["rsync", "-havHS"] + extra_args + [self.src_mount, self.dest_mount]
+                r = subprocess.run(rsync_args)
             else:
-                rsync_args = ["rsync", "-havH", self.src_mount, self.dest_mount]
-                subprocess.run(rsync_args)
+                rsync_args = ["rsync", "-havHS", self.src_mount, self.dest_mount]
+                r = subprocess.run(rsync_args)
+            return r
         else:
             if src_rc != 0:
                 print(f"Error: {self.src_mount} Not Mounted")
