@@ -18,7 +18,7 @@ class PureLog:
         self.logfile = f"{logfile}-{datetime.now().strftime('%d%b%Y')}.log"
 
     def set_logdir(self, logdir):
-        self.logdir = f"{self.logdir}/{logdir}"
+        self.logdir = f"logs/{logdir}"
 
     def get_log_path(self):
         return f"{self.logdir}/{self.logfile}"

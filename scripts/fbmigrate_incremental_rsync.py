@@ -25,6 +25,7 @@ s200 = FlashBladeAPI(*pb2_vars)
 def rsync_filesystem(filesystem):
     # Logger Instance
     fs_logger =  PureLog()
+    fs_logger.set_logdir(f"{filesystem}-logs")
     fs_logger.set_logfile(f"{filesystem}-rsync")
 
     # Stopwatch Instance
