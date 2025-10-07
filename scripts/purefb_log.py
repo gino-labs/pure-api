@@ -42,6 +42,9 @@ class Stopwatch:
         self.end_time = None
         self.todays_log = PureLog()
 
+    def set_log(self, logger_instance):
+        self.todays_log = logger_instance
+
     def start_stopwatch(self, show_start_time=True):
         self.start_time = time.time()
         if show_start_time:
