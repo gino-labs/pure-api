@@ -19,9 +19,9 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    logger.set_logdir("test-logs")
-    logger.set_logfile("testing")
-    print(logger.get_logdir_path())
-    print(logger.get_logfile_path())
+    keys = s200.get_object_store_access_keys()
+
+    for key in keys:
+        s200.delete_object_store_access_key(key["name"])
 
     watch.end_stopwatch()
