@@ -39,6 +39,7 @@ def migrate_object_store_accounts():
     # Post each account not in s200 account names
     accts_migrated = []
     for acct in accts:
+        # Idempotent check
         if acct["name"] not in s200_acct_names:
             if acct["bucket_defaults"]["quota_limit"]:
                 bd_quota_limit = str(acct["bucket_defaults"]["quota_limit"])
@@ -81,6 +82,7 @@ def migrate_buckets():
     # Post each bucket not in s200 bucket names
     buckets_migrated = []
     for bucket in buckets:
+        # Idempotent check
         if bucket["name"] not in s200_bucket_names:
             if bucket["object_lock_config"]["default_retention"]:
                 default_retention = str(bucket["object_lock_config"]["default_retention"])
@@ -131,6 +133,7 @@ def migrate_object_store_users():
     # Post each user not in s200 user names
     users_migrated = []
     for user in users:
+        # Idempotent check
         if user["name"] not in s200_user_names and "migration" not in user["name"]:
             s200.post_object_store_user(user["name"])
             users_migrated.append(user["name"])
@@ -163,14 +166,16 @@ def create_new_s200_access_keys():
 
     # Check if keys already exist for user
     if s200_keys:
-        key_user_list = [key["user"]["name"] for key in s200_keys]
+        s200_key_user_list = [key["user"]["name"] for key in s200_keys]
         
     new_key_data= []
     # Post new access keys from migrated users
     for user in s200_users:
-        if user["name"] in key_user_list:
+        # Idempotent check
+        if user["name"] in s200_key_user_list:
             print(f"User {user['name']} already has an access key.")
             print()
+            continue
         if user["name"] in legacy_user_names:
             payload = {
                 "user": {
@@ -192,7 +197,7 @@ def create_new_s200_access_keys():
                 key_data.append(key)
         else:
             key_data = new_key_data
-        with open(f".secrets/{s200.name}_s200_access_keys.json", "a") as file:
+        with open(f".secrets/{s200.name}_s200_access_keys.json", "w") as file:
             json.dump(key_data, file, indent=4)
         print(f"S200 keys have been saved to .secrets/{s200.name}_s200_access_keys.json.")
         print()
@@ -404,6 +409,7 @@ def create_bucket_replica_links():
     # For each bucket on legacy establish replica link to remote s200
     buckets_linked = 0
     for bucket in buckets:
+        # Idempotent check
         if bucket["name"] in buckets_with_links:
             continue
         account = bucket["account"]["name"]
@@ -433,9 +439,33 @@ def create_bucket_replica_links():
     else:
         print(f"Bucket replica links update: {buckets_linked}")
     print()
+
+# Delete object replica links on LEGACY for fresh reset
+def delete_legacy_object_replica_links():
+    print("Deleting Legacy bucket replica links for fresh reset")
+    print()
+
+    bucket_links = legacy.get_bucket_replia_links()
+
+    for link in bucket_links:
+        legacy.delete_bucket_replica_link(link["local_bucket"]["name"])
+
+# Delete S200 access keys for fresh reset
+def delete_s200_access_keys():
+    print("Deleting S200 access keys for fresh reset")
+    print()
+
+    keys = s200.get_object_store_access_keys()
+
+    for key in keys:
+        s200.delete_object_store_access_key(key["name"])
                  
 # Main Script
 if __name__ == "__main__":
+    # Fresh replica links and keys
+    delete_legacy_object_replica_links()
+    delete_s200_access_keys()
+
     # Fucntion call to migrate object store accounts
     migrate_object_store_accounts()
 
