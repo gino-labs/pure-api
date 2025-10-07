@@ -23,7 +23,17 @@ s200 = FlashBladeAPI(*pb2_vars)
 
 # Define rsync wrapper function for data migration
 def rsync_filesystem(filesystem):
-    # Patch file system NFS rules for local IP
+    # Logger Instance
+    fs_logger =  PureLog()
+    fs_logger.set_logfile(f"{filesystem}-rsync")
+
+    # Stopwatch Instance
+    watch = Stopwatch()
+
+    # Start timer
+    watch.start_stopwatch(show_start_time=False)
+
+    # Patch local IP to file system NFS rules
     local_ip = rrc_site.get_local_ip()
     legacy_rule = f"{local_ip}(ro,no_root_squash)"
     s200_rule = f"{local_ip}(rw,no_root_squash)"
@@ -47,6 +57,10 @@ def rsync_filesystem(filesystem):
 
     # Unmount file systems after done
     fs_processor.umount()
+
+    # Stop timer
+    watch.end_stopwatch(showtime=False)
+    watch.show_time_elapsed(show_output=False)
 
 # Define file systems that need to be migrated (Non-replication)
 def get_filesystems_to_rsync():
