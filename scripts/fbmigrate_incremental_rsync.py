@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     print(filesystems)
 
-    with ThreadPoolExecutor(max_workers=6) as executor:
+    with ThreadPoolExecutor(max_workers=8) as executor:
         futures = [executor.submit(rsync_filesystem, fs) for fs in filesystems]
         for f in as_completed(futures):
             try:
