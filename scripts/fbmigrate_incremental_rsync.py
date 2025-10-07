@@ -29,6 +29,7 @@ def rsync_filesystem(filesystem):
 
     # Stopwatch Instance
     watch = Stopwatch()
+    watch.set_log(fs_logger)
 
     # Start timer
     watch.start_stopwatch(show_start_time=False)
@@ -45,18 +46,25 @@ def rsync_filesystem(filesystem):
 
     # Make directories for mount points
     fs_processor.mkdir()
+    fs_logger.write_log("Directories created for mountpoints and migration")
 
     # Mount file systems
     fs_processor.mount()
+    fs_logger.write_log("File systems mounted.")
 
     # Rsync file systems
+    fs_logger.write_log(f"Beginning rsync of file system {filesystem} from legacy to s200")
     rsync_args = ["--delete", "--info=progress2", "--exclude", ".snapshot/"]
     if "home" in filesystem:
         rsync_args = rsync_args + ["--exclude", "/home/*/.cache/"]
-    fs_processor.rsync()
+    result = fs_processor.rsync()
+
+    # Write rsync log complete
+    fs_logger.write_log(f"File system rsync process complete with EXIT CODE: {result.returncode}")
 
     # Unmount file systems after done
     fs_processor.umount()
+    fs_logger.write_log("file systems unmounted.")
 
     # Stop timer
     watch.end_stopwatch(showtime=False)
@@ -78,10 +86,12 @@ def get_filesystems_to_rsync():
 # Main
 if __name__ == "__main__":
     
-    test_fs = ["anaconda_linux_tucson", "rhel6_repos_linux_tucson", "docushare-backup"]
+    filesystems = get_filesystems_to_rsync()
 
-    with ThreadPoolExecutor(max_workers=3) as executor:
-        futures = [executor.submit(rsync_filesystem, fs) for fs in test_fs]
-        for f in as_completed(futures):
-            print(f.result())
+    print(filesystems)
+
+    # with ThreadPoolExecutor(max_workers=3) as executor:
+    #     futures = [executor.submit(rsync_filesystem, fs) for fs in test_fs]
+    #     for f in as_completed(futures):
+    #         print(f.result())
 
