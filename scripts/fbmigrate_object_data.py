@@ -60,7 +60,7 @@ def migrate_object_store_accounts():
                 "quota_limit": quota_limit
             }
             s200.post_object_store_account(acct["name"], payload)
-            accts_migrated.append[acct["name"]]
+            accts_migrated.append(acct["name"])
     return accts_migrated
 
 # Migrate buckets #
