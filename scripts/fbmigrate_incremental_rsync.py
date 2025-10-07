@@ -54,9 +54,9 @@ def rsync_filesystem(filesystem):
 
     # Rsync file systems
     fs_logger.write_log(f"Beginning rsync of file system {filesystem} from legacy to s200")
-    rsync_args = ["--delete", "--info=progress2", "--exclude", ".snapshot/"]
+    rsync_args = ["--delete", "--exclude", ".snapshot/"]
     if "home" in filesystem:
-        rsync_args = rsync_args + ["--exclude", "/home/*/.cache/"]
+        rsync_args = rsync_args + ["--exclude", "*/.cache/"]
     result = fs_processor.rsync()
 
     # Write rsync log complete
@@ -69,6 +69,8 @@ def rsync_filesystem(filesystem):
     # Stop timer
     watch.end_stopwatch(showtime=False)
     watch.show_time_elapsed(show_output=False)
+
+    return f"File system {filesystem} has finished rsyncing. See logs at {fs_logger.get_log_path()}"
 
 # Define file systems that need to be migrated (Non-replication)
 def get_filesystems_to_rsync():
@@ -90,8 +92,11 @@ if __name__ == "__main__":
 
     print(filesystems)
 
-    # with ThreadPoolExecutor(max_workers=3) as executor:
-    #     futures = [executor.submit(rsync_filesystem, fs) for fs in test_fs]
-    #     for f in as_completed(futures):
-    #         print(f.result())
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        futures = [executor.submit(rsync_filesystem, fs) for fs in filesystems]
+        for f in as_completed(futures):
+            try:
+                logger.write_log(f.result(), show_output=True)
+            except Exception as e:
+                logger.write_log(f"Exception has occurred: {e}", show_output=True)
 
