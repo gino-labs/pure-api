@@ -452,6 +452,8 @@ def delete_legacy_object_replica_links():
     for link in bucket_links:
         legacy.delete_bucket_replica_link(link["local_bucket"]["name"])
 
+# Delete legacy remote credentials TODO
+
 # Delete S200 access keys for fresh reset
 def delete_s200_access_keys():
     print("Deleting S200 access keys for fresh reset")
@@ -464,9 +466,7 @@ def delete_s200_access_keys():
                  
 # Main Script
 if __name__ == "__main__":
-    # Fresh replica links and keys
-    delete_legacy_object_replica_links()
-    delete_s200_access_keys()
+    # Fresh replica links keys and credentials
 
     # Fucntion call to migrate object store accounts
     migrate_object_store_accounts()
