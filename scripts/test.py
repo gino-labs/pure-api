@@ -19,9 +19,9 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    keys = s200.get_object_store_access_keys()
+    bucket_links = legacy.get_bucket_replia_links()
 
-    for key in keys:
-        s200.delete_object_store_access_key(key["name"])
+    for link in bucket_links:
+        legacy.delete_bucket_replica_link(link["local_bucket"]["name"])
 
     watch.end_stopwatch()
