@@ -445,6 +445,8 @@ def delete_legacy_object_replica_links():
     print("Deleting Legacy bucket replica links for fresh reset")
     print()
 
+    legacy_array_connections = legacy.get_array_connections()
+    remote_name = legacy_array_connections["remote"]["name"]
     bucket_links = legacy.get_bucket_replia_links()
 
     for link in bucket_links:

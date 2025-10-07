@@ -726,8 +726,8 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Delete a bucket replica link
-    def delete_bucket_replica_link(self, local_bucket, dumpjson=False):
-        url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}"
+    def delete_bucket_replica_link(self, local_bucket, remote_name, dumpjson=False):
+        url = self.baseurl + f"bucket-replica-links?local_bucket_names={local_bucket}&remote_names={remote_name}"
         msg = f"bucket replica link: {local_bucket}"
         data = self.REST_Request("delete", url, msg)
 
