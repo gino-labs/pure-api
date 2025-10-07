@@ -155,7 +155,7 @@ def create_new_s200_access_keys():
 
     double_access_key_list = []
     s200_keys = s200.get_object_store_access_keys()
-    # Check if 2 access keys already exist for a user
+
     if s200_keys and not isinstance(s200_keys, dict):
         single_access_key_list = []
         for key in s200_keys:
@@ -167,6 +167,8 @@ def create_new_s200_access_keys():
     # Check if keys already exist for user
     if s200_keys:
         s200_key_user_list = [key["user"]["name"] for key in s200_keys]
+    else:
+        s200_key_user_list = []
         
     new_key_data= []
     # Post new access keys from migrated users
