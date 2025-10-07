@@ -58,7 +58,7 @@ def rsync_filesystem(filesystem):
     rsync_args = ["--delete", "--stats","--log-file", f"{fs_logger.get_logdir_path()}/{filesystem}-rsync.log", "--exclude", ".snapshot/", "--exclude", "*/.snapshot/***"]
     if "home" in filesystem:
         rsync_args = rsync_args + ["--exclude", "*/.cache/"]
-    result = fs_processor.rsync()
+    result = fs_processor.rsync(extra_args=rsync_args)
 
     # Write rsync log complete
     fs_logger.write_log(f"File system rsync process complete with EXIT CODE: {result.returncode}")
