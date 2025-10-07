@@ -20,41 +20,6 @@ pb2_vars = rrc_site.get_pb2_vars()
 legacy = FlashBladeAPI(*pb1_vars)
 s200 = FlashBladeAPI(*pb2_vars)
 
-# Helper function to skip migration of buckets with replica links already in place
-def check_bucket_replica_links(check_argument, check_user=True, check_account=False):
-    bucket_links = legacy.get_bucket_replia_links()
-    bucket_list_with_links = [bucket["local_bucket"]["name"] for bucket in bucket_links]
-
-    buckets = legacy.get_buckets()
-    
-    map_buckets_with_links = {}
-    
-    for bucket in buckets:
-        if bucket["name"] in bucket_list_with_links:
-            account_name = bucket["account"]["name"]
-            users = legacy.get_object_store_users()
-            user_bucket_list = [user["name"] for user in users if user["account"]["name"] == account_name]
-
-            map_buckets_with_links[bucket] = {
-                "account": bucket["account"]["name"],
-                "users": user_bucket_list 
-            }
-
-    if check_user:
-        for b in map_buckets_with_links:
-            for u in map_buckets_with_links[b]["users"]:
-                if u == check_argument:
-                    logger.write_log(f"Object store user {u} is associated with a bucket being replicated.")
-                    return True
-        return False
-    if check_account:
-        for b in map_buckets_with_links:
-            if map_buckets_with_links[b]["account"] == check_argument:
-                logger.write_log(f"Object store account {map_buckets_with_links[b]["account"]} is associated with a bucket being replicated.")
-                return True
-        return False
-    return False
-
 # Migrate object store accounts #
 def migrate_object_store_accounts():
     print("Object store accounts")
