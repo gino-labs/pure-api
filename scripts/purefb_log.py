@@ -75,7 +75,7 @@ class Stopwatch:
         print("\nTime Elapsed. Continuing...")
         print()
         
-    def show_time_elapsed(self):
+    def show_time_elapsed(self, show_output=True):
         time_elapsed = self.get_time_elapsed(dictionary=True)
         time_string = "Time elapsed: "
         
@@ -86,7 +86,7 @@ class Stopwatch:
             time_string += f"{time_elapsed.get('minutes')} minutes, "
         
         time_string += f"{time_elapsed.get('seconds')} seconds"
-        self.todays_log.write_log(time_string, show_output=True)
+        self.todays_log.write_log(time_string, show_output=show_output)
 
 
 
