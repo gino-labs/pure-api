@@ -19,8 +19,9 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    test_pol = s200.get_nfs_export_policies(policies="test", dumpjson=True)
-
-    s200.patch_nfs_rule_to_policy("test", client="172.16.206.149")
+    logger.set_logdir("test-logs")
+    logger.set_logfile("testing")
+    print(logger.get_logdir_path())
+    print(logger.get_logfile_path())
 
     watch.end_stopwatch()
