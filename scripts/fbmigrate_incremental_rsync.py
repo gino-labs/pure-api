@@ -55,7 +55,7 @@ def rsync_filesystem(filesystem):
 
     # Rsync file systems
     fs_logger.write_log(f"Beginning rsync of file system {filesystem} from legacy to s200")
-    rsync_args = ["--delete", "--log-file", f"{fs_logger.get_logdir_path()}/{filesystem}-rsync.log", "--exclude", ".snapshot/", "--exclude", "*/.snapshot/***"]
+    rsync_args = ["--delete", "--stats","--log-file", f"{fs_logger.get_logdir_path()}/{filesystem}-rsync.log", "--exclude", ".snapshot/", "--exclude", "*/.snapshot/***"]
     if "home" in filesystem:
         rsync_args = rsync_args + ["--exclude", "*/.cache/"]
     result = fs_processor.rsync()
