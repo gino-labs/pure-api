@@ -97,7 +97,10 @@ def check_filesystems_replica_links(show_fs_data=False):
 
     non_replica_fs_list = compare_lists(legacy_fs_list, legacy_replica_fs_list, check_one=True)
 
-    logger.write_log(f"Legacy Filesystems with no replication links: {len(non_replica_fs_list)}", jsondata=non_replica_fs_list, show_output=True)
+    if len(non_replica_fs_list) == 0:
+        logger.write_log("All legacy file have replication links.", show_output=True)
+    else:
+        logger.write_log(f"Legacy Filesystems with no replication links: {len(non_replica_fs_list)}", jsondata=non_replica_fs_list, show_output=True)
 
     if show_fs_data:
         fs_data = []
@@ -162,6 +165,8 @@ def check_matching_attached_snapshot_policies():
 
         if diffs:
             logger.write_log(f"Attached snapshot policy \"{pol}\" has MISSING filesystem members on s200.", jsondata=diffs, show_output=True)
+        else:
+            logger.write_log(f"Snapshot policy {pol} attched to same file systems on both FBs.", show_output=True)
 
 # Check subnets names and vlans match for data interfaces
 def check_subnets():
@@ -251,8 +256,10 @@ def check_bucket_replica_links():
     legacy_buckets = [buck["name"] for buck in legacy.get_buckets()]
 
     buckets_no_replicas = compare_lists(legacy_buckets, legacy_replica_buckets, check_one=True)
-
-    logger.write_log(f"Legacy buckets with no replication links: {len(buckets_no_replicas)}", jsondata=buckets_no_replicas, show_output=True)
+    if len(buckets_no_replicas) == 0:
+        logger.write_log("Legacy buckets all have replication links.", show_output=True)
+    else:
+        logger.write_log(f"Legacy buckets with no replication links: {len(buckets_no_replicas)}", jsondata=buckets_no_replicas, show_output=True)
 
 # Check Directory Services point to valid LDAPS server on S200
 def check_directory_services(show_only_diffs=True):
