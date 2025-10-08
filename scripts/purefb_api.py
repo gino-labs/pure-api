@@ -619,17 +619,21 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Patch filesystem nfs rule if only if it doesn't already exist
-    def patch_nfs_rule(self, filesystem, rule, dumpjson=True):
+    def patch_nfs_rule(self, filesystem, rule, remove=False, dumpjson=True):
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem ({filesystem}) NFS rule: {rule}"
         target_fs = self.get_filesystems(filesystems=filesystem)
-        if rule in target_fs["nfs"]["rules"]:
+        if not remove and rule in target_fs["nfs"]["rules"]:
             self.logger.write_log(f"Rule {rule} for filesystem {filesystem} already exists.", show_output=True)
             return
         else:
+            if remove:
+                edit_rule = "remove_rules"
+            else:
+                edit_rule = "add_rules"
             payload = {
                 "nfs": {
-                    "add_rules": rule
+                    edit_rule: rule
                 }
             }
             data = self.REST_Request("patch", url, msg, payload=payload)
