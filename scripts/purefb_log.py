@@ -65,16 +65,26 @@ class Stopwatch:
         if showtime:
             self.show_time_elapsed()
 
-    def get_time_elapsed(self, dictionary=False):
+    def get_time_elapsed(self, time_string=False, dictionary=False):
         if not self.start_time or not self.end_time:
             return 0
         
-        if dictionary:
-            elapsed_time_dict = {
-                "hours": int((self.end_time - self.start_time) // 3600),
-                "minutes": int(((self.end_time - self.start_time) % 3600) // 60),
-                "seconds": round((self.end_time - self.start_time) % 60, 2)
-            }
+        elapsed_time_dict = {
+            "hours": int((self.end_time - self.start_time) // 3600),
+            "minutes": int(((self.end_time - self.start_time) % 3600) // 60),
+            "seconds": round((self.end_time - self.start_time) % 60, 2)
+        }
+        
+        if time_string:
+            if elapsed_time_dict.get("hours") > 0:
+                time_elapsed_string += f"{elapsed_time_dict.get('hours')} hours, "
+            
+            if time_elapsed_string.get("minutes"):
+                time_elapsed_string += f"{elapsed_time_dict.get('minutes')} minutes, "
+            
+            time_elapsed_string += f"{elapsed_time_dict.get('seconds')} seconds"
+            return time_elapsed_string
+        elif dictionary:
             return elapsed_time_dict
         else:
             return self.end_time - self.start_time

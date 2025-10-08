@@ -28,12 +28,18 @@ def rsync_filesystem(filesystem):
     fs_logger.set_logdir(f"{filesystem}-logs")
     fs_logger.set_logfile(f"{filesystem}-scriptlog")
 
+    sum_logger = PureLog()
+    sum_logger.set_logfile("rsync-summary")
+
     # Stopwatch Instance
     watch = Stopwatch()
     watch.set_log(fs_logger)
+    sum_watch = Stopwatch()
+    sum_watch.set_log(sum_logger)
 
     # Start timer
     watch.start_stopwatch(show_start_time=False)
+    sum_watch.start_stopwatch(show_start_time=False)
 
     # Patch local IP to file system NFS rules
     local_ip = rrc_site.get_local_ip()
@@ -70,6 +76,11 @@ def rsync_filesystem(filesystem):
     # Stop timer
     watch.end_stopwatch(showtime=False)
     watch.show_time_elapsed(show_output=False)
+
+    sum_watch.end_stopwatch(showtime=False)
+    elapsed_time = sum_watch.get_time_elapsed(time_string=True)
+
+    sum_logger.write_log(f"File system {filesystem} completed rsync in {elapsed_time}")
 
     return f"File system {filesystem} has finished rsyncing. See logs at {fs_logger.get_logfile_path()}"
 
