@@ -366,10 +366,6 @@ def add_remote_credentials():
         secret_key = cred["secret_access_key"]
         account_user = cred["user"]["name"].replace("/", "-")
 
-        # Idempotent check
-        if cred_name in cred_remote_names:
-            continue
-
         print(f"Posting remote credential from s200 to legacy: {account_user}")
         print()
 
@@ -381,6 +377,10 @@ def add_remote_credentials():
         legacy_array_connections = legacy.get_array_connections()
         remote_name = legacy_array_connections["remote"]["name"]
         cred_name = f"{remote_name}/{account_user}"
+
+        # Idempotent check
+        if cred_name in cred_remote_names:
+            continue
 
 
         legacy.post_object_store_remote_credential(cred_name, payload)
