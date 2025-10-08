@@ -80,7 +80,7 @@ def rsync_filesystem(filesystem):
     sum_watch.end_stopwatch(showtime=False)
     elapsed_time = sum_watch.get_time_elapsed(time_string=True)
 
-    sum_logger.write_log(f"File system {filesystem} completed rsync in {elapsed_time}")
+    sum_logger.write_log(f"File system {filesystem} completed rsync. {elapsed_time}")
 
     legacy.patch_nfs_rule(filesystem, legacy_rule, remove=True)
     s200.patch_nfs_rule(filesystem, s200_rule, remove=False)

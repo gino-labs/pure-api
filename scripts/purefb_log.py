@@ -74,6 +74,8 @@ class Stopwatch:
             "minutes": int(((self.end_time - self.start_time) % 3600) // 60),
             "seconds": round((self.end_time - self.start_time) % 60, 2)
         }
+
+        time_elapsed_string = "Time elapsed: "
         
         if time_string:
             if elapsed_time_dict.get("hours") > 0:
