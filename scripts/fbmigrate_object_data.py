@@ -342,6 +342,8 @@ def remove_temporary_migration_users():
 
 # Add remote credentials from s200 to source
 def add_remote_credentials():
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Add remote credentials from s200 to legacy")
     print()
 
@@ -385,6 +387,8 @@ def add_remote_credentials():
 
 # Establish bucket replica links, enable object versioning on buckets
 def create_bucket_replica_links():
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
     print("Create bucket replica links")
     print()
 
