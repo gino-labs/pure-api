@@ -215,7 +215,6 @@ class FlashBladeAPI:
                     return data["items"][0]
                 elif len(data["items"]) == 0:
                     self.logger.write_log("Zero items returned from parsed data list.", show_output=True)
-                    self.continue_check()
                     return data["items"]
                 else:
                     if dump:
