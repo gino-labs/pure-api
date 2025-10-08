@@ -71,7 +71,7 @@ def rsync_filesystem(filesystem):
     watch.end_stopwatch(showtime=False)
     watch.show_time_elapsed(show_output=False)
 
-    return f"File system {filesystem} has finished rsyncing. See logs at {fs_logger.get_log_path()}"
+    return f"File system {filesystem} has finished rsyncing. See logs at {fs_logger.get_logfile_path()}"
 
 # Define file systems that need to be migrated (Non-replication)
 def get_filesystems_to_rsync():
