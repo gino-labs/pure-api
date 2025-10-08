@@ -81,7 +81,7 @@ class Stopwatch:
             if elapsed_time_dict.get("hours") > 0:
                 time_elapsed_string += f"{elapsed_time_dict.get('hours')} hours, "
             
-            if time_elapsed_string.get("minutes"):
+            if elapsed_time_dict.get("minutes"):
                 time_elapsed_string += f"{elapsed_time_dict.get('minutes')} minutes, "
             
             time_elapsed_string += f"{elapsed_time_dict.get('seconds')} seconds"
