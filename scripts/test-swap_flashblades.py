@@ -83,7 +83,6 @@ scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reloa
 hosts = legacy.get_nfs_clients()
 
 # Create inventory file with NFS clients obtained
-
 inventory = {
     "all": {
         "hosts": {host["name"].split(":")[0]: None for host in hosts["items"] if "172.20." not in host["name"]}
