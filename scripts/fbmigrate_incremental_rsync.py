@@ -20,12 +20,12 @@ rrc_site = SiteVars()
 pb1_vars = rrc_site.get_pb1_vars()
 pb2_vars = rrc_site.get_pb2_vars()
 
-# Create API object instances of each array
-legacy = FlashBladeAPI(*pb1_vars)
-s200 = FlashBladeAPI(*pb2_vars)
-
 # Define rsync wrapper function for data migration
 def rsync_filesystem(filesystem):
+    # Create new API sessions
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
+
     # Logger Instance
     fs_logger =  PureLog()
     fs_logger.set_logdir(f"{filesystem}-logs")
@@ -80,6 +80,10 @@ def rsync_filesystem(filesystem):
 
     sum_logger.write_log(f"File system ({filesystem}) completed rsync. {elapsed_time}")
 
+    # Refresh new API sessions
+    legacy = FlashBladeAPI(*pb1_vars)
+    s200 = FlashBladeAPI(*pb2_vars)
+
     legacy.patch_nfs_rule(filesystem, legacy_rule, remove=True)
     s200.patch_nfs_rule(filesystem, s200_rule, remove=True)
 
@@ -87,6 +91,9 @@ def rsync_filesystem(filesystem):
 
 # Define file systems that need to be migrated (Non-replication)
 def get_filesystems_to_rsync():
+    # Create new API session
+    legacy = FlashBladeAPI(*pb1_vars)
+
     legacy_replica_links = legacy.get_filesytem_replica_links()
     legacy_filesystems = legacy.get_filesystems()
 
