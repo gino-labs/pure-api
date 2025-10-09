@@ -52,7 +52,7 @@ legacy_data_iface_names = []
 legacy_data_ips = []
 
 for iface in legacy_interfaces:
-    if "data" in iface["services"]:
+    if "data" in iface["services"] and "replication" not in iface["services"]:
         legacy_data_iface_names.append(iface["name"])
         legacy_data_ips.append(iface["address"])
 
@@ -73,6 +73,17 @@ s200_interfaces = s200.get_interfaces()
 
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["services"]]
 logger.write_log("S200 data interface names list", jsondata=s200_data_iface_names)
+
+# Match interfaces by same subnet
+interfaces_matching_subnets = {}
+for iface200 in s200_interfaces:
+    if "data" in iface200["services"]:
+        iface200_subnet = iface200["subnet"]["name"]
+        for iface in legacy_interfaces:
+            if "data" in iface["services"] and iface200_subnet == iface["subnet"]["name"]:
+                interfaces_matching_subnets[iface["name"]] = iface200["name"]
+
+logger.write_log("Interfaces that are using the same subnets.", jsondata=interfaces_matching_subnets, show_output=True)
 
 # Get file system replica links on Legacy #
 legacy_replica_links = legacy.get_filesytem_replica_links()
@@ -141,8 +152,13 @@ for iface in legacy_interfaces:
     else:
         # Post/create interface if not exists
         if "data" in iface["services"]:
+            # New iface name <subnet-name>-interface
+            if "-subnet" in iface["subnet"]["name"]:
+                new_iface_name = iface["subnet"]["name"].replace("-subnet", "-interface")
+            else:
+                new_iface_name = iface["subnet"]["name"] + "-interface"
             payload = { "address": iface["address"], "services": ["data"] }
-            s200.post_interface(iface["name"], payload) 
+            s200.post_interface(new_iface_name, payload) 
 
 # Patch S200 IPs to Legacy
 for iface in s200_interfaces:
