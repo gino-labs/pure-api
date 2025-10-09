@@ -71,7 +71,7 @@ scriptlog.write_log(f"Legacy production IP list and ansible var {production_ips}
 # Get S200 interfaces' info
 s200_interfaces = s200.get_interfaces()
 
-s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["name"]]
+s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["services"]]
 scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_names, show_output=True)
 
 # Get file system replica links on Legacy

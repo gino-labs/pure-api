@@ -71,7 +71,7 @@ logger.write_log("Legacy production IP list", jsondata=legacy_data_ips)
 # Get S200 interfaces' info #
 s200_interfaces = s200.get_interfaces()
 
-s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["name"]]
+s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["services"]]
 logger.write_log("S200 data interface names list", jsondata=s200_data_iface_names)
 
 # Get file system replica links on Legacy #
