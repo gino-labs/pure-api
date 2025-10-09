@@ -185,6 +185,8 @@ for link in legacy_replica_links:
     fs = link["local_file_system"]["name"]
     legacy.delete_filesystem_replica_link(fs, remote_array)
 
+# TODO DELETE BUCKET REPLICA LINKS!
+
 # Promote / Enable each file system on S200
 for fs in s200_filesystems:
     if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
