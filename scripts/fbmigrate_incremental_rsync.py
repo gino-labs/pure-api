@@ -81,7 +81,7 @@ def rsync_filesystem(filesystem):
     sum_logger.write_log(f"File system ({filesystem}) completed rsync. {elapsed_time}")
 
     legacy.patch_nfs_rule(filesystem, legacy_rule, remove=True)
-    s200.patch_nfs_rule(filesystem, s200_rule, remove=False)
+    s200.patch_nfs_rule(filesystem, s200_rule, remove=True)
 
     return f"File system {filesystem} has finished rsyncing. See logs at {fs_logger.get_logfile_path()}"
 
