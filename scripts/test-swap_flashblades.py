@@ -132,6 +132,10 @@ for iface in legacy_interfaces:
     # Patch
     if iface["name"] in s200_data_iface_names:
         s200_iface_json["patched"].append({iface["name"]: {"address": iface["address"]}})
+    # Use matching subnet interface info
+    elif iface["name"] in interfaces_matching_subnets:
+        # Patch s200 interface instead with matching subnet
+        s200_iface_json["patched"].append({interfaces_matching_subnets[iface["name"]]: {"address": iface["address"]}})
     else:
         # Post data interfaces # New for AZ
         if "data" in iface["services"] and "replication" not in iface["services"]:

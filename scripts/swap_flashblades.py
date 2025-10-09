@@ -149,6 +149,11 @@ for iface in legacy_interfaces:
     if iface["name"] in s200_data_iface_names:
         payload = { "address": iface["address"] }
         s200.patch_interface(iface["name"], payload)
+    # Use matching subnet interface info
+    elif iface["name"] in interfaces_matching_subnets:
+        # Patch s200 interface instead with matching subnet
+        payload = { "address": iface["address"] }
+        s200.patch_interface(interfaces_matching_subnets[iface["name"]], payload)
     else:
         # Post/create interface if not exists # New for AZ
         if "data" in iface["services"] and "replication" not in iface["services"]:
