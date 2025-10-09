@@ -628,8 +628,10 @@ class FlashBladeAPI:
             return
         else:
             if remove:
+                msg = "add " + msg
                 edit_rule = "remove_rules"
             else:
+                msg = "remove " + msg
                 edit_rule = "add_rules"
             payload = {
                 "nfs": {
