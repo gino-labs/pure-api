@@ -14,8 +14,11 @@ class PureLog:
         formatted_timestamp = f"{now.strftime('%d%b%Y-%H:%M:%S')}"
         return formatted_timestamp
     
-    def set_logfile(self, logfile):
-        self.logfile = f"{logfile}-{datetime.now().strftime('%d%b%Y')}.log"
+    def set_logfile(self, logfile, no_date=False):
+        if no_date:
+            self.logfile = f"{logfile}.log"
+        else:
+            self.logfile = f"{logfile}-{datetime.now().strftime('%d%b%Y')}.log"
 
     def set_logdir(self, logdir):
         self.logdir = f"logs/{logdir}"
