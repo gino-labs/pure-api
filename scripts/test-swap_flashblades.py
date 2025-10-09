@@ -74,6 +74,17 @@ s200_interfaces = s200.get_interfaces()
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["services"]]
 scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_names, show_output=True)
 
+# Match interfaces by same subnet
+interfaces_matching_subnets = {}
+for iface200 in s200_interfaces:
+    if "data" in iface200["services"]:
+        iface200_subnet = iface200["subnet"]["name"]
+        for iface in legacy_interfaces:
+            if "data" in iface["services"] and iface200_subnet == iface["subnet"]["name"]:
+                interfaces_matching_subnets[iface["subnet"]["name"]] = iface200_subnet
+
+scriptlog.write_log("Interfaces that are using the same subnets.", jsondata=interfaces_matching_subnets, show_output=True)
+
 # Get file system replica links on Legacy
 legacy_replica_links = legacy.get_filesytem_replica_links()
 replication_filesystems = [link["local_file_system"]["name"] for link in legacy_replica_links]
@@ -105,8 +116,8 @@ for fs in legacy_filesystems:
 
 scriptlog.write_log(f"File systems that would get pre-swap snapshot: {len(promoted_fs_list)}", jsondata=promoted_fs_list, show_output=True)
 
-scriptlog.write_log("Waiting 30 seconds for pre-swap snapshots to settle...", show_output=True)
-timer.countdown(30)
+scriptlog.write_log("Waiting 30 (simulated) seconds for pre-swap snapshots to settle...", show_output=True)
+timer.countdown(3)
 
 # File systems that would be demoted or not demoted
 demo_fs_list = [fs["name"] for fs in legacy_filesystems if fs["name"] in replication_filesystems]
