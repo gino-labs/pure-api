@@ -151,14 +151,16 @@ s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json }
 scriptlog.write_log(f"S200 to Legacy interfaces patched: {len(s200_iface_json['patched'])}, posted: {len(s200_iface_json['posted'])}", jsondata=s200_iface_json, show_output=True)
 
 # IPs that would be patched to legacy
-legacy_iface_json_list = []
+legacy_iface_list = []
 for iface in s200_interfaces:
     if iface["name"] in legacy_data_iface_names:
-        legacy_iface_json_list.append({iface["name"]: {"address": iface["address"]}})
+        legacy_iface_list.append({iface["name"]: {"address": iface["address"]}})
+    elif iface["name"] in interfaces_matching_subnets.values():
+        for key, value in interfaces_matching_subnets.items():
+            if value == iface["name"]:
+                legacy_iface_list.append({key: {"address": iface["address"]}})
 
-legacy_ifaces_updated = { "Legacy_Updated_Interfaces": legacy_iface_json_list }
-
-scriptlog.write_log(f"Legacy interfaces to be updated with S200 IPs: {len(legacy_iface_json_list)}", jsondata=legacy_ifaces_updated, show_output=True)
+scriptlog.write_log(f"Legacy interfaces to be updated with S200 IPs: {len(legacy_iface_list)}", jsondata=legacy_iface_list, show_output=True)
 
 exit()
 # Replication links that would be deleted

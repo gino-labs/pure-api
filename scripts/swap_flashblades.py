@@ -167,9 +167,14 @@ for iface in legacy_interfaces:
 
 # Patch S200 IPs to Legacy
 for iface in s200_interfaces:
+    payload = { "address": iface["address"] }
     if iface["name"] in legacy_data_iface_names:
-        payload = { "address": iface["address"] }
         legacy.patch_interface(iface["name"], payload)
+    elif iface["name"] in interfaces_matching_subnets.values():
+        for key, value in interfaces_matching_subnets.items():
+            if value == iface["name"]:
+                legacy.patch_interface(key, payload)
+        
 
 # Delete replica links on Legacy
 legacy_array_connections = legacy.get_array_connections()
