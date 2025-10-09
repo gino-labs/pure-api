@@ -140,8 +140,9 @@ for iface in legacy_interfaces:
         s200.patch_interface(iface["name"], payload)
     else:
         # Post/create interface if not exists
-        payload = { "address": iface["address"], "services": ["data"] }
-        s200.post_interface(iface["name"], payload) 
+        if "data" in iface["services"]:
+            payload = { "address": iface["address"], "services": ["data"] }
+            s200.post_interface(iface["name"], payload) 
 
 # Patch S200 IPs to Legacy
 for iface in s200_interfaces:

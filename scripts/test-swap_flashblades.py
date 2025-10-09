@@ -123,8 +123,9 @@ for iface in legacy_interfaces:
     if iface["name"] in s200_data_iface_names:
         s200_iface_json["patched"].append({iface["name"]: {"address": iface["address"]}})
     else:
-        # Post
-        s200_iface_json["posted"].append({iface["name"]: {"address": iface["address"]}})
+        # Post data interfaces
+        if "data" in iface["services"]:
+            s200_iface_json["posted"].append({iface["name"]: {"address": iface["address"]}})
 
 s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json }
 
@@ -140,6 +141,7 @@ legacy_ifaces_updated = { "Legacy_Updated_Interfaces": legacy_iface_json_list }
 
 scriptlog.write_log(f"Legacy interfaces to be updated with S200 IPs: {len(legacy_iface_json_list)}", jsondata=legacy_ifaces_updated, show_output=True)
 
+exit()
 # Replication links that would be deleted
 legacy_array_connections = legacy.get_array_connections()
 
