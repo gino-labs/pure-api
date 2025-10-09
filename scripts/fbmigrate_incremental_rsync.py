@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 # Logger object for logs
 logger = PureLog()
 sum_logger = PureLog()
-sum_logger.set_logfile("Arsync-summary")
+sum_logger.set_logfile("00_rsync-summary", no_date=True)
 
 # Stopwatch for summary log
 sum_watch = Stopwatch()
