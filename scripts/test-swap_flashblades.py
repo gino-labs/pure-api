@@ -128,7 +128,7 @@ for iface in legacy_interfaces:
 
 s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json }
 
-scriptlog.write_log(f"S200 to Legacy interfaces patched: {len(s200_iface_json["patched"])}, posted: {len(s200_iface_json["posted"])}", jsondata=s200_iface_json, show_output=True)
+scriptlog.write_log(f"S200 to Legacy interfaces patched: {len(s200_iface_json['patched'])}, posted: {len(s200_iface_json['posted'])}", jsondata=s200_iface_json, show_output=True)
 
 # IPs that would be patched to legacy
 legacy_iface_json_list = []
