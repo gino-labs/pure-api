@@ -81,7 +81,7 @@ for iface200 in s200_interfaces:
         iface200_subnet = iface200["subnet"]["name"]
         for iface in legacy_interfaces:
             if "data" in iface["services"] and iface200_subnet == iface["subnet"]["name"]:
-                interfaces_matching_subnets[iface["subnet"]["name"]] = iface200_subnet
+                interfaces_matching_subnets[iface["name"]] = iface200["name"]
 
 scriptlog.write_log("Interfaces that are using the same subnets.", jsondata=interfaces_matching_subnets, show_output=True)
 
@@ -135,7 +135,12 @@ for iface in legacy_interfaces:
     else:
         # Post data interfaces
         if "data" in iface["services"]:
-            s200_iface_json["posted"].append({iface["name"]: {"address": iface["address"]}})
+            # New iface name <subnet-name>-interface
+            if "-subnet" in iface["subnet"]["name"]:
+                new_iface_name = iface["subnet"]["name"].replace("-subnet", "-interface")
+            else:
+                new_iface_name = iface["subnet"]["name"] + "-interface"
+            s200_iface_json["posted"].append({new_iface_name: {"address": iface["address"], "services": ["data"]}})
 
 s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json }
 
