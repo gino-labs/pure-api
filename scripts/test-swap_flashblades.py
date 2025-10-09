@@ -52,7 +52,7 @@ legacy_data_iface_names = []
 legacy_data_ips = []
 
 for iface in legacy_interfaces:
-    if "data" in iface["services"]:
+    if "data" in iface["services"] and "replication" not in iface["services"]:
         legacy_data_iface_names.append(iface["name"])
         legacy_data_ips.append(iface["address"])
 
