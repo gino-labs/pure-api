@@ -52,7 +52,7 @@ legacy_data_iface_names = []
 legacy_data_ips = []
 
 for iface in legacy_interfaces:
-    if "data" in iface["services"] and "replication" not in iface["services"]:
+    if "data" in iface["services"] and "replication" not in iface["services"]: # New for AZ
         legacy_data_iface_names.append(iface["name"])
         legacy_data_ips.append(iface["address"])
 
@@ -74,7 +74,7 @@ s200_interfaces = s200.get_interfaces()
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["services"]]
 scriptlog.write_log("S200 data interface names list", jsondata=s200_data_iface_names, show_output=True)
 
-# Match interfaces by same subnet
+# Match interfaces by same subnet # New for AZ
 interfaces_matching_subnets = {}
 for iface200 in s200_interfaces:
     if "data" in iface200["services"]:
@@ -133,7 +133,7 @@ for iface in legacy_interfaces:
     if iface["name"] in s200_data_iface_names:
         s200_iface_json["patched"].append({iface["name"]: {"address": iface["address"]}})
     else:
-        # Post data interfaces
+        # Post data interfaces # New for AZ
         if "data" in iface["services"]:
             # New iface name <subnet-name>-interface
             if "-subnet" in iface["subnet"]["name"]:
