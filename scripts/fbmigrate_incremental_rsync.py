@@ -8,9 +8,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Logger object for logs
 logger = PureLog()
+sum_logger = PureLog()
+sum_logger.set_logfile("rsync-summary")
 
-# Stopwatch for script runtimes
-watch = Stopwatch()
+# Stopwatch for summary log
+sum_watch = Stopwatch()
+sum_watch.set_log(sum_logger)
 
 # Site environment variables sourced from shell
 rrc_site = SiteVars()
@@ -28,17 +31,12 @@ def rsync_filesystem(filesystem):
     fs_logger.set_logdir(f"{filesystem}-logs")
     fs_logger.set_logfile(f"{filesystem}-scriptlog")
 
-    sum_logger = PureLog()
-    sum_logger.set_logfile("rsync-summary")
-
     # Stopwatch Instance
-    watch = Stopwatch()
-    watch.set_log(fs_logger)
-    sum_watch = Stopwatch()
-    sum_watch.set_log(sum_logger)
+    fs_watch = Stopwatch()
+    fs_watch.set_log(fs_logger)
 
     # Start timer
-    watch.start_stopwatch(show_start_time=False)
+    fs_watch.start_stopwatch(show_start_time=False)
     sum_watch.start_stopwatch(show_start_time=False)
 
     # Patch local IP to file system NFS rules
@@ -74,13 +72,13 @@ def rsync_filesystem(filesystem):
     fs_logger.write_log("file systems unmounted.")
 
     # Stop timer
-    watch.end_stopwatch(showtime=False)
-    watch.show_time_elapsed(show_output=False)
+    fs_watch.end_stopwatch(showtime=False)
+    fs_watch.show_time_elapsed(show_output=False)
 
     sum_watch.end_stopwatch(showtime=False)
     elapsed_time = sum_watch.get_time_elapsed(time_string=True)
 
-    sum_logger.write_log(f"File system {filesystem} completed rsync. {elapsed_time}")
+    sum_logger.write_log(f"File system ({filesystem}) completed rsync. {elapsed_time}")
 
     legacy.patch_nfs_rule(filesystem, legacy_rule, remove=True)
     s200.patch_nfs_rule(filesystem, s200_rule, remove=False)
@@ -105,7 +103,10 @@ if __name__ == "__main__":
     
     filesystems = get_filesystems_to_rsync()
 
-    print(filesystems)
+    main_watch = Stopwatch()
+    main_watch.set_log(sum_logger)
+
+    main_watch.start_stopwatch(show_start_time=False)
 
     with ThreadPoolExecutor(max_workers=10) as executor:
         futures = [executor.submit(rsync_filesystem, fs) for fs in filesystems]
@@ -114,4 +115,9 @@ if __name__ == "__main__":
                 logger.write_log(f.result(), show_output=True)
             except Exception as e:
                 logger.write_log(f"Exception has occurred: {e}", show_output=True)
+    
+    main_watch.end_stopwatch(showtime=False)
+
+    runtime = main_watch.get_time_elapsed(time_string=True)
+    sum_logger.write_log(f"All filesystesms rsynced. {runtime}\n---", show_output=True)
 
