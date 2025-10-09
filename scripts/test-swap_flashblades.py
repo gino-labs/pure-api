@@ -134,7 +134,7 @@ for iface in legacy_interfaces:
         s200_iface_json["patched"].append({iface["name"]: {"address": iface["address"]}})
     else:
         # Post data interfaces # New for AZ
-        if "data" in iface["services"]:
+        if "data" in iface["services"] and "replication" not in iface["services"]:
             # New iface name <subnet-name>-interface
             if "-subnet" in iface["subnet"]["name"]:
                 new_iface_name = iface["subnet"]["name"].replace("-subnet", "-interface")
