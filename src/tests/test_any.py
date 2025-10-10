@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     logger.dump_config(home, "s200_home_linux_tucson")
 
-    data = logger.load_config("s200_home_linux_tucon")
+    data = logger.load_config("s200_home_linux_tucson")
 
     print(data) 
 
