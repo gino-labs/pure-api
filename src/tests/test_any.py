@@ -18,6 +18,8 @@ if __name__ == "__main__":
     watch = Stopwatch()
 
     watch.start_stopwatch()
+
+    legacy.get_filesytem_replica_links(dumpjson=True)
     
     arrays = legacy.get_array_connections()
 
