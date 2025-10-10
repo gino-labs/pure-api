@@ -19,11 +19,12 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    bucket_links = legacy.get_bucket_replia_links()
     legacy_array_connections = legacy.get_array_connections()
     remote_name = legacy_array_connections["remote"]["name"]
 
-    for link in bucket_links:
-        legacy.delete_bucket_replica_link(link["local_bucket"]["name"], remote_name)
+    gxc_bucket_link = legacy.get_bucket_replia_links(buckets="gxc-bucket")
+    gxc_bucket = gxc_bucket_link["local_bucket"]["name"]
+
+    legacy.delete_bucket_replica_link(gxc_bucket, remote_name)
 
     watch.end_stopwatch()
