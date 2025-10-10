@@ -63,7 +63,15 @@ legacy_if_config = "legacy_interfaces.json"
 logger.write_log(f"Loading original network interface configurations for Legacy FlashBlade. (logs/pure_configs/{legacy_if_config})", show_output=True)
 original_legacy_interfaces = logger.load_config(legacy_if_config)
 
-#TODO
+for iface in legacy.get_interfaces():
+    if ("data" in iface["services"]) and ("replication" not in iface["services"]):
+        legacy.delete_interface(iface["name"])
+
+for iface in original_legacy_interfaces:
+    services = iface["services"]
+    if ("data" in iface["services"]) and ("replication" not in iface["services"]):
+        payload = {"address": iface["address"], "services": iface["services"], "type": "vip"}
+        legacy.post_interface("iface_name")
 
 
 # Using logs/pure_configs/s200_interfaces.json configure S200 network interfaces to original state
@@ -71,7 +79,15 @@ s200_if_config = "s200_interfaces.json"
 logger.write_log(f"Loading original network interface configurations for S200 FlashBlade. (logs/pure_configs/{s200_if_config})", show_output=True)
 original_s200_interfaces = logger.load_config(s200_if_config)
 
-#TODO
+for iface in s200.get_interfaces():
+    if ("data" in iface["services"]) and ("replication" not in iface["services"]):
+        s200.delete_interface(iface["name"])
+
+for iface in original_s200_interfaces:
+    services = iface["services"]
+    if ("data" in iface["services"]) and ("replication" not in iface["services"]):
+        payload = {"address": iface["address"], "services": iface["services"], "type": "vip"}
+        s200.post_interface("iface_name")
 
 # Re-establish file repliation links where possible
 
