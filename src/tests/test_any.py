@@ -29,9 +29,9 @@ if __name__ == "__main__":
         "policies": [
             {
                 "name": "5_mins",
-                # "location": {
-                #     "name": "5_min"
-                # }
+                "location": {
+                    "name": "5_min"
+                }
             }
         ]
     }
