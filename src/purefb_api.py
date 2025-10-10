@@ -761,4 +761,12 @@ class FlashBladeAPI:
         data = self.REST_Request("delete", url, msg)
 
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete a network interface
+    def delete_interface(self, interface, dumpjson=False):
+        url = self.baseurl + f"network-interfaces?names={interface}"
+        msg = f"network interface: {interface}"
+        data = self.REST_Request("delete", url, msg)
+
+        return self.Parse_Data(data, dump=dumpjson)
         
