@@ -446,7 +446,7 @@ def create_bucket_replica_links():
         print(f"Bucket replica links update: {buckets_linked}")
     print()
 
-# Delete object replica links on LEGACY for fresh reset #FIXME
+# Delete object replica links on LEGACY for fresh reset #TODO TEST
 def delete_legacy_object_replica_links():
     print("Deleting Legacy bucket replica links for fresh reset")
     print()
@@ -456,11 +456,13 @@ def delete_legacy_object_replica_links():
     bucket_links = legacy.get_bucket_replia_links()
 
     for link in bucket_links:
-        legacy.delete_bucket_replica_link(link["local_bucket"]["name"])
+        legacy.delete_bucket_replica_link(link["local_bucket"]["name"], remote_name)
 
-# Delete legacy remote credentials TODO
+# Delete legacy remote credentials #TODO TEST
+for cred in legacy.get_object_store_remote_credentials():
+    legacy.delete_object_store_remote_credential(cred["name"])
 
-# Delete S200 access keys for fresh reset
+# Delete S200 access keys for fresh reset #TODO TEST
 def delete_s200_access_keys():
     print("Deleting S200 access keys for fresh reset")
     print()
