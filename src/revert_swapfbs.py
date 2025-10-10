@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import subprocess
 from purefb_api import *
 from purefb_log import *
 
@@ -63,6 +64,9 @@ legacy_if_config = "legacy_interfaces.json"
 logger.write_log(f"Loading original network interface configurations for Legacy FlashBlade. (logs/pure_configs/{legacy_if_config})", show_output=True)
 original_legacy_interfaces = logger.load_config(legacy_if_config)
 
+production_ips = [iface["address"] for iface in original_legacy_interfaces]
+pure_ips = "|".join(production_ips)
+
 for iface in legacy.get_interfaces():
     if ("data" in iface["services"]) and ("replication" not in iface["services"]):
         legacy.delete_interface(iface["name"])
@@ -89,6 +93,13 @@ for iface in original_s200_interfaces:
         payload = {"address": iface["address"], "services": iface["services"], "type": "vip"}
         s200.post_interface("iface_name")
 
+
 # Re-establish file repliation links where possible
 
+
 # Re-establish object replication links where possible
+
+
+# Run ansible playbook with nfs client inventory and production IP variable
+print("Enter root password for ansible playbook.")
+subprocess.run(["ansible-playbook", "-i", f"inventory/az_inventory.json", "-e", f"pure_ips={pure_ips}", "-k", "remount-pure.yml"], cwd="ansible")
