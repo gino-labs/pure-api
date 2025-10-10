@@ -23,9 +23,11 @@ s200 = FlashBladeAPI(*pb2_vars)
 
 # Get Legacy file systems #
 legacy_filesystems = legacy.get_filesystems()
+logger.dump_config(legacy_filesystems, "legacy_filesystems")
 
 # Get S200 file systems #
 s200_filesystems = s200.get_filesystems()
+logger.dump_config(s200_filesystems, "s200_filesystems")
 
 # Create promotion payloads using corresponding legacy file system
 s200_promo_payloads = {}
@@ -47,6 +49,7 @@ logger.write_log("S200 file system promotion data from legacy", jsondata=s200_pr
 
 # Get Legacy interfaces' info #
 legacy_interfaces = legacy.get_interfaces()
+logger.dump_config(legacy_interfaces, "legacy_interfaces")
 
 legacy_data_iface_names = []
 legacy_data_ips = []
@@ -70,6 +73,7 @@ logger.write_log("Legacy production IP list", jsondata=legacy_data_ips)
 
 # Get S200 interfaces' info #
 s200_interfaces = s200.get_interfaces()
+logger.dump_config(s200_interfaces, "s200_interfaces")
 
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["services"]]
 logger.write_log("S200 data interface names list", jsondata=s200_data_iface_names)
