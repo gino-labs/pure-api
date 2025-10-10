@@ -19,24 +19,8 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    legacy_array_connections = legacy.get_array_connections()
-    remote_name = legacy_array_connections["remote"]["name"]
+    home = s200.get_filesystems(filesystems="home_linux_tucson")
 
-    credentials = legacy.get_object_store_remote_credentials()
-
-    gxc_bucket_json = legacy.get_buckets(buckets="gxc-bucket")
-    gxc_account = gxc_bucket_json["account"]["name"]
-
-    for cred in credentials:
-        if gxc_account in cred["name"]:
-            remote_credential = cred["name"]
-            break
-
-    payload = {
-            "paused": False,
-            "cascading_enabled": False
-        }
-
-    legacy.post_bucket_replica_link("gxc-bucket", remote_credential, payload)
+    logger.dump_config(home, "home_linux_tucson")
 
     watch.end_stopwatch()
