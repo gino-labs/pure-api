@@ -59,7 +59,7 @@ class PureLog:
     def load_config(self, filename):
         if not filename.endswith(".json"):
             filename += ".json"
-        with open(filename, "r") as cfg:
+        with open(f"logs/pure_configs/{filename}", "r") as cfg:
             data = json.load(cfg)
         return data
 
