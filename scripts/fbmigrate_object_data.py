@@ -306,7 +306,7 @@ def rclone_object_storage_buckets():
             "data_ip_dest": s200.data_ip
         }
 
-        env = Environment(loader=FileSystemLoader('.'))
+        env = Environment(loader=FileSystemLoader('ansible/templates'))
         template = env.get_template('rclone.conf.j2')
         rendered_output = template.render(config_data)
 
