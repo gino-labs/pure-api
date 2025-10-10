@@ -24,11 +24,11 @@ s200 = FlashBladeAPI(*pb2_vars)
 
 # Get Legacy file systems
 legacy_filesystems = legacy.get_filesystems()
-logger.dump_config(legacy_filesystems, "legacy_filesystems")
+logger.dump_config(legacy_filesystems, "test_legacy_filesystems")
 
 # Get S200 file systems
 s200_filesystems = s200.get_filesystems()
-logger.dump_config(s200_filesystems, "s200_filesystems")
+logger.dump_config(s200_filesystems, "test_s200_filesystems")
 
 s200_promo_payloads = {}
 for fs in legacy_filesystems:
@@ -49,7 +49,7 @@ logger.write_log("S200 file system promotion data from legacy", jsondata=s200_pr
 
 # Get Legacy interfaces' info
 legacy_interfaces = legacy.get_interfaces()
-logger.dump_config(legacy_interfaces, "legacy_interfaces")
+logger.dump_config(legacy_interfaces, "test_legacy_interfaces")
 
 legacy_data_iface_names = []
 legacy_data_ips = []
@@ -73,7 +73,7 @@ logger.write_log(f"Legacy production IP list and ansible var {production_ips}", 
 
 # Get S200 interfaces' info
 s200_interfaces = s200.get_interfaces()
-logger.dump_config(s200_interfaces, "s200_interfaces")
+logger.dump_config(s200_interfaces, "test_s200_interfaces")
 
 s200_data_iface_names = [iface["name"] for iface in s200_interfaces if "data" in iface["services"]]
 logger.write_log("S200 data interface names list", jsondata=s200_data_iface_names, show_output=True)
