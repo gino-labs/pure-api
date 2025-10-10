@@ -28,10 +28,10 @@ if __name__ == "__main__":
     payload = {
         "policies": [
             {
-                "name": "5_min",
-                "location": {
-                    "name": "5_min"
-                }
+                "name": "5_mins",
+                # "location": {
+                #     "name": "5_min"
+                # }
             }
         ]
     }
