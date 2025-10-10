@@ -19,12 +19,9 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    home = s200.get_filesystems(filesystems="home_linux_tucson")
+    payload = { "address": "172.16.208.237", "services": ["data"] }
+    s200.post_interface("test", payload)
 
-    logger.dump_config(home, "s200_home_linux_tucson")
-
-    data = logger.load_config("s200_home_linux_tucson")
-
-    print(data) 
+    s200.delete_interface("test")
 
     watch.end_stopwatch()
