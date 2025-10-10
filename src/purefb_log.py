@@ -53,6 +53,7 @@ class PureLog:
         os.makedirs("logs/pure_configs", exist_ok=True)
         with open(f"logs/pure_configs/{filename}.json", "w") as cfg:
             json.dump(json_input, cfg, indent=4)
+            cfg.write("\n")
 
 class Stopwatch:
     def __init__(self):
