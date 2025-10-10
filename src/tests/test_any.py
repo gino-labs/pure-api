@@ -21,6 +21,6 @@ if __name__ == "__main__":
 
     home = s200.get_filesystems(filesystems="home_linux_tucson")
 
-    logger.dump_config(home, "home_linux_tucson")
+    logger.dump_config(home, "s200_home_linux_tucson")
 
     watch.end_stopwatch()
