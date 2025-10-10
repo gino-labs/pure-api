@@ -85,8 +85,11 @@ for iface200 in s200_interfaces:
 
 logger.write_log("Interfaces that are using the same subnets.", jsondata=interfaces_matching_subnets, show_output=True)
 
-# Get file system replica links on Legacy #
-legacy_replica_links = legacy.get_filesytem_replica_links()
+# Get file system replica links on Legacy
+replication_filesystems = [link["local_file_system"]["name"] for link in legacy.get_filesytem_replica_links()]
+
+# Get bucket replica links on legacy
+replication_buckets = [link["local_bucket"]["name"] for link in legacy.get_bucket_replia_links()]
 
 # Get active NFS clients before swapping #
 logger.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
@@ -176,16 +179,17 @@ for iface in s200_interfaces:
                 legacy.patch_interface(key, payload)
         
 
-# Delete replica links on Legacy
+# Delete file system replication links on Legacy
 legacy_array_connections = legacy.get_array_connections()
 
 remote_array = legacy_array_connections["remote"]["name"]
 
-for link in legacy_replica_links:
-    fs = link["local_file_system"]["name"]
+for filesystem in replication_filesystems:
     legacy.delete_filesystem_replica_link(fs, remote_array)
 
-# TODO DELETE BUCKET REPLICA LINKS!
+# Delete file system replication links on Legacy
+for bucket in replication_buckets:
+    legacy.delete_bucket_replica_link(bucket, remote_array)
 
 # Promote / Enable each file system on S200
 for fs in s200_filesystems:

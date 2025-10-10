@@ -86,8 +86,10 @@ for iface200 in s200_interfaces:
 scriptlog.write_log("Interfaces that are using the same subnets.", jsondata=interfaces_matching_subnets, show_output=True)
 
 # Get file system replica links on Legacy
-legacy_replica_links = legacy.get_filesytem_replica_links()
-replication_filesystems = [link["local_file_system"]["name"] for link in legacy_replica_links]
+replication_filesystems = [link["local_file_system"]["name"] for link in legacy.get_filesytem_replica_links()]
+
+# Get bucket replica links on legacy
+replication_buckets = [link["local_bucket"]["name"] for link in legacy.get_bucket_replia_links()]
 
 # Get active NFS clients before swapping
 scriptlog.write_log("Retrieving active NFS clients from Legacy FlashBlade. Reload Cache in progress...", show_output=True)
@@ -162,22 +164,23 @@ for iface in s200_interfaces:
 
 scriptlog.write_log(f"Legacy interfaces to be updated with S200 IPs: {len(legacy_iface_list)}", jsondata=legacy_iface_list, show_output=True)
 
-exit()
-# Replication links that would be deleted
+# File Replication links that would be deleted
 legacy_array_connections = legacy.get_array_connections()
 
 remote_array = legacy_array_connections["remote"]["name"]
 
-fs_del_replica_list = []
-for link in legacy_replica_links:
-    fs = link["local_file_system"]["name"]
-    tmp_dict = {
-        "remote_array": remote_array,
-        "local_file_system": fs
-    }
-    fs_del_replica_list.append(tmp_dict)
+fs_replica_data = {
+    remote_array: [fs for fs in replication_filesystems]
+}
 
-scriptlog.write_log(f"Legacy file system replica links that would be deleted: {len(fs_del_replica_list)}", jsondata=fs_del_replica_list, show_output=True)
+scriptlog.write_log(f"Legacy file system replication links that would be deleted: {len(replication_filesystems)}", jsondata=fs_replica_data, show_output=True)
+
+# Bucket Replication links that would be deleted
+buck_replica_data = {
+    remote_array: [buck for buck in replication_buckets]
+}
+
+scriptlog.write_log(f"Legacy bucket replication links that would be deleted: {len(replication_buckets)}", jsondata=buck_replica_data, show_output=True)
 
 # File systems that would be promoted on S200
 fs_promotions = {"promotion_due": [], "destroyed": []}
