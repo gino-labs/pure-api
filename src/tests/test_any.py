@@ -25,4 +25,6 @@ if __name__ == "__main__":
 
     data = logger.load_config("s200_home_linux_tucon")
 
+    print(data) 
+
     watch.end_stopwatch()
