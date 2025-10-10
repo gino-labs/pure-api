@@ -48,12 +48,20 @@ class PureLog:
                 print(json.dumps(jsondata, indent=4))
                 print()
 
-    # Dump a json config into logs/configs/<name>.json
+    # Dump a json config into logs/pure_configs/<name>.json
     def dump_config(self, json_input, filename):
         os.makedirs("logs/pure_configs", exist_ok=True)
         with open(f"logs/pure_configs/{filename}.json", "w") as cfg:
             json.dump(json_input, cfg, indent=4)
             cfg.write("\n")
+
+    # Load a json config into logs/pure_configs/<name>.json
+    def load_config(self, filename):
+        if not filename.endswith(".json"):
+            filename += ".json"
+        with open(filename, "r") as cfg:
+            data = json.load(cfg)
+        return data
 
 class Stopwatch:
     def __init__(self):
