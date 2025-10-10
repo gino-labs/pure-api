@@ -22,6 +22,8 @@ if __name__ == "__main__":
     payload = { "address": "172.16.208.237", "services": ["data"] }
     s200.post_interface("test", payload)
 
+    time.sleep(3)
+
     s200.delete_interface("test")
 
     watch.end_stopwatch()
