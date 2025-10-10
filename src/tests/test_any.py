@@ -18,12 +18,11 @@ if __name__ == "__main__":
     watch = Stopwatch()
 
     watch.start_stopwatch()
+    
+    arrays = legacy.get_array_connections()
 
-    payload = { "address": "172.16.208.237", "services": ["data"], "type": "vip" }
-    s200.post_interface("test", payload)
-
-    time.sleep(3)
-
-    s200.delete_interface("test")
+    remote_array = arrays["remote"]["name"]
+    
+    legacy.post_filesystem_replica_link("skeletor_linux_tucson", remote_array)
 
     watch.end_stopwatch()
