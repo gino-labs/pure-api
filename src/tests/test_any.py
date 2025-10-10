@@ -28,7 +28,7 @@ if __name__ == "__main__":
             {
                 "name": "5_min",
                 "location": {
-                    "name": "test"
+                    "name": "5_min"
                 }
             }
         ]
