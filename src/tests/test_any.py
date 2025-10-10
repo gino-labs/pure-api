@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    payload = { "address": "172.16.208.237", "services": ["data"] }
+    payload = { "address": "172.16.208.237", "services": ["data"], "type": "vip" }
     s200.post_interface("test", payload)
 
     time.sleep(3)
