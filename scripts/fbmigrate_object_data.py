@@ -446,7 +446,7 @@ def create_bucket_replica_links():
         print(f"Bucket replica links update: {buckets_linked}")
     print()
 
-# Delete object replica links on LEGACY for fresh reset
+# Delete object replica links on LEGACY for fresh reset #FIXME
 def delete_legacy_object_replica_links():
     print("Deleting Legacy bucket replica links for fresh reset")
     print()

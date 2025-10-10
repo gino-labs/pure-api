@@ -22,9 +22,24 @@ if __name__ == "__main__":
     legacy_array_connections = legacy.get_array_connections()
     remote_name = legacy_array_connections["remote"]["name"]
 
+    credentials = legacy.get_object_store_remote_credentials()
+
     gxc_bucket_link = legacy.get_bucket_replia_links(buckets="gxc-bucket")
     gxc_bucket = gxc_bucket_link["local_bucket"]["name"]
 
-    legacy.delete_bucket_replica_link(gxc_bucket, remote_name)
+    gxc_bucket_json = legacy.get_buckets(buckets=gxc_bucket)
+    gxc_account = gxc_bucket["account"]["name"]
+
+    for cred in credentials:
+        if gxc_account in cred["name"]:
+            remote_credential = cred["name"]
+            break
+
+    payload = {
+            "paused": False,
+            "cascading_enabled": False
+        }
+
+    legacy.post_bucket_replica_link(gxc_bucket, remote_credential, payload)
 
     watch.end_stopwatch()
