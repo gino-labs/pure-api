@@ -22,6 +22,17 @@ if __name__ == "__main__":
     arrays = legacy.get_array_connections()
 
     remote_array = arrays["remote"]["name"]
+
+    payload = {
+        "policies": [
+            {
+                "name": "test",
+                "location": {
+                    "name": "test"
+                }
+            }
+        ]
+    }
     
     legacy.post_filesystem_replica_link("skeletor_linux_tucson", remote_array)
 
