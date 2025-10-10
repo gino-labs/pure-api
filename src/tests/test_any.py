@@ -34,6 +34,6 @@ if __name__ == "__main__":
         ]
     }
     
-    legacy.post_filesystem_replica_link("skeletor_linux_tucson", remote_array)
+    legacy.post_filesystem_replica_link("skeletor_linux_tucson", remote_array, payload)
 
     watch.end_stopwatch()
