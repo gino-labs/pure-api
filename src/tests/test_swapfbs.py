@@ -150,7 +150,7 @@ for iface in legacy_interfaces:
                 new_iface_name = iface["subnet"]["name"].replace("-subnet", "-interface")
             else:
                 new_iface_name = iface["subnet"]["name"] + "-interface"
-            s200_iface_json["posted"].append({new_iface_name: {"address": iface["address"], "services": ["data"]}})
+            s200_iface_json["posted"].append({new_iface_name: {"address": iface["address"], "services": ["data"], "type": "vip"}})
 
 s200_ifaces_updated = { "S200_Updated_Interfaces": s200_iface_json }
 

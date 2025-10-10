@@ -169,7 +169,7 @@ for iface in legacy_interfaces:
                 new_iface_name = iface["subnet"]["name"].replace("-subnet", "-interface")
             else:
                 new_iface_name = iface["subnet"]["name"] + "-interface"
-            payload = { "address": iface["address"], "services": ["data"] }
+            payload = { "address": iface["address"], "services": ["data"], "type": "vip" }
             s200.post_interface(new_iface_name, payload) 
 
 # Patch S200 IPs to Legacy
