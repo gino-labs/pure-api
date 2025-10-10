@@ -24,11 +24,8 @@ if __name__ == "__main__":
 
     credentials = legacy.get_object_store_remote_credentials()
 
-    gxc_bucket_link = legacy.get_bucket_replia_links(buckets="gxc-bucket")
-    gxc_bucket = gxc_bucket_link["local_bucket"]["name"]
-
-    gxc_bucket_json = legacy.get_buckets(buckets=gxc_bucket)
-    gxc_account = gxc_bucket["account"]["name"]
+    gxc_bucket_json = legacy.get_buckets(buckets="gxc-bucket")
+    gxc_account = gxc_bucket_json["account"]["name"]
 
     for cred in credentials:
         if gxc_account in cred["name"]:
@@ -40,6 +37,6 @@ if __name__ == "__main__":
             "cascading_enabled": False
         }
 
-    legacy.post_bucket_replica_link(gxc_bucket, remote_credential, payload)
+    legacy.post_bucket_replica_link("gxc-bucket", remote_credential, payload)
 
     watch.end_stopwatch()
