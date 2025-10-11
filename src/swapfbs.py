@@ -60,13 +60,13 @@ for iface in legacy_interfaces:
         legacy_data_ips.append(iface["address"])
 
 # Store Production IPs in variable to pass to ansible playbook later #
-if len(legacy_data_ips) > 1:
-    production_ips = "|".join(legacy_data_ips)
-elif len(legacy_data_ips) == 1:
-    production_ips = legacy_data_ips[0]
-else:
-    print("No data interfaces.")
-    print()
+# if len(legacy_data_ips) > 1:
+#     production_ips = "|".join(legacy_data_ips)
+# elif len(legacy_data_ips) == 1:
+#     production_ips = legacy_data_ips[0]
+# else:
+#     print("No data interfaces.")
+#     print()
 
 logger.write_log("Legacy data interface names list", jsondata=legacy_data_iface_names)
 logger.write_log("Legacy production IP list", jsondata=legacy_data_ips)
@@ -199,6 +199,20 @@ for bucket in replication_buckets:
 for fs in s200_filesystems:
     if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
         s200.patch_filesystem(fs["name"], s200_promo_payloads[fs["name"]])
+
+data_ips = []
+for iface in s200_interfaces:
+    if "data" in iface["services"] and "replication" not in iface["services"]: # New for AZ
+        data_ips.append(iface["address"])
+
+# Store Production IPs in variable to pass to ansible playbook later #
+if len(data_ips) > 1:
+    production_ips = "|".join(data_ips)
+elif len(data_ips) == 1:
+    production_ips = data_ips[0]
+else:
+    print("No data interfaces.")
+    print()
 
 # Run ansible playbook with nfs client inventory and production IP variable
 print("Enter root password for ansible playbook.")
