@@ -114,7 +114,7 @@ with open(f"ansible/inventory/{inventory_filename}", "w") as inv_file:
 
 logger.write_log(f"Inventory created: ansible/inventory/{inventory_filename}", show_output=True)
 
-# # Create final snapshots on Legacy and wait 30 seconds for them to settle #
+# Create final snapshots on Legacy and wait 30 seconds for them to settle #
 for fs in legacy_filesystems:
     try:
         if fs["promotion_status"] == "promoted":
@@ -132,7 +132,7 @@ for fs in legacy_filesystems:
 logger.write_log("Waiting 30 seconds for pre-swap snapshots to settle...", show_output=True)
 timer.countdown(30)
 
-# # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
+# Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
 for fs in legacy_filesystems:
     try:
         demote_payload = {
@@ -151,7 +151,8 @@ for fs in legacy_filesystems:
         else:
             logger.write_log(f"Other error occurred with code: {err.code}", show_output=True)
 
-# # Patch Legacy IPs to S200
+# Patch/Post Legacy IPs to S200
+post_ifaces = []
 for iface in legacy_interfaces:
     if iface["name"] in s200_data_iface_names:
         payload = { "address": iface["address"] }
@@ -169,10 +170,11 @@ for iface in legacy_interfaces:
                 new_iface_name = iface["subnet"]["name"].replace("-subnet", "-interface")
             else:
                 new_iface_name = iface["subnet"]["name"] + "-interface"
+            post_ifaces.append(iface)
             payload = { "address": iface["address"], "services": ["data"], "type": "vip" }
             s200.post_interface(new_iface_name, payload) 
 
-# # Patch S200 IPs to Legacy
+# Patch S200 IPs to Legacy
 for iface in s200_interfaces:
     payload = { "address": iface["address"] }
     if iface["name"] in legacy_data_iface_names:
@@ -182,6 +184,9 @@ for iface in s200_interfaces:
             if value == iface["name"]:
                 legacy.patch_interface(key, payload)
         
+# Delete clean up legacy ips that were posted instead of patched
+for iface in post_ifaces:
+    legacy.delete_interface(iface)
 
 # Delete file system replication links on Legacy
 legacy_array_connections = legacy.get_array_connections()
