@@ -19,23 +19,8 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    legacy.get_filesytem_replica_links(dumpjson=True)
-    
-    arrays = legacy.get_array_connections()
-
-    remote_array = arrays["remote"]["name"]
-
-    payload = {
-        "policies": [
-            {
-                "name": "5_mins",
-                "location": {
-                    "name": "5_min"
-                }
-            }
-        ]
-    }
-    
-    legacy.post_filesystem_replica_link("skeletor_linux_tucson", remote_array, payload)
+    for iface in legacy.get_interfaces():
+        if "data" in iface["services"]:
+            legacy.delete_interface(iface["name"])
 
     watch.end_stopwatch()
