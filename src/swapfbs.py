@@ -188,17 +188,17 @@ legacy_array_connections = legacy.get_array_connections()
 
 remote_array = legacy_array_connections["remote"]["name"]
 
-for filesystem in replication_filesystems:
-    legacy.delete_filesystem_replica_link(filesystem, remote_array)
+# for filesystem in replication_filesystems:
+#     legacy.delete_filesystem_replica_link(filesystem, remote_array)
 
-# Delete file system replication links on Legacy
-for bucket in replication_buckets:
-    legacy.delete_bucket_replica_link(bucket, remote_array)
+# # Delete file system replication links on Legacy
+# for bucket in replication_buckets:
+#     legacy.delete_bucket_replica_link(bucket, remote_array)
 
-# Promote / Enable each file system on S200
-for fs in s200_filesystems:
-    if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
-        s200.patch_filesystem(fs["name"], s200_promo_payloads[fs["name"]])
+# # Promote / Enable each file system on S200
+# for fs in s200_filesystems:
+#     if fs["name"] in s200_promo_payloads and not fs["destroyed"]:       
+#         s200.patch_filesystem(fs["name"], s200_promo_payloads[fs["name"]])
 
 data_ips = []
 for iface in s200_interfaces:
