@@ -19,6 +19,8 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
     
+    policy_test = s200.get_filesystems_attached_to_snapshot_policy(policies="weekly", dumpjson=True)
+
     mems = s200.get_endpoint("policies/members", params="policy_names=weekly&member_types=file-systems", dumpjson=True)
     for mem in mems:
         print(mem["member"]["name"])
