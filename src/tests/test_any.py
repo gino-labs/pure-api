@@ -19,8 +19,6 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    for iface in legacy.get_interfaces():
-        if "data" in iface["services"]:
-            legacy.delete_interface(iface["name"])
+    mems = legacy.get_endpoint("polices/members", names="weekly", dumpjson=True)
 
     watch.end_stopwatch()
