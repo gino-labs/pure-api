@@ -6,8 +6,8 @@ from purefb_log import *
 '''
 TODO
 - Migrate/Configure Subnets/Vlans # Test
-- Migrate/Configure DNS
-- Migrate/Configure NTP
+- Migrate/Configure DNS # Done during fbsetup
+- Migrate/Configure NTP # Done during fbsetup
 - Migrate/Configure Policies
 - Migrate/Configure Directory Service
 - Migrate/Configure Certificates/Certificate-Group
@@ -30,7 +30,7 @@ pb2_vars = rrc_site.get_pb2_vars()
 legacy = FlashBladeAPI(*pb1_vars)
 s200 = FlashBladeAPI(*pb2_vars)
 
-class FlashBladeMigrator:
+class ConfigMigrator:
     def __init__(self):
         self.legacy = legacy
         self.s200 = s200
@@ -66,7 +66,7 @@ class FlashBladeMigrator:
             s200_subnames = s200_sub_details["s200_subnames"]
             s200_prefixes = s200_sub_details["s200_prefixes"]
             s200_vlans = s200_sub_details["s200_vlans"]
-
+            
             for sub in legacy_subnets:
                 # Skip if subnet name, prefix, or vlan already exist from s200 info gathered in s200_sub_details
                 if sub["name"] in s200_subnames:
@@ -93,6 +93,22 @@ class FlashBladeMigrator:
                     except ApiError as e:
                         e.check_details(show_code=True, show_context=True)
 
+    # Migrate Snapshot policies TODO
+    def migrate_snapshot_polices(self):
+        legacy_snapshot_polices = legacy.get_snapshot_policies()
+
+        for pol in legacy_snapshot_polices:
+            payload = {
+                "name": pol["name"],
+                "enabled": pol["enabled"],
+                "rules": pol["rules"]
+            }
+            s200.post_snapshot_policy(pol["name"], payload)
+
+    # Migrate attached policies to file systems TODO
+    def migrate_attached_snapshot_policies_to_filesystems(self):
+        filesystems_with_pols = legacy.get_filesystems_attached_to_snapshot_policy()
+
     # Migrate NFS rules
     def migrate_nfs_rules(self):
         legacy_filesystems = legacy.get_filesystems()
@@ -109,6 +125,6 @@ class FlashBladeMigrator:
 
 
 if __name__ == "__main__":
-    migrator = FlashBladeMigrator()
+    migrator = ConfigMigrator()
 
     migrator.migrate_nfs_rules()
