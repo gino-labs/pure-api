@@ -425,7 +425,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
         
     # Get snapshot policies attached 
-    def get_filesystems_attached_to_snapshot_policy(self, policies=None, dumpjson=False):
+    def get_snapshot_policy_members(self, policies=None, dumpjson=False):
         if policies is not None:
             pol_list = self.to_csv(policies)
             url = self.baseurl + f"file-systems/policies?policy_names={pol_list}"
