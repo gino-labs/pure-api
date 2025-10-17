@@ -474,7 +474,8 @@ def delete_s200_access_keys():
                  
 # Main Script
 if __name__ == "__main__":
-    # Fresh replica links keys and credentials
+    # DELETE For Fresh replica links keys and credentials
+    # TODO
 
     # Fucntion call to migrate object store accounts
     migrate_object_store_accounts()
