@@ -19,6 +19,6 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
     
-    mems = s200.get_endpoint("policies/members", names="weekly", dumpjson=True)
+    mems = s200.get_endpoint("policies/members", params="policy_names=weekly", dumpjson=True)
 
     watch.end_stopwatch()
