@@ -588,7 +588,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Post snapshot policy
-    def post_snapshot_policies(self, policy, payload, dumpjson=False):
+    def post_snapshot_policy(self, policy, payload, dumpjson=False):
         url = self.baseurl + f"policies?names={policy}"
         msg = f"filesystem snapshot policies: {policy}"
         data = self.REST_Request("post", url, msg, payload=payload)
