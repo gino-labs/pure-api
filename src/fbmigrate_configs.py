@@ -107,7 +107,13 @@ class ConfigMigrator:
 
     # Migrate attached policies to file systems TODO
     def migrate_attached_snapshot_policies_to_filesystems(self):
-        filesystems_with_pols = legacy.get_filesystems_attached_to_snapshot_policy()
+        policies = legacy.get_snapshot_policies()
+
+        for policy in policies:
+            members = legacy.get_snapshot_policy_members(policy["name"])
+            for member in members:
+                # TODO for each member attach snapshot policy to s200 file system
+                s200.post_snapshot_policy() #FIXME
 
     # Migrate NFS rules
     def migrate_nfs_rules(self):
