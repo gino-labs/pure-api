@@ -245,6 +245,20 @@ class FlashBladeAPI:
     ### GET API Section ###
     #######################
 
+    # General get request by passing endpoint
+    def get_endpoint(self, endpoint, names=None, other_params=None, dumpjson=False):
+        if names is not None:
+            name_list = self.to_csv(names)
+            url = self.baseurl + endpoint + f"?names={name_list}"
+            msg = endpoint
+        else:
+            url = self.baseurl + endpoint
+            msg = endpoint
+        if other_params is not None:
+            url += other_params
+
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Get api version used by blade
     def get_api_version(self, dumpjson=False):
