@@ -20,6 +20,7 @@ if __name__ == "__main__":
     watch.start_stopwatch()
     
     mems = s200.get_endpoint("policies/members", params="policy_names=weekly&member_types=file-systems", dumpjson=True)
-    print(len(mems))
+    for mem in mems:
+        print(mem["member"]["name"])
 
     watch.end_stopwatch()
