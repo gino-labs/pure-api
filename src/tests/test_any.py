@@ -18,7 +18,7 @@ if __name__ == "__main__":
     watch = Stopwatch()
 
     watch.start_stopwatch()
-    legacy_fs = legacy.get_filesystems() 
+    #legacy_fs = legacy.get_filesystems() 
 
     mems = s200.get_endpoint("polices/members", names="weekly", dumpjson=True)
 
