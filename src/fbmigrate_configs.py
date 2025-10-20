@@ -10,9 +10,9 @@ DONE / TEST
 - Migrate/Confiure NFS export policies
 - Migrate/Configure NFS rules
 - Migrate/Configure Syslog Server Connections
+- Migrate/Configure Array Connections
 
 TODO / Optional
-- Migrate/Configure Array Connections
 - Migrate/Configure Certificates/Certificate-Group
 - Migrate/Configure Directory Service
 - Migrate/Configure roles
