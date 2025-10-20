@@ -18,11 +18,24 @@ if __name__ == "__main__":
     watch = Stopwatch()
 
     watch.start_stopwatch()
+
+    anacon = "anaconda_linux_tucson"
     
-    policy_test = s200.get_snapshot_policy_members(policies="weekly", dumpjson=True)
-
-    mems = s200.get_endpoint("policies/members", params="policy_names=weekly&member_types=file-systems", dumpjson=True)
-    for mem in mems:
-        print(mem["member"]["name"])
-
-    watch.end_stopwatch()
+    fs = s200.get_filesystems(filesystems=anacon)
+    payload = {
+        "default_group_quota": fs["default_group_quota"],
+        "default_user_quota": fs["default_user_quota"],
+        "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
+        "hard_limit_enabled": fs["hard_limit_enabled"], 
+        "http": fs["http"], 
+        "multi_protocol": fs["multi_protocol"], 
+        "nfs": fs["nfs"], 
+        "provisioned": fs["provisioned"], 
+        "smb": fs["smb"], 
+        "snapshot_directory_enabled": fs["snapshot_directory_enabled"], 
+        #"source": fs["source"], Need to double check. 
+        "writable": fs["writable"], 
+    }
+    legacy.post_filesystem(anacon, payload)
+    
+watch.end_stopwatch()
