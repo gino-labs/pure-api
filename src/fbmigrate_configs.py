@@ -176,7 +176,7 @@ class ConfigMigrator:
             for syslog in legacy_syslog:
                 s200.post_syslog_server(syslog["name"], syslog["uri"])
             
-    # Migrate array connections
+    # Migrate array connections #TODO
     def migrate_config_array_connection(self):
         # Get/Post connection key from s200
         key_data = s200.post_connection_key()
