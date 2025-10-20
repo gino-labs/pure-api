@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-import sys
 from purefb_api import *
 from purefb_log import *
 
 '''
-TODO
-- Migrate/Configure Subnets/Vlans # Test
-- Migrate/Configure DNS # Done during fbsetup
-- Migrate/Configure NTP # Done during fbsetup
-- Migrate/Configure Policies
-- Migrate/Configure Directory Service
+DONE / TEST
+- Migrate/Configure Subnets/Vlans
+- Migrate/Configure Snapshot Policies
+- Migrate/Configure attached file system snapshot policies
+- Migrate/Configure NFS rules
+
+TODO / Optional
 - Migrate/Configure Certificates/Certificate-Group
+- Migrate/Configure Directory Service
+- Migrate/Configure roles
 - Migrate/Configure Syslog Server Connections
 - Migrate/Configure Interfaces (Data/Replcation, ensure no duplicate IPs between blades)
 '''
@@ -112,8 +114,8 @@ class ConfigMigrator:
         for policy in policies:
             members = legacy.get_snapshot_policy_members(policy["name"])
             for member in members:
-                # TODO for each member attach snapshot policy to s200 file system
-                s200.post_snapshot_policy() #FIXME
+                # Match scheduled snapshot policies from legacy to s200 file systems
+                s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
 
     # Migrate NFS rules
     def migrate_nfs_rules(self):
@@ -133,4 +135,9 @@ class ConfigMigrator:
 if __name__ == "__main__":
     migrator = ConfigMigrator()
 
+    '''
+    migrator.migrate_config_subnets()
+    migrator.migrate_snapshot_polices()
+    migrator.migrate_attached_snapshot_policies_to_filesystems()
     migrator.migrate_nfs_rules()
+    '''
