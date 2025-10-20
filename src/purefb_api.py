@@ -61,6 +61,14 @@ class SiteVars:
             pb2_vars = [self.PB2, self.PB2_MGT, self.PB2_API_TOKEN]
         return pb2_vars
     
+     # Get pb1 mgt ip
+    def get_pb1_mgt_ip(self):
+        return self.PB1_MGT
+
+    # Get pb2 mgt ip
+    def get_pb2_mgt_ip(self):
+        return self.PB2_MGT
+
     # Get pb1 data ip
     def get_pb1_data_ip(self):
         return self.PB1
