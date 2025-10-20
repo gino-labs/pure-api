@@ -78,7 +78,7 @@ class SiteVars:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             # address doesn't need to be reachable
-            s.connect(("rincon.com", 80))
+            s.connect(("108.156.201.129", 80))
             return s.getsockname()[0]
         finally:
             s.close()
