@@ -211,4 +211,5 @@ if __name__ == "__main__":
     migrator.migrate_nfs_rules()
     migrator.migrate_nfs_policies()
     migrator.migrate_syslog_server()
+    migrator.migrate_config_array_connection()
     '''
