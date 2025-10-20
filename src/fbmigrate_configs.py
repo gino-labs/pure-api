@@ -139,10 +139,25 @@ class ConfigMigrator:
             legacy_polices = list(legacy_polices)
 
         for pol in legacy_polices:
+            rules = []
+            for rule in pol["rules"]:
+                rules.append(
+                    {
+                        "access": rule["access"],
+                        "anongid": rule["anongid"],
+                        "anonuid": rule["anonuid"],
+                        "atime": rule["atime"],
+                        "client": rule["client"],
+                        "fileid_32bit": rule["fileid_32bit"],
+                        "permission": rule["permission"],
+                        "secure": rule["secure"],
+                        "security": rule["security"],
+                    }
+                )
             payload = {
                 "name": pol["name"],
                 "enabled": pol["enabled"],
-                "rules": pol["rules"]
+                "rules": rules
             }
             s200.post_nfs_export_policy(pol["name"], payload)
 
