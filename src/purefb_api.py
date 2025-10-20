@@ -20,11 +20,8 @@ class SiteVars:
         self.PB2_MGT = os.getenv("PB2_MGT")
         self.PB1_REPLICATION = os.getenv("PB1_REPLICATION")
         self.PB2_REPLICATION = os.getenv("PB2_REPLICATION")
-        self.LOCAL_IP = os.getenv("LOCAL_IP")
-        self.API_TOKEN = os.getenv("API_TOKEN")
-        self.API_TOKEN_S200 = os.getenv("API_TOKEN_S200")
-        self.MIGRATION_POLICY = os.getenv("MIGRATION_POLICY")
-        self.REPLICATION_CUTOFF = os.getenv("REPLICATION_CUTOFF")
+        self.PB1_API_TOKEN = os.getenv("API_TOKEN")
+        self.PB2_API_TOKEN = os.getenv("API_TOKEN_S200")
 
     # Return Environment variables as dictionary
     def get_site_vars(self):
@@ -33,11 +30,10 @@ class SiteVars:
             "pb2": self.PB2,
             "pb1_mgt": self.PB1_MGT,
             "pb2_mgt": self.PB2_MGT,
-            "local_ip": self.LOCAL_IP,
-            "legacy_api_token": self.API_TOKEN,
-            "s200_api_token": self.API_TOKEN_S200,
-            "migration_policy": self.MIGRATION_POLICY,
-            "replication_cutoff": self.REPLICATION_CUTOFF
+            "pb1_replication": self.PB1_REPLICATION,
+            "pb2_replication": self.PB2_REPLICATION,
+            "legacy_api_token": self.PB1_API_TOKEN,
+            "s200_api_token": self.PB2_API_TOKEN,
         }
         return site_vars
     
@@ -47,10 +43,10 @@ class SiteVars:
             pb1_vars = {
                 "pb1": self.PB1,
                 "pb1_mgt": self.PB1_MGT,
-                "api_token": self.API_TOKEN
+                "api_token": self.PB1_API_TOKEN
             }
         else:
-            pb1_vars = [self.PB1, self.PB1_MGT, self.API_TOKEN]
+            pb1_vars = [self.PB1, self.PB1_MGT, self.PB1_API_TOKEN]
         return pb1_vars
 
     # Return only pb2 variables
@@ -59,10 +55,10 @@ class SiteVars:
             pb2_vars = {
                 "pb2": self.PB2,
                 "pb2_mgt": self.PB2_MGT,
-                "api_token": self.API_TOKEN_S200
+                "api_token": self.PB2_API_TOKEN
             }
         else:
-            pb2_vars = [self.PB2, self.PB2_MGT, self.API_TOKEN_S200]
+            pb2_vars = [self.PB2, self.PB2_MGT, self.PB2_API_TOKEN]
         return pb2_vars
     
     # Get pb1 data ip
@@ -72,6 +68,30 @@ class SiteVars:
     # Get pb2 data ip
     def get_pb2_data_ip(self):
         return self.PB2
+    
+    # Get pb1 replication ip
+    def get_pb1_replication_ip(self):
+        return self.PB1_REPLICATION
+    
+    # Get pb2 replication ip
+    def get_pb2_replication_ip(self):
+        return self.PB2_REPLICATION
+    
+    # Set pb1 data ip
+    def set_pb1_data_ip(self, host_or_ip):
+        self.PB1 = host_or_ip
+
+    # Set pb2 data ip
+    def set_pb2_data_ip(self, host_or_ip):
+        self.PB2 = host_or_ip
+    
+    # Set pb1 replication ip
+    def set_pb1_replication_ip(self, host_or_ip):
+        self.PB1_REPLICATION = host_or_ip
+    
+    # Set pb2 replication ip
+    def set_pb2_replication_ip(self, host_or_ip):
+        self.PB2_REPLICATION = host_or_ip
     
     # Get local ip of host executing scripts
     def get_local_ip(self):
