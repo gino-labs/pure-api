@@ -150,4 +150,5 @@ if __name__ == "__main__":
     migrator.migrate_snapshot_polices()
     migrator.migrate_attached_snapshot_policies_to_filesystems()
     migrator.migrate_nfs_rules()
+    migrator.migrate_syslog_server()
     '''
