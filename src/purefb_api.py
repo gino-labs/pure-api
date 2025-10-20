@@ -642,7 +642,7 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Post array connection 
-    def post_array_connections(self, payload, dumpjson=False):
+    def post_array_connection(self, payload, dumpjson=False):
         url = self.baseurl + "array-connections"
         msg = "array connection"
         data = self.REST_Request("post", url, msg, payload=payload)
