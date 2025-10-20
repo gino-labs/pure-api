@@ -640,6 +640,13 @@ class FlashBladeAPI:
         msg = "connection key"
         data = self.REST_Request("post", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Post array connection 
+    def post_array_connections(self, payload, dumpjson=False):
+        url = self.baseurl + "array-connections"
+        msg = "array connection"
+        data = self.REST_Request("post", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
 
 
     #########################
@@ -801,3 +808,9 @@ class FlashBladeAPI:
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
         
+    # Delete an array connection
+    def delete_array_connection(self, remote_name, dumpjson=False):
+        url = self.baseurl + f"array-connections?remote_names={remote_name}"
+        msg = f"array connection: {remote_name}"
+        data = self.REST_Request("deleete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
