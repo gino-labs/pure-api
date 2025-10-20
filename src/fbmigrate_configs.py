@@ -12,6 +12,7 @@ DONE / TEST
 - Migrate/Configure Syslog Server Connections
 
 TODO / Optional
+- Migrate/Configure Array Connections
 - Migrate/Configure Certificates/Certificate-Group
 - Migrate/Configure Directory Service
 - Migrate/Configure roles
@@ -175,6 +176,21 @@ class ConfigMigrator:
             for syslog in legacy_syslog:
                 s200.post_syslog_server(syslog["name"], syslog["uri"])
             
+    # Migrate array connections
+    def migrate_config_array_connection(self):
+        # Get/Post connection key from s200
+        key_data = s200.post_connection_key()
+
+        conn_key = key_data["connection_key"]
+
+        # Post new array connection with s200 connection key
+        payload = {
+            "encrypted": "",
+            "management_address": "",
+            "replication_addresses": "",
+            "connection_key": conn_key
+        }
+        legacy.post_array_connection()
 
 
 if __name__ == "__main__":
@@ -187,5 +203,4 @@ if __name__ == "__main__":
     migrator.migrate_nfs_rules()
     migrator.migrate_nfs_policies()
     migrator.migrate_syslog_server()
-
     '''
