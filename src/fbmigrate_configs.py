@@ -7,6 +7,7 @@ DONE / TEST
 - Migrate/Configure Subnets/Vlans
 - Migrate/Configure Snapshot Policies
 - Migrate/Configure attached file system snapshot policies
+- Migrate/Confiure NFS export policies
 - Migrate/Configure NFS rules
 - Migrate/Configure Syslog Server Connections
 
@@ -129,6 +130,21 @@ class ConfigMigrator:
                 }
             }
             s200.patch_filesystem(fs["name"], payload)
+    
+    # Migrate NFS export policies
+    def migrate_nfs_policies(self):
+        legacy_polices = legacy.get_nfs_export_policies()
+
+        if isinstance(legacy_polices, dict):
+            legacy_polices = list(legacy_polices)
+
+        for pol in legacy_polices:
+            payload = {
+                "name": pol["name"],
+                "enabled": pol["enabled"],
+                "rules": pol["rules"]
+            }
+            s200.post_nfs_export_policy(pol["name"], payload)
 
     # Migrate syslog server configuration
     def migrate_syslog_server(self):
@@ -150,5 +166,7 @@ if __name__ == "__main__":
     migrator.migrate_snapshot_polices()
     migrator.migrate_attached_snapshot_policies_to_filesystems()
     migrator.migrate_nfs_rules()
+    migrator.migrate_nfs_policies()
     migrator.migrate_syslog_server()
+
     '''
