@@ -36,6 +36,6 @@ if __name__ == "__main__":
         #"source": fs["source"], Need to double check. 
         "writable": fs["writable"], 
     }
-    legacy.post_filesystem(anacon, payload)
-    
+    legacy.post_filesystem("gxc_" + anacon , payload)
+
 watch.end_stopwatch()

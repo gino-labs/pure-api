@@ -17,8 +17,11 @@ payload = {
     }
 
 
-Api Error info for handling error in this script
+Api Error info for handling errors in script
+
 purefb_api.ApiError: [Code: 22] Replication is not supported for a file system that was created in a version prior to 3.0.0.
+
+purefb_api.ApiError: [Code: 22] File system anaconda_linux_tucson already exists.
 '''
 
 '''
