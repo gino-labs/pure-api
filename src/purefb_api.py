@@ -504,6 +504,14 @@ class FlashBladeAPI:
 
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get connection key
+    def get_connection_key(self, dumpjson=False):
+        url = self.baseurl + "array-connections/connection-key"
+        msg = "connection key"
+        data = self.REST_Request("get", url, msg)
+
+        return self.Parse_Data(data, dump=dumpjson)
 
  
     ########################
@@ -633,6 +641,15 @@ class FlashBladeAPI:
         data = self.REST_Request("post", url, msg, payload={"uri": uri})
 
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Post connection key
+    def post_connection_key(self, dumpjson=False):
+        url = self.baseurl + "array-connections/connection-key"
+        msg = "connection key"
+        data = self.REST_Request("post", url, msg)
+
+        return self.Parse_Data(data, dump=dumpjson)
+
 
     #########################
     ### PATCH API Section ###
