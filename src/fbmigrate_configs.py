@@ -130,6 +130,16 @@ class ConfigMigrator:
             }
             s200.patch_filesystem(fs["name"], payload)
 
+    # Migrate syslog server configuration
+    def migrate_syslog_server(self):
+        legacy_syslog = legacy.get_syslog_servers()
+
+        if isinstance(legacy_syslog, dict):
+            s200.post_syslog_server(legacy_syslog["name"], legacy_syslog["uri"])
+        else:
+            for syslog in legacy_syslog:
+                s200.post_syslog_server(syslog["name"], syslog["uri"])
+            
 
 
 if __name__ == "__main__":
