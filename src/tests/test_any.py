@@ -19,6 +19,6 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    print(rrc_site.get_local_ip())
+    legacy_snapshot_polices = legacy.get_snapshot_policies(dumpjson=True)
 
     watch.end_stopwatch()
