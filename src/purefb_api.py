@@ -531,7 +531,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"file-systems?names={filesystem}&default_exports=nfs"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store account
@@ -539,7 +538,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"object-store-accounts?names={account}"
         msg = f"object store account: {account}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Post a bucket
@@ -547,7 +545,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"buckets?names={bucket}"
         msg = f"bucket: {bucket}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post a bucket replica link (ENDPOINT BROKEN)
@@ -555,7 +552,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"bucket-replica-links?local_bucket_names={bucket}&remote_bucket_names={bucket}&remote_credentials_names={remote_credential}"
         msg = f"bucket replica link: {bucket} with remote credential: {remote_credential}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store user
@@ -563,7 +559,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"object-store-users?names={user}&full_access=true"
         msg = f"object store user: {user}"
         data = self.REST_Request("post", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store access key (Secret key shown once in response)
@@ -571,7 +566,6 @@ class FlashBladeAPI:
         url = self.baseurl + "object-store-access-keys"
         msg = f"object store access key: {user}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post an object store remote credential (formatted <remote-name>/<credentials-name>)
@@ -579,7 +573,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"object-store-remote-credentials?names={credential_name}"
         msg = f"object store remote credential: {credential_name}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post a subnet
@@ -587,7 +580,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"subnets?names={subnet}"
         msg = f"subnet: {subnet}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Post a network interface
@@ -595,7 +587,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"network-interfaces?names={interface}"
         msg = f"network interface: {interface}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Post a filesystem replica link (Replica Link ID required)
@@ -603,7 +594,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}&remote_file_system_names={filesystem}&remote_names={remote_array}"
         msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post a filesystem snapshot
@@ -614,7 +604,6 @@ class FlashBladeAPI:
             url = self.baseurl + f"file-system-snapshots?source_names={filesystem}"
         msg = f"filesytem snapshot: {snapshot} for {filesystem}"
         data = self.REST_Request("post", url, msg, payload={"suffix":snapshot})
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post snapshot scheduling policy to a filesystem
@@ -622,7 +611,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"file-systems/policies?member_names={filesystem}&policy_names={policy}"
         msg = f"snapshot policy {policy} to {filesystem}"
         data = self.REST_Request("post", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
     
     # Post snapshot policy
@@ -630,7 +618,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"policies?names={policy}"
         msg = f"filesystem snapshot policies: {policy}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Post NFS export policy
@@ -638,7 +625,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"nfs-export-policies?names={policy}"
         msg = f"NFS export policiy: {policy}"
         data = self.REST_Request("post", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
     
     # Post syslog server
@@ -646,7 +632,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"syslog-servers?names={syslog_name}"
         msg = f"syslog server: {syslog_name}"
         data = self.REST_Request("post", url, msg, payload={"uri": uri})
-
         return self.Parse_Data(data, dump=dumpjson)
     
     # Post connection key
@@ -654,7 +639,6 @@ class FlashBladeAPI:
         url = self.baseurl + "array-connections/connection-key"
         msg = "connection key"
         data = self.REST_Request("post", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
 
 
@@ -670,14 +654,12 @@ class FlashBladeAPI:
             url += "&discard_non_snapshotted_data=true"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("patch", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
     
     def patch_nfs_export_policy(self, policy, payload, dumpjson=False):
         url = self.baseurl + f"nfs-export-policies?names={policy}"
         msg = f"NFS export policy: {policy}"
         data = self.REST_Request("patch", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
     
     # Patch filesystem nfs rule if only if it doesn't already exist
@@ -724,7 +706,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"nfs-export-policies?names={policy}"
         msg = f"policy: {policy}"
         data = self.REST_Request("patch", url, msg, payload=rules)
-        
         return self.Parse_Data(data, dump=dumpjson)
 
 
@@ -733,7 +714,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"network-interfaces?names={interface}"
         msg = f"network interface: {interface}"
         data = self.REST_Request("patch", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Patch a snapshot
@@ -743,7 +723,6 @@ class FlashBladeAPI:
             url = url + "&latest_replica=True"
         msg = f"filesystem snapshot: {snapshot}"
         data = self.REST_Request("patch", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
     # Patch a bucket
@@ -751,7 +730,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"buckets?names={bucket}"
         msg = f"filesystem bucket: {bucket}"
         data = self.REST_Request("patch", url, msg, payload=payload)
-
         return self.Parse_Data(data, dump=dumpjson)
         
 
@@ -765,7 +743,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem: {filesystem}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete an object store user
@@ -773,7 +750,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"object-store-users?names={object_user}"
         msg = f"object store user: {object_user}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete an object store access key
@@ -781,7 +757,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"object-store-access-keys?names={access_key}"
         msg = f"access key: {access_key}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete an object store remote credential
@@ -789,7 +764,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"object-store-remote_credentials?names={credential_name}"
         msg = f"credential name: {credential_name}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
     
     # Delete a bucket replica link
@@ -797,7 +771,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"bucket-replica-links?local_bucket_names={bucket}&remote_bucket_names={bucket}&remote_names={remote_name}"
         msg = f"bucket replica link: {bucket}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete a filesystem replica link
@@ -805,7 +778,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"file-system-replica-links?local_file_system_names={filesystem}&remote_file_system_names={filesystem}&remote_names={remote_array}&cancel_in_progress_transfers=true"
         msg = f"filesystem replica link: {filesystem}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
 
     # Delete a filesystem snapshot
@@ -813,7 +785,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"file-system-snapshots?names={snapshot}"
         msg = f"snapshot: {snapshot}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
     
     # Delete a NFS export policy
@@ -821,7 +792,6 @@ class FlashBladeAPI:
         url = self.baseurl + f"nfs-export-policy?names={policy}"
         msg = f"NFS export policy: {policy}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
     
     # Delete a network interface
@@ -829,6 +799,5 @@ class FlashBladeAPI:
         url = self.baseurl + f"network-interfaces?names={interface}"
         msg = f"network interface: {interface}"
         data = self.REST_Request("delete", url, msg)
-
         return self.Parse_Data(data, dump=dumpjson)
         
