@@ -20,111 +20,116 @@ rrc_site = SiteVars()
 pb1_vars = rrc_site.get_pb1_vars()
 pb2_vars = rrc_site.get_pb2_vars()
 
-# Define rsync wrapper function for data migration
-def rsync_filesystem(filesystem):
-    # Create new API sessions
-    legacy = FlashBladeAPI(*pb1_vars)
-    s200 = FlashBladeAPI(*pb2_vars)
+class PureRsyncer:
 
-    # Logger Instance
-    fs_logger =  PureLog()
-    fs_logger.set_logdir(f"{filesystem}-logs")
-    fs_logger.set_logfile(f"{filesystem}-scriptlog")
+    def __init__(self):
+        self.legacy = FlashBladeAPI(*pb1_vars)
+        self.s200 = FlashBladeAPI(*pb2_vars)
+        self.fs_logger = PureLog()
+        self.fs_watch = Stopwatch()
 
-    # Stopwatch Instance
-    fs_watch = Stopwatch()
-    fs_watch.set_log(fs_logger)
+    def refresh_api_sessions(self):
+        self.legacy = FlashBladeAPI(*pb1_vars)
+        self.s200 = FlashBladeAPI(*pb2_vars)
 
-    # Start timer
-    fs_watch.start_stopwatch(show_start_time=False)
-    sum_watch.start_stopwatch(show_start_time=False)
+    # Define rsync wrapper function for data migration
+    def rsync_filesystem(self, filesystem):
+        
+        # Set Logger Data
+        self.fs_logger.set_logdir(f"{filesystem}-logs")
+        self.fs_logger.set_logfile(f"{filesystem}-scriptlog")
 
-    # Patch local IP to file system NFS rules
-    local_ip = rrc_site.get_local_ip()
-    legacy_rule = f"{local_ip}(ro,no_root_squash)"
-    s200_rule = f"{local_ip}(rw,no_root_squash)"
-    legacy.patch_nfs_rule(filesystem, legacy_rule)
-    s200.patch_nfs_rule(filesystem, s200_rule)
+        # Set Stopwatch Log
+        self.fs_watch.set_log(self.fs_logger)
 
-    # Initial file system processor class
-    fs_processor = PureSubprocessor(filesystem, rrc_site.get_pb1_data_ip(), rrc_site.get_pb2_data_ip())
+        # Start timer
+        self.fs_watch.start_stopwatch(show_start_time=False)
+        sum_watch.start_stopwatch(show_start_time=False)
 
-    # Make directories for mount points
-    fs_processor.mkdir()
-    fs_logger.write_log("Directories created for mountpoints and migration")
+        # Patch local IP to file system NFS rules
+        local_ip = rrc_site.get_local_ip()
+        legacy_rule = f"{local_ip}(ro,no_root_squash)"
+        s200_rule = f"{local_ip}(rw,no_root_squash)"
+        self.legacy.patch_nfs_rule(filesystem, legacy_rule)
+        self.s200.patch_nfs_rule(filesystem, s200_rule)
 
-    # Mount file systems
-    fs_processor.mount()
-    fs_logger.write_log("File systems mounted.")
+        # Initial file system processor class
+        fs_processor = PureSubprocessor(filesystem, rrc_site.get_pb1_data_ip(), rrc_site.get_pb2_data_ip())
 
-    # Rsync file systems
-    fs_logger.write_log(f"Beginning rsync of file system {filesystem} from legacy to s200")
-    rsync_args = ["--delete", "--stats","--log-file", f"{fs_logger.get_logdir_path()}/{filesystem}-rsync.log", "--exclude", ".snapshot/", "--exclude", ".fast-remove/"]
-    if "home" in filesystem:
-        rsync_args = rsync_args + ["--exclude", "*/.cache/"]
-    result = fs_processor.rsync(extra_args=rsync_args)
+        # Make directories for mount points
+        fs_processor.mkdir()
+        self.fs_logger.write_log("Directories created for mountpoints and migration")
 
-    # Write rsync log complete
-    fs_logger.write_log(f"File system rsync process complete with EXIT CODE: {result.returncode}")
+        # Mount file systems
+        fs_processor.mount()
+        self.fs_logger.write_log("File systems mounted.")
 
-    # Unmount file systems after done
-    fs_processor.umount()
-    fs_logger.write_log("file systems unmounted.")
+        # Rsync file systems
+        self.fs_logger.write_log(f"Beginning rsync of file system {filesystem} from legacy to s200")
+        rsync_args = ["--delete", "--stats","--log-file", f"{self.fs_logger.get_logdir_path()}/{filesystem}-rsync.log", "--exclude", ".snapshot/", "--exclude", ".fast-remove/"]
+        if "home" in filesystem:
+            rsync_args = rsync_args + ["--exclude", "*/.cache/"]
+        result = fs_processor.rsync(extra_args=rsync_args)
 
-    # Stop timer
-    fs_watch.end_stopwatch(showtime=False)
-    fs_watch.show_time_elapsed(show_output=False)
+        # Write rsync log complete
+        self.fs_logger.write_log(f"File system rsync process complete with EXIT CODE: {result.returncode}")
 
-    sum_watch.end_stopwatch(showtime=False)
-    elapsed_time = sum_watch.get_time_elapsed(time_string=True)
+        # Unmount file systems after done
+        fs_processor.umount()
+        self.fs_logger.write_log("file systems unmounted.")
 
-    sum_logger.write_log(f"File system ({filesystem}) completed rsync. {elapsed_time}")
+        # Stop timer
+        self.fs_watch.end_stopwatch(showtime=False)
+        self.fs_watch.show_time_elapsed(show_output=False)
 
-    # Refresh new API sessions
-    legacy = FlashBladeAPI(*pb1_vars)
-    s200 = FlashBladeAPI(*pb2_vars)
+        sum_watch.end_stopwatch(showtime=False)
+        elapsed_time = sum_watch.get_time_elapsed(time_string=True)
 
-    legacy.patch_nfs_rule(filesystem, legacy_rule, remove=True)
-    s200.patch_nfs_rule(filesystem, s200_rule, remove=True)
+        sum_logger.write_log(f"File system ({filesystem}) completed rsync. {elapsed_time}")
 
-    return f"File system {filesystem} has finished rsyncing. See logs at {fs_logger.get_logfile_path()}"
+        # Refresh new API sessions
+        self.refresh_api_sessions()
 
-# Define file systems that need to be migrated (Non-replication)
-def get_filesystems_to_rsync():
-    # Create new API session
-    legacy = FlashBladeAPI(*pb1_vars)
+        self.legacy.patch_nfs_rule(filesystem, legacy_rule, remove=True)
+        self.s200.patch_nfs_rule(filesystem, s200_rule, remove=True)
 
-    legacy_replica_links = legacy.get_filesytem_replica_links()
-    legacy_filesystems = legacy.get_filesystems()
+        return f"File system {filesystem} has finished rsyncing. See logs at {self.fs_logger.get_logfile_path()}"
 
-    legacy_fs_list = [fs["name"] for fs in legacy_filesystems]
-    legacy_replica_fs_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
+    # Define file systems that need to be migrated (Non-replication)
+    def get_filesystems_to_rsync(self):
 
-    rsync_list = set(legacy_fs_list) - set(legacy_replica_fs_list)
+        legacy_replica_links = self.legacy.get_filesytem_replica_links()
+        legacy_filesystems = self.legacy.get_filesystems()
 
-    return list(rsync_list)
+        legacy_fs_list = [fs["name"] for fs in legacy_filesystems]
+        legacy_replica_fs_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
+
+        rsync_list = set(legacy_fs_list) - set(legacy_replica_fs_list)
+
+        return list(rsync_list)
 
 
 # Main
 if __name__ == "__main__":
-    
-    filesystems = get_filesystems_to_rsync()
+        rsyncer = PureRsyncer()
+        
+        filesystems = rsyncer.get_filesystems_to_rsync()
 
-    main_watch = Stopwatch()
-    main_watch.set_log(sum_logger)
+        main_watch = Stopwatch()
+        main_watch.set_log(sum_logger)
 
-    main_watch.start_stopwatch(show_start_time=False)
+        main_watch.start_stopwatch(show_start_time=False)
 
-    with ThreadPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(rsync_filesystem, fs) for fs in filesystems]
-        for f in as_completed(futures):
-            try:
-                logger.write_log(f.result(), show_output=True)
-            except Exception as e:
-                logger.write_log(f"Exception has occurred: {e}", show_output=True)
-    
-    main_watch.end_stopwatch(showtime=False)
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [executor.submit(rsyncer.rsync_filesystem, fs) for fs in filesystems]
+            for f in as_completed(futures):
+                try:
+                    logger.write_log(f.result(), show_output=True)
+                except Exception as e:
+                    logger.write_log(f"Exception has occurred: {e}", show_output=True)
 
-    runtime = main_watch.get_time_elapsed(time_string=True)
-    sum_logger.write_log(f"All filesystesms rsynced. {runtime}\n---", show_output=True)
+        main_watch.end_stopwatch(showtime=False)
+
+        runtime = main_watch.get_time_elapsed(time_string=True)
+        sum_logger.write_log(f"All filesystesms rsynced. {runtime}\n---", show_output=True)
 
