@@ -19,22 +19,14 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    anacon = "anaconda_linux_tucson"
-    
-    fs = s200.get_filesystems(filesystems=anacon)
-    payload = {
-        "default_group_quota": fs["default_group_quota"],
-        "default_user_quota": fs["default_user_quota"],
-        "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
-        "hard_limit_enabled": fs["hard_limit_enabled"], 
-        "http": fs["http"], 
-        "multi_protocol": fs["multi_protocol"], 
-        "nfs": fs["nfs"], 
-        "provisioned": fs["provisioned"], 
-        "smb": fs["smb"], 
-        "snapshot_directory_enabled": fs["snapshot_directory_enabled"], 
-        "writable": fs["writable"], 
-    }
-    legacy.post_filesystem("gxc_" + anacon , payload)
+    pol = s200.get_nfs_export_policies(polices="test")
 
-watch.end_stopwatch()
+    payload = {
+        "name": pol["name"],
+        "enabled": pol["enabled"],
+        "rules": pol["rules"]
+    }
+
+    legacy.post_nfs_export_policy("test", payload)
+
+    watch.end_stopwatch()
