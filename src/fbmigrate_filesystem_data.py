@@ -114,3 +114,8 @@ class FileSystemMigrator:
 
     
     # Migrate file system data via replication/pcopy
+    def migrate_filesystem_data(self):
+
+        # Try replication first, needs local file system, remote array, and remote file system optional
+        # REMOTE ARRAY needs Management Address, Connection Key, Replication Address, Encrypted = True
+        print("TODO")
