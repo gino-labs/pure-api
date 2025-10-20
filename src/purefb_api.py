@@ -62,19 +62,27 @@ class SiteVars:
         return pb2_vars
     
      # Get pb1 mgt ip
-    def get_pb1_mgt_ip(self):
+    def get_pb1_mgt_host(self, ip_addr=True):
+        if ip_addr:
+            return socket.gethostbyname(self.PB1_MGT)
         return self.PB1_MGT
 
     # Get pb2 mgt ip
-    def get_pb2_mgt_ip(self):
+    def get_pb2_mgt_host(self, ip_addr=True):
+        if ip_addr:
+            return socket.gethostbyname(self.PB2_MGT)
         return self.PB2_MGT
 
     # Get pb1 data ip
-    def get_pb1_data_ip(self):
+    def get_pb1_data_host(self, ip_addr=True):
+        if ip_addr:
+            return socket.gethostbyname(self.PB1)
         return self.PB1
 
     # Get pb2 data ip
-    def get_pb2_data_ip(self):
+    def get_pb2_data_host(self, ip_addr=True):
+        if ip_addr:
+            return socket.gethostbyname(self.PB2)
         return self.PB2
     
     # Get pb1 replication ip

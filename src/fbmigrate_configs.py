@@ -36,6 +36,7 @@ s200 = FlashBladeAPI(*pb2_vars)
 
 class ConfigMigrator:
     def __init__(self):
+        self.rrc_site = rrc_site
         self.legacy = legacy
         self.s200 = s200
         self.logger = logger
@@ -183,11 +184,18 @@ class ConfigMigrator:
 
         conn_key = key_data["connection_key"]
 
+        ifaces = s200.get_interfaces()
+
+        for iface in ifaces:
+            if "replication" in iface["services"]:
+                rrc_site.set_pb2_replication_ip(iface["address"])
+                break
+
         # Post new array connection with s200 connection key
         payload = {
-            "encrypted": "",
-            "management_address": "",
-            "replication_addresses": "",
+            "encrypted": False,
+            "management_address": rrc_site.get_pb2_mgt_ip(),
+            "replication_addresses": rrc_site.get_pb2_replication_ip(),
             "connection_key": conn_key
         }
         legacy.post_array_connection()
