@@ -51,3 +51,28 @@ class FileSystemMigrator:
         self.s200 = s200
         self.logger = logger
         self.watch = watch
+
+    # Migrate file systems created and their configurations
+    def migrate_filesystem_configs(self):
+        legacy_filesystems = legacy.get_filesystems()
+        for fs in legacy_filesystems:
+        
+            payload = {
+                "default_group_quota": fs["default_group_quota"],
+                "default_user_quota": fs["default_user_quota"],
+                "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
+                "hard_limit_enabled": fs["hard_limit_enabled"], 
+                "http": fs["http"], 
+                "multi_protocol": fs["multi_protocol"], 
+                "nfs": fs["nfs"], 
+                "provisioned": fs["provisioned"], 
+                "smb": fs["smb"], 
+                "snapshot_directory_enabled": fs["snapshot_directory_enabled"], 
+                #"source": fs["source"], Need to double check. 
+                "writable": fs["writable"], 
+            }
+
+            s200.post_filesystem(fs["name"], payload)
+
+    
+    # Migrate file system data via replication/pcopy
