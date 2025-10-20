@@ -71,7 +71,6 @@ class FileSystemMigrator:
                 "provisioned": fs["provisioned"], 
                 "smb": fs["smb"], 
                 "snapshot_directory_enabled": fs["snapshot_directory_enabled"], 
-                #"source": fs["source"], Need to double check. 
                 "writable": fs["writable"], 
             }
 
