@@ -202,7 +202,7 @@ class FlashBladeAPI:
                 sys.exit(1)
 
     # Parse json data or rest request items
-    def Parse_Data(self, data, dump=False):
+    def Parse_Data(self, data, return_list=False, dump=False):
         if "errors" not in data:
             try:
                 if "items" not in data:
@@ -212,7 +212,10 @@ class FlashBladeAPI:
                 elif len(data["items"]) == 1:
                     if dump:
                         self.logger.write_log("Debug: See parsed data.", jsondata=data["items"][0], show_output=dump)
-                    return data["items"][0]
+                    if return_list:
+                        return data["items"]
+                    else:
+                        return data["items"][0]
                 elif len(data["items"]) == 0:
                     self.logger.write_log("Zero items returned from parsed data list.", show_output=True)
                     return data["items"]
