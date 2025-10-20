@@ -19,9 +19,13 @@ payload = {
 
 Api Error info for handling errors in script
 
+# Post replication link errors
 purefb_api.ApiError: [Code: 22] Replication is not supported for a file system that was created in a version prior to 3.0.0.
 
+# Post file system errors
 purefb_api.ApiError: [Code: 22] File system anaconda_linux_tucson already exists.
+
+purefb_api.ApiError: [Code: 6] NFS export policy does not exist.
 '''
 
 '''
@@ -74,7 +78,14 @@ class FileSystemMigrator:
                 "writable": fs["writable"], 
             }
 
-            s200.post_filesystem(fs["name"], payload)
+            try:
+                s200.post_filesystem(fs["name"], payload)
+            except ApiError as e:
+                if e.code == 22:
+                    print(e.message, end="\n\n")
+                elif e.code == 6:
+                     # TODO NFS Export policy doesn't exist
+                     export_policy = fs["nfs"]["export_policy"]["name"]
 
     
     # Migrate file system data via replication/pcopy
