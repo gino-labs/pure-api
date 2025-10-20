@@ -8,12 +8,12 @@ DONE / TEST
 - Migrate/Configure Snapshot Policies
 - Migrate/Configure attached file system snapshot policies
 - Migrate/Configure NFS rules
+- Migrate/Configure Syslog Server Connections
 
 TODO / Optional
 - Migrate/Configure Certificates/Certificate-Group
 - Migrate/Configure Directory Service
 - Migrate/Configure roles
-- Migrate/Configure Syslog Server Connections
 - Migrate/Configure Interfaces (Data/Replcation, ensure no duplicate IPs between blades)
 '''
 
