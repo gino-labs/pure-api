@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from purefb_api import *
 from purefb_log import *
+from fbmigrate_configs import ConfigMigrator
 
 '''
 Example payload for legacy.post_filesystem_replica_link(filesystem, remote_array, payload)

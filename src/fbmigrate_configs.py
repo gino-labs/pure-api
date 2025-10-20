@@ -159,7 +159,11 @@ class ConfigMigrator:
                 "enabled": pol["enabled"],
                 "rules": rules
             }
-            s200.post_nfs_export_policy(pol["name"], payload)
+            try:
+                s200.post_nfs_export_policy(pol["name"], payload)
+            except ApiError as e:
+                if e.code == 1:
+                    print(e.message + f" : {pol['name']}", end="\n\n")
 
     # Migrate syslog server configuration
     def migrate_syslog_server(self):
