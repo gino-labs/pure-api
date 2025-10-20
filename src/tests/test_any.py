@@ -21,9 +21,25 @@ if __name__ == "__main__":
 
     pol = s200.get_nfs_export_policies(policies="test", dumpjson=True)
 
+    rules = []
+    for rule in pol["rules"]:
+        rules.append(
+            {
+                "access": rule["access"],
+                "anongid": rule["anongid"],
+                "anonuid": rule["anonuid"],
+                "atime": rule["atime"],
+                "client": rule["client"],
+                "fileid_32bit": rule["fileid_32bit"],
+                "permission": rule["permission"],
+                "secure": rule["secure"],
+                "security": rule["security"],
+            }
+        )
+
     payload = {
         "enabled": pol["enabled"],
-        "rules": pol["rules"]
+        "rules": rules
     }
 
     legacy.post_nfs_export_policy("test", payload)
