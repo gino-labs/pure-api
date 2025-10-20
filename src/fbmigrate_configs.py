@@ -194,11 +194,11 @@ class ConfigMigrator:
         # Post new array connection with s200 connection key
         payload = {
             "encrypted": False,
-            "management_address": rrc_site.get_pb2_mgt_ip(),
+            "management_address": rrc_site.get_pb2_mgt_host(ip_addr=True),
             "replication_addresses": rrc_site.get_pb2_replication_ip(),
             "connection_key": conn_key
         }
-        legacy.post_array_connection()
+        legacy.post_array_connection(payload)
 
 
 if __name__ == "__main__":
