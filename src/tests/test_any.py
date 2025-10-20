@@ -33,7 +33,7 @@ if __name__ == "__main__":
         "provisioned": fs["provisioned"], 
         "smb": fs["smb"], 
         "snapshot_directory_enabled": fs["snapshot_directory_enabled"], 
-        #"source": fs["source"], Need to double check. 
+        "source": fs["source"], #Need to double check. 
         "writable": fs["writable"], 
     }
     legacy.post_filesystem("gxc_" + anacon , payload)
