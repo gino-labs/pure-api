@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 from purefb_api import *
 from purefb_log import *
 from fbmigrate_configs import ConfigMigrator
@@ -31,9 +32,9 @@ purefb_api.ApiError: [Code: 6] NFS export policy does not exist.
 
 '''
 DONE / TEST
+- Migrate file systems and their configurations
 
 TODO / Optional
-- Migrate file systems and their configurations
 - Migrate file data with replication links
 - Migrate file data with pcopy if replication not possible 
 '''
@@ -117,5 +118,29 @@ class FileSystemMigrator:
     def migrate_filesystem_data(self):
 
         # Try replication first, needs local file system, remote array, and remote file system optional
-        # REMOTE ARRAY needs Management Address, Connection Key, Replication Address, Encrypted = True
-        print("TODO")
+        remote_array = legacy.get_array_connections()
+
+        if isinstance(remote_array, dict):
+            remote_name = remote_array["remote"]["name"]
+        else:
+            if len(remote_array) == 0:
+                # No remote arrays found, configure one
+                sys.exit("No remote arrays found. Please configure a remote array for replication. Exiting.\n")
+
+        legacy_filesystems = legacy.get_filesystems()
+
+        legacy_snapshot_polices = legacy.get_snapshot_policies()
+        for fs in legacy_filesystems():
+            # Try replication link
+            try:
+                payload = {
+                    "policies": [
+                        
+                    ]
+                }
+                legacy.post_filesystem_replica_link(fs["name"], remote_name)
+            except ApiError as e: 
+                e.check_details()
+            
+        
+                    
