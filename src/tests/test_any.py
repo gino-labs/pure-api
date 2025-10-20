@@ -22,7 +22,6 @@ if __name__ == "__main__":
     pol = s200.get_nfs_export_policies(policies="test")
 
     payload = {
-        "name": pol["name"],
         "enabled": pol["enabled"],
         "rules": pol["rules"]
     }
