@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+import socket
 import urllib3
 import requests
 from purefb_log import PureLog
@@ -17,6 +18,8 @@ class SiteVars:
         self.PB2 = os.getenv("PB2")
         self.PB1_MGT = os.getenv("PB1_MGT")
         self.PB2_MGT = os.getenv("PB2_MGT")
+        self.PB1_REPLICATION = os.getenv("PB1_REPLICATION")
+        self.PB2_REPLICATION = os.getenv("PB2_REPLICATION")
         self.LOCAL_IP = os.getenv("LOCAL_IP")
         self.API_TOKEN = os.getenv("API_TOKEN")
         self.API_TOKEN_S200 = os.getenv("API_TOKEN_S200")
@@ -72,7 +75,14 @@ class SiteVars:
     
     # Get local ip of host executing scripts
     def get_local_ip(self):
-        return self.LOCAL_IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # address doesn't need to be reachable
+            s.connect(("8.8.8.8", 80))
+            return s.getsockname()[0]
+        finally:
+            s.close()
+
 
 
 # Custom exception class built for handling api errors 
