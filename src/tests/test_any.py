@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    pol = s200.get_nfs_export_policies(polices="test")
+    pol = s200.get_nfs_export_policies(policies="test")
 
     payload = {
         "name": pol["name"],
