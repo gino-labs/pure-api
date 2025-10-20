@@ -491,9 +491,21 @@ class FlashBladeAPI:
         
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get syslog servers
+    def get_syslog_servers(self, syslog_names=None, dumpjson=False):
+        if syslog_names is not None:
+            syslog_list = self.to_csv(syslog_names)
+            url = self.baseurl + f"syslog-servers?names={syslog_list}"
+            msg = f"syslog servers: {syslog_list}"
+        else:
+            url = self.baseurl + f"syslog-servers"
+            msg = f"syslog servers"
 
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
 
-        
+ 
     ########################
     ### POST API Section ###
     ########################
@@ -613,7 +625,14 @@ class FlashBladeAPI:
         data = self.REST_Request("post", url, msg, payload=payload)
 
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Post syslog server
+    def post_syslog_server(self, syslog_name, uri, dumpjson=False):
+        url = self.baseurl + f"syslog-servers?names={syslog_name}"
+        msg = f"syslog server: {syslog_name}"
+        data = self.REST_Request("post", url, msg, payload={"uri": uri})
 
+        return self.Parse_Data(data, dump=dumpjson)
 
     #########################
     ### PATCH API Section ###
