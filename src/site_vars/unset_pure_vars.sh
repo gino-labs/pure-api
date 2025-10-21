@@ -3,7 +3,8 @@ unset PB1
 unset PB2
 unset PB1_MGT
 unset PB2_MGT
-unset LOCAL_IP
-unset API_TOKEN
-unset API_TOKEN_S200
-unset REPLICATION_CUTOFF
+unset PB1_REPLICATION
+unset PB2_REPLICATION
+unset PB1_API_TOKEN
+unset PB2_API_TOKEN
+

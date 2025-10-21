@@ -4,6 +4,7 @@ from purefb_api import *
 from purefb_log import *
 from purefb_subprocess import PureSubprocessor
 from fbmigrate_configs import ConfigMigrator
+from fbmigrate_incremental_rsync import PureRsyncer
 
 '''
 Example payload for legacy.post_filesystem_replica_link(filesystem, remote_array, payload)
@@ -183,7 +184,13 @@ class FileSystemMigrator:
 
                 pcopier.umount()
 
-            # TODO run incremental rsyncs after pcopy
+                self.legacy.patch_nfs_rule(fs["name"], f"{local_ip}(ro,no_root_squash)", remove=True)
+                self.s200.patch_nfs_rule(fs["name"], f"{local_ip}(rw,no_root_squash)", remove=True)
+
+            # Run incremental rsyncs after pcopy
+            rsyncer = PureRsyncer()
+
+            rsyncer.run_incremental_rsyncs(fs_list=pcopy_filesystem_list)
 
 
 

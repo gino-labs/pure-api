@@ -120,7 +120,6 @@ class SiteVars:
             s.close()
 
 
-
 # Custom exception class built for handling api errors 
 class ApiError(Exception):
     def __init__(self, message, code, context, ask_to_continue=True):
@@ -149,6 +148,7 @@ class ApiError(Exception):
         self.logger.write_log(f"API error message: \"{self.message}\"", show_output=show_message)
         if self.ask_to_continue and not skip_ask_to_continue:
             self.ask_to_continue_loop()
+
 
 class FlashBladeAPI:
     def __init__(self, data_ip, mgt_ip, api_token):

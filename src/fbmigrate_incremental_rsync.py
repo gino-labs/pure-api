@@ -8,12 +8,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Logger object for logs
 logger = PureLog()
-sum_logger = PureLog()
-sum_logger.set_logfile("00_rsync-summary", no_date=True)
+summary_logger = PureLog()
+summary_logger.set_logfile("rsync-summary", no_date=True)
 
 # Stopwatch for summary log
-sum_watch = Stopwatch()
-sum_watch.set_log(sum_logger)
+summary_stopwatch = Stopwatch()
+summary_stopwatch.set_log(summary_logger)
 
 # Site environment variables sourced from shell
 rrc_site = SiteVars()
@@ -44,7 +44,7 @@ class PureRsyncer:
 
         # Start timer
         self.fs_watch.start_stopwatch(show_start_time=False)
-        sum_watch.start_stopwatch(show_start_time=False)
+        summary_stopwatch.start_stopwatch(show_start_time=False)
 
         # Patch local IP to file system NFS rules
         local_ip = rrc_site.get_local_ip()
@@ -82,10 +82,10 @@ class PureRsyncer:
         self.fs_watch.end_stopwatch(showtime=False)
         self.fs_watch.show_time_elapsed(show_output=False)
 
-        sum_watch.end_stopwatch(showtime=False)
-        elapsed_time = sum_watch.get_time_elapsed(time_string=True)
+        summary_stopwatch.end_stopwatch(showtime=False)
+        elapsed_time = summary_stopwatch.get_time_elapsed(time_string=True)
 
-        sum_logger.write_log(f"File system ({filesystem}) completed rsync. {elapsed_time}")
+        summary_logger.write_log(f"File system ({filesystem}) completed rsync. {elapsed_time}")
 
         # Refresh new API sessions
         self.refresh_api_sessions()
@@ -107,18 +107,18 @@ class PureRsyncer:
         rsync_list = set(legacy_fs_list) - set(legacy_replica_fs_list)
 
         return list(rsync_list)
+    
+    # Def run concurrent incremental rsyncs
+    def run_incremental_rsyncs(self, fs_list=None):
+        if fs_list is not None:
+            filesystems = list(fs_list)
+        else:
+            filesystems = self.get_filesystems_to_rsync()
 
+        runtime_watch = Stopwatch()
+        runtime_watch.set_log(summary_logger)
 
-# Main
-if __name__ == "__main__":
-        rsyncer = PureRsyncer()
-        
-        filesystems = rsyncer.get_filesystems_to_rsync()
-
-        main_watch = Stopwatch()
-        main_watch.set_log(sum_logger)
-
-        main_watch.start_stopwatch(show_start_time=False)
+        runtime_watch.start_stopwatch(show_start_time=False)
 
         with ThreadPoolExecutor(max_workers=10) as executor:
             futures = [executor.submit(rsyncer.rsync_filesystem, fs) for fs in filesystems]
@@ -128,8 +128,14 @@ if __name__ == "__main__":
                 except Exception as e:
                     logger.write_log(f"Exception has occurred: {e}", show_output=True)
 
-        main_watch.end_stopwatch(showtime=False)
+        runtime_watch.end_stopwatch(showtime=False)
 
-        runtime = main_watch.get_time_elapsed(time_string=True)
-        sum_logger.write_log(f"All filesystesms rsynced. {runtime}\n---", show_output=True)
+        runtime = runtime_watch.get_time_elapsed(time_string=True)
+        summary_logger.write_log(f"All filesystesms rsynced. {runtime}\n---", show_output=True)
+
+# Main
+if __name__ == "__main__":
+        rsyncer = PureRsyncer()
+        
+        rsyncer.run_incremental_rsyncs()
 
