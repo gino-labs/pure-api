@@ -4,6 +4,9 @@
 # Ignore virtual env
 **.pureenv
 
+# Ignore .vscode
+**.vscode
+
 # Ignore api tokens
 **.api_tokens
 
