@@ -19,10 +19,7 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    filesystems = s200.get_filesystems()
-
-    for fs in filesystems:
-        quotas = s200.get_endpoint("quotas/users", f"file_system_names={fs['name']}&uids=0,1,2,3,4,5", dumpjson=True)
+    quotas = s200.get_endpoint("quotas/users", f"file_system_names=home_linux_tucson&uids=0", dumpjson=True)
 
     # user_quotas = s200.get_user_quotas("home_linux_tucson", dumpjson=True)
 
