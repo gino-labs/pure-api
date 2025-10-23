@@ -303,7 +303,7 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         if raw:
             if dumpjson:
-                json.dumps(data, indent=4)
+                print(json.dumps(data, indent=4), end="\n\n")
             return data
         else:
             return self.Parse_Data(data, dump=dumpjson)
