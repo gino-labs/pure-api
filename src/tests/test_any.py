@@ -21,9 +21,9 @@ if __name__ == "__main__":
 
     quotas = s200.get_endpoint("quotas/users", f"file_system_names=home_linux_tucson&user_names=gxc", dumpjson=True)
 
-    # user_quotas = s200.get_user_quotas("home_linux_tucson", dumpjson=True)
+    user_quotas = s200.get_user_quotas("home_linux_tucson", dumpjson=True)
 
-    # with open("logs/azhome-user-quotas.json", "w") as json_f:
-    #     json.dump(user_quotas, json_f, indent=4)
+    with open("logs/azhome-user-quotas.json", "w") as json_f:
+        json.dump(user_quotas, json_f, indent=4)
 
     watch.end_stopwatch()

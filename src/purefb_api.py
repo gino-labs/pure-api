@@ -20,8 +20,8 @@ class SiteVars:
         self.PB2_MGT = os.getenv("PB2_MGT")
         self.PB1_REPLICATION = os.getenv("PB1_REPLICATION")
         self.PB2_REPLICATION = os.getenv("PB2_REPLICATION")
-        self.PB1_API_TOKEN = os.getenv("API_TOKEN")
-        self.PB2_API_TOKEN = os.getenv("API_TOKEN_S200")
+        self.PB1_API_TOKEN = os.getenv("PB1_API_TOKEN")
+        self.PB2_API_TOKEN = os.getenv("PB2_API_TOKEN")
 
     # Return Environment variables as dictionary
     def get_site_vars(self):
