@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    usage = s200.get_users_filesystem_usage("home_linux_tucon", dumpjson=True)
+    usage = s200.get_users_filesystem_usage("home_linux_tucson", dumpjson=True)
 
     with open("logs/azhome-user-quotas.json", "w") as json_f:
          json.dump(usage, json_f, indent=4)
