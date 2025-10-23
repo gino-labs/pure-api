@@ -19,6 +19,9 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    legacy_snapshot_polices = legacy.get_snapshot_policies(dumpjson=True)
+    user_quotas = s200.get_user_quotas("home_linux_tucson", dumpjson=True)
+
+    with open("logs/azhome-user-quotas.json", "w") as json_f:
+        json.dump(user_quotas, json_f, indent=4)
 
     watch.end_stopwatch()

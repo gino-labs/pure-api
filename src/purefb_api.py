@@ -563,7 +563,13 @@ class FlashBladeAPI:
         url = self.baseurl + "array-connections/connection-key"
         msg = "connection key"
         data = self.REST_Request("get", url, msg)
-
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get users quotas per file system
+    def get_user_quotas(self, filesystem, dumpjson=False):
+        url = self.baseurl + f"quotas/users?file_system_names={filesystem}"
+        msg = f"{filesystem} user quotas"
+        data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
 
  
