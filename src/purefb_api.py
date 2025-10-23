@@ -292,7 +292,7 @@ class FlashBladeAPI:
     #######################
 
     # General get request by passing endpoint
-    def get_endpoint(self, endpoint, params=None, dumpjson=False):
+    def get_endpoint(self, endpoint, params=None, dumpjson=False, raw=False):
         if params is not None:
             url = self.baseurl + endpoint + f"?{params}"
             msg = endpoint
@@ -301,7 +301,12 @@ class FlashBladeAPI:
             msg = endpoint
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        if raw:
+            if dumpjson:
+                json.dumps(data, indent=4)
+            return data
+        else:
+            return self.Parse_Data(data, dump=dumpjson)
 
     # Get api version used by blade
     def get_api_version(self, dumpjson=False):
