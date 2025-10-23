@@ -584,7 +584,7 @@ class FlashBladeAPI:
             url = self.baseurl + f"usage/users?file_system_names={filesystem}&uids={uid_list}"
             msg = f"{filesystem} usage for UIDs: {uid_list}"
         else:
-            url = self.baseurl + f"file_system_names={filesystem}"
+            url = self.baseurl + f"usage/users?file_system_names={filesystem}"
             msg = f"{filesystem} usage by UIDs"
 
         data = self.REST_Request("get", url, msg)
