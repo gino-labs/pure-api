@@ -27,6 +27,7 @@ if __name__ == "__main__":
         for unit in units:
             if size < 1024:
                 return f"{size:.1f}{unit}"
+            size /= 1024
         return f"{size:.1f}PB"
     
     user_filesystem_usages = [] 
