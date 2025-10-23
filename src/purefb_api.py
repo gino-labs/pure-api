@@ -576,6 +576,19 @@ class FlashBladeAPI:
         msg = f"{filesystem} user quotas"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get users file system usage
+    def get_users_filesystem_usage(self, filesystem, uids=None, dumpjson=False):
+        if uids is not None:
+            uid_list = self.to_csv(uids)
+            url = self.baseurl + f"file_system_names={filesystem}&uids={uid_list}"
+            msg = f"{filesystem} usage for UIDs: {uid_list}"
+        else:
+            url = self.baseurl + f"file_system_names={filesystem}"
+            msg = f"{filesystem} usage by UIDs"
+
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
 
  
     ########################
