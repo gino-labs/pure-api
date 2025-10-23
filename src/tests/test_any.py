@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    quotas = s200.get_endpoint("quotas/users", f"file_system_names=home_linux_tucson&user_names=gxc", dumpjson=True)
+    # quotas = s200.get_endpoint("quotas/users", f"file_system_names=home_linux_tucson&user_names=gxc", dumpjson=True)
 
     user_quotas = s200.get_user_quotas("home_linux_tucson", dumpjson=True)
 
