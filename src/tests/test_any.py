@@ -44,7 +44,7 @@ if __name__ == "__main__":
         }
         user_filesystem_usages.append(curr_item)
 
-    with open(f"logs/home_linux_tucons_usages_{len(user_filesystem_usages)}.json", "w") as json_f:
+    with open(f"logs/home_linux_tucson_usages_{len(user_filesystem_usages)}.json", "w") as json_f:
          json.dump(user_filesystem_usages, json_f, indent=4)
 
     watch.end_stopwatch()
