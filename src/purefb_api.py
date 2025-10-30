@@ -531,9 +531,15 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson)
     
     # Get certifcates
-    def get_certificates(self, dumpjson=False):
-        url = self.baseurl + "certificates"
-        msg = "certifcates"
+    def get_certificates(self, certificates=None, dumpjson=False):
+        if certificates is not None:
+            cert_list = self.to_csv(certificates)
+            url = self.baseurl + f"certificates?names={cert_list}"
+            msg = f"certificate: {certificates}"
+        else:
+            url = self.baseurl + "certificates"
+            msg = "certifcates"
+
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     

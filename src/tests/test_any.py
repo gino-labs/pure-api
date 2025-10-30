@@ -19,8 +19,8 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    legacy.get_certificates(dumpjson=True)
+    #legacy.get_certificates(dumpjson=True)
 
-    s200.get_certificates(dumpjson=True)
+    s200.get_certificates(certificates="global", dumpjson=True)
 
     watch.end_stopwatch()

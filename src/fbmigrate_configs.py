@@ -266,7 +266,7 @@ class ConfigMigrator:
 
     # Migrate export/import certificate from s200 to legacy
     def migrate_certificate(self):
-        print("todo")
+        s200.get_certificates(certificates="global")
 
 
 if __name__ == "__main__":
