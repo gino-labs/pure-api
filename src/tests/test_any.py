@@ -23,4 +23,6 @@ if __name__ == "__main__":
 
     legacy.get_certificates(dumpjson=True)
 
+    s200.get_certificates(dumpjson=True)
+
     watch.end_stopwatch()
