@@ -108,17 +108,35 @@ class ConfigMigrator:
                 "enabled": pol["enabled"],
                 "rules": pol["rules"]
             }
-            s200.post_snapshot_policy(pol["name"], payload)
+            try:
+                s200.post_snapshot_policy(pol["name"], payload)
+            except ApiError as e:
+                if "exists" in e.message:
+                    logger.write_log(f"Snapshot policy {pol['name']} already exists.", show_output=True)
+                else:
+                    e.check_details()
+                    sys.exit(1)
 
     # Migrate attached policies to file systems TODO
     def migrate_attached_snapshot_policies_to_filesystems(self):
         policies = legacy.get_snapshot_policies()
+        if isinstance(policies, dict):
+            policies = [policies]
 
         for policy in policies:
             members = legacy.get_snapshot_policy_members(policy["name"])
+            if isinstance(members, dict):
+                members = [members]
             for member in members:
                 # Match scheduled snapshot policies from legacy to s200 file systems
-                s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
+                try: 
+                    s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
+                except ApiError as e:
+                    if "exists" in e.message:
+                        logger.write_log(f"Snapshot policy already attached to filesystem {member['member']['name']}.", show_output=True)
+                    else:
+                        e.check_details()
+                        sys.exit(1)
 
     # Migrate NFS rules
     def migrate_nfs_rules(self):
@@ -184,12 +202,8 @@ class ConfigMigrator:
 
         conn_key = key_data["connection_key"]
 
-        ifaces = s200.get_interfaces()
-
-        for iface in ifaces:
-            if "replication" in iface["services"]:
-                rrc_site.set_pb2_replication_ip(iface["address"])
-                break
+        with open("logs/conn_key.txt", "w") as f:
+            f.write(conn_key)
 
         # Post new array connection with s200 connection key
         payload = {
@@ -200,16 +214,70 @@ class ConfigMigrator:
         }
         legacy.post_array_connection(payload)
 
+    # Create replication subnet/interface
+    def create_replication_net(self):
+        subnet_payload = {
+            "gateway": "172.20.0.1",
+            "link_aggregation_group": {"name": "uplink"},
+            "mtu": 9000,
+            "prefix": "172.20.0.0/28",
+            "vlan": 400
+        }
+
+        for fb in (legacy, s200):
+            try:
+                fb.post_subnet("replication-subnet", subnet_payload)
+            except ApiError as e:
+                if "exists" in e.message:
+                    logger.write_log(f"Replication subnet already exists.", show_output=True)
+                else:
+                    e.check_details()
+                    sys.exit(1)
+
+        legacy_iface_payload = {
+            "address": rrc_site.get_pb1_replication_ip(),
+            "services": ["replication"],
+            "type": "vip"
+        }
+
+        s200_iface_payload = {
+            "address": rrc_site.get_pb2_replication_ip(),
+            "services": ["replication"],
+            "type": "vip"
+        }
+
+        try:
+            legacy.post_interface("replication-interface", legacy_iface_payload)
+        except ApiError as e:
+            if "exists" in e.message:
+                logger.write_log(f"Replication interface {rrc_site.get_pb1_replication_ip()} already exists.", show_output=True)
+            else:
+                e.check_details()
+                sys.exit(1)
+
+        try:
+            s200.post_interface("replication-interface", s200_iface_payload)
+        except ApiError as e:
+            if "exists" in e.message:
+                logger.write_log(f"Replication interface {rrc_site.get_pb2_replication_ip()} already exists.", show_output=True)
+            else:
+                e.check_details()
+                sys.exit(1)
+
 
 if __name__ == "__main__":
     migrator = ConfigMigrator()
 
-    '''
     migrator.migrate_config_subnets()
     migrator.migrate_snapshot_polices()
     migrator.migrate_attached_snapshot_policies_to_filesystems()
+    migrator.create_replication_net()
+    migrator.migrate_config_array_connection()
+
+
+    '''
     migrator.migrate_nfs_rules()
     migrator.migrate_nfs_policies()
     migrator.migrate_syslog_server()
-    migrator.migrate_config_array_connection()
+    
     '''
