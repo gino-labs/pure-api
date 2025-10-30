@@ -264,6 +264,10 @@ class ConfigMigrator:
                 e.check_details()
                 sys.exit(1)
 
+    # Migrate export/import certificate from s200 to legacy
+    def migrate_certificate(self):
+        print("todo")
+
 
 if __name__ == "__main__":
     migrator = ConfigMigrator()
@@ -273,11 +277,3 @@ if __name__ == "__main__":
     migrator.migrate_attached_snapshot_policies_to_filesystems()
     migrator.create_replication_net()
     migrator.migrate_config_array_connection()
-
-
-    '''
-    migrator.migrate_nfs_rules()
-    migrator.migrate_nfs_policies()
-    migrator.migrate_syslog_server()
-    
-    '''
