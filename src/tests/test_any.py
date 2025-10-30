@@ -19,8 +19,6 @@ if __name__ == "__main__":
 
     watch.start_stopwatch()
 
-    usages = s200.get_users_filesystem_usage("home_linux_tucson", dumpjson=True)
-
     legacy.get_certificates(dumpjson=True)
 
     s200.get_certificates(dumpjson=True)
