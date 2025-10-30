@@ -21,30 +21,6 @@ if __name__ == "__main__":
 
     usages = s200.get_users_filesystem_usage("home_linux_tucson", dumpjson=True)
 
-    def h_readable_size(bytes):
-        units = ["B", "KB", "MB", "GB", "TB"]
-        size = float(bytes)
-        for unit in units:
-            if size < 1024:
-                return f"{size:.1f}{unit}"
-            size /= 1024
-        return f"{size:.1f}PB"
-    
-    user_filesystem_usages = [] 
-
-    for usage in usages:
-        curr_item = {
-            "name": usage["name"],
-            "file_system": usage["file_system"]["name"],
-            "user_id": usage["user"]["id"],
-            "user_name": usage["user"]["name"],
-            "file_system_default_quota": usage["file_system_default_quota"],
-            "usage_bytes": usage["usage"],
-            "readable_usage": h_readable_size(usage["usage"])
-        }
-        user_filesystem_usages.append(curr_item)
-
-    with open(f"logs/home_linux_tucson_usages_{len(user_filesystem_usages)}.json", "w") as json_f:
-         json.dump(user_filesystem_usages, json_f, indent=4)
+    legacy.get_certificates(dumpjson=True)
 
     watch.end_stopwatch()
