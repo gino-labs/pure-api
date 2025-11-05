@@ -3,17 +3,7 @@ from purefb_api import *
 from purefb_log import *
 
 '''
-DONE / TEST
-- Migrate/Configure Subnets/Vlans
-- Migrate/Configure Snapshot Policies
-- Migrate/Configure attached file system snapshot policies
-- Migrate/Confiure NFS export policies
-- Migrate/Configure NFS rules
-- Migrate/Configure Syslog Server Connections
-- Migrate/Configure Array Connections
-
 TODO / Optional
-- Migrate/Configure Certificates/Certificate-Group
 - Migrate/Configure Directory Service
 - Migrate/Configure roles
 - Migrate/Configure Interfaces (Data/Replcation, ensure no duplicate IPs between blades)
@@ -112,7 +102,7 @@ class ConfigMigrator:
                 s200.post_snapshot_policy(pol["name"], payload)
             except ApiError as e:
                 if "exists" in e.message:
-                    logger.write_log(f"Snapshot policy {pol['name']} already exists.", show_output=True)
+                    logger.write_log(e.message, show_output=True)
                 else:
                     e.check_details()
                     sys.exit(1)
@@ -133,7 +123,7 @@ class ConfigMigrator:
                     s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
                 except ApiError as e:
                     if "exists" in e.message:
-                        logger.write_log(f"Snapshot policy already attached to filesystem {member['member']['name']}.", show_output=True)
+                        logger.write_log(e.message, show_output=True)
                     else:
                         e.check_details()
                         sys.exit(1)
@@ -229,7 +219,7 @@ class ConfigMigrator:
                 fb.post_subnet("replication-subnet", subnet_payload)
             except ApiError as e:
                 if "exists" in e.message:
-                    logger.write_log(f"Replication subnet already exists.", show_output=True)
+                    logger.write_log(e.message, show_output=True)
                 else:
                     e.check_details()
                     sys.exit(1)
@@ -250,7 +240,7 @@ class ConfigMigrator:
             legacy.post_interface("replication-interface", legacy_iface_payload)
         except ApiError as e:
             if "exists" in e.message:
-                logger.write_log(f"Replication interface {rrc_site.get_pb1_replication_ip()} already exists.", show_output=True)
+                logger.write_log(e.message, show_output=True)
             else:
                 e.check_details()
                 sys.exit(1)
@@ -259,15 +249,40 @@ class ConfigMigrator:
             s200.post_interface("replication-interface", s200_iface_payload)
         except ApiError as e:
             if "exists" in e.message:
-                logger.write_log(f"Replication interface {rrc_site.get_pb2_replication_ip()} already exists.", show_output=True)
+                logger.write_log(e.message, show_output=True)
             else:
                 e.check_details()
                 sys.exit(1)
 
     # Migrate export/import certificate from s200 to legacy
     def migrate_certificate(self):
-        s200.get_certificates(certificates="global")
+        s200_global_cert = s200.get_certificates(certificates="global")
+        
+        payload = {
+            "certificate": s200_global_cert["certificate"],
+            "certificate_type": s200_global_cert["certificate_type"],
+            "intermediate_certificate": s200_global_cert["intermediate_certificate"],
+        }
 
+        try:
+            legacy.post_certificate(rrc_site.get_pb2_name(), payload)
+            legacy.post_certificate_to_group()
+        except ApiError as e:
+            if "exists" in e.message:
+                logger.write_log(e.message, show_output=True)
+            else:
+                e.check_details()
+                sys.exit(1)
+
+        try:
+            legacy.post_certificate_to_group()
+        except ApiError as e:
+            if "exists" in e.message:
+                logger.write_log(e.message, show_output=True)
+            else:
+                e.check_details()
+                sys.exit(1)
+        
 
 if __name__ == "__main__":
     migrator = ConfigMigrator()
@@ -277,3 +292,4 @@ if __name__ == "__main__":
     migrator.migrate_attached_snapshot_policies_to_filesystems()
     migrator.create_replication_net()
     migrator.migrate_config_array_connection()
+    migrator.migrate_certificate()
