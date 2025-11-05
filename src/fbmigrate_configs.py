@@ -345,7 +345,27 @@ class ConfigMigrator:
             except ApiError as e:
                 e.check_details()
                 sys.exit(1)
-        
+
+    # Configure 5_mins snapshot policy for replication
+    def configure_replication_snapshot_policy(self):
+        payload = {
+            "name": "5_mins",
+            "enabled": True,
+            "rules": [
+                {
+                    "every": 30000,
+                    "keep_for": 3600000
+                }
+            ]
+        }
+        try:
+            legacy.post_snapshot_policy("5_mins", payload)
+        except ApiError as e:
+            if "exists" in e.message:
+                logger.write_log(e.message)
+            else:
+                e.check_details()
+                sys.exit(1)
 
 if __name__ == "__main__":
     migrator = ConfigMigrator()
@@ -353,9 +373,11 @@ if __name__ == "__main__":
     migrator.migrate_config_subnets()
     migrator.migrate_snapshot_polices()
     migrator.migrate_attached_snapshot_policies_to_filesystems()
+    migrator.configure_replication_snapshot_policy()
     migrator.create_replication_net()
     migrator.migrate_config_array_connection()
     migrator.migrate_certificate()
     migrator.migrate_directory_service()
     migrator.migrate_directory_service_roles()
     migrator.configure_data_interface()
+    
