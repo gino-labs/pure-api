@@ -6,14 +6,11 @@ from purefb_subprocess import PureSubprocessor
 from fbmigrate_incremental_rsync import PureRsyncer
 
 '''
-Api Error info for handling errors in script
-
 # Post replication link errors
 purefb_api.ApiError: [Code: 22] Replication is not supported for a file system that was created in a version prior to 3.0.0.
 
 # Post file system errors
 purefb_api.ApiError: [Code: 22] File system anaconda_linux_tucson already exists.
-
 purefb_api.ApiError: [Code: 6] NFS export policy does not exist.
 '''
 
