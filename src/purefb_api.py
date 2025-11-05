@@ -518,6 +518,19 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     
+    # Get directory service roles
+    def get_directory_service_roles(self, role_names=None, dumpjson=False):
+        if role_names is not None:
+            role_list = self.to_csv(role_names)
+            url = self.baseurl + f"directory-services/roles?role_names={role_list}"
+            msg = f"directory service roles: {role_names}"
+        else:
+            url = self.baseurl + "directory-services/roles"
+            msg = "directory service roles"
+        
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
     # Get DNS configuration
     def get_dns(self, dumpjson=False):
         url = self.baseurl + "dns"
@@ -854,6 +867,13 @@ class FlashBladeAPI:
     def patch_directory_services(self, name, payload, dumpjson=False):
         url = self.baseurl + f"directory-services?names={name}"
         msg = f"directory service: {name}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Patch directory service role
+    def patch_directory_service_role(self, role_name, payload, dumpjson=False):
+        url = self.baseurl + f"directory-services/roles?role_names={role_name}"
+        msg = f"directory service role: {role_name}"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
         
