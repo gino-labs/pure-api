@@ -543,6 +543,19 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     
+    # Get certificate groups
+    def get_certificate_groups(self, groups=None, dumpjson=False):
+        if groups is not None:
+            group_list = self.to_csv(groups)
+            url = self.baseurl + f"groups?names={group_list}"
+            msg = f"certificate group: {groups}"
+        else:
+            url = self.baseurl + "certificate-groups"
+            msg = "certificate groups"
+
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
     # Get NFS export policies
     def get_nfs_export_policies(self, policies=None, dumpjson=False):
         if policies is not None:
@@ -723,7 +736,20 @@ class FlashBladeAPI:
         msg = "array connection"
         data = self.REST_Request("post", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
-
+    
+    # Post certificate
+    def post_certificate(self, certificate_name, payload, dumpjson=False):
+        url = self.baseurl + f"certificates?names={certificate_name}"
+        msg = f"certifcate: {certificate_name}"
+        data = self.REST_Request("post", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Post certificate to a certificate group
+    def post_certificate_to_group(self, certificate, group, dumpjson=False):
+        url = self.baseurl + f"certificate-groups/certificates?certificate_names={certificate}&certificate_group_names={group}"
+        msg = f"group/certificate: {group}/{certificate}"
+        data = self.REST_Request("post", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
 
     #########################
     ### PATCH API Section ###
