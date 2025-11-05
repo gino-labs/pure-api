@@ -457,36 +457,14 @@ if __name__ == "__main__":
     obj_migrator = ObjectMigrator()
 
     # Object migration operations
-
-    # Delete any existing bucket replication links
     obj_migrator.delete_legacy_object_replica_links()
-
-    # Delete any existing s200 access keys
     obj_migrator.delete_s200_access_keys()
-
-    # Fucntion call to migrate object store accounts
     obj_migrator.migrate_object_store_accounts()
-
-    # Function call to migrate object store buckets
     obj_migrator.migrate_buckets()
-
-    # Fucntion call to migrate object store users
     obj_migrator.migrate_object_store_users()
-
-    # Function call to create new access keys on migrated s200 users
     obj_migrator.create_new_s200_access_keys()
-        
-    # Fucntion call to create tempoary migration users and keys on legacy
     obj_migrator.create_migration_legacy_users_and_keys()
-
-    # Fucntion call to move object storage with rclone
     obj_migrator.rclone_object_storage_buckets()
-
-    # Function call to remove temporary created users/files
     obj_migrator.remove_temporary_migration_users()
-
-    # Function call to add remote credentials on legacy for object replication
     obj_migrator.add_remote_credentials()
-
-    # Function call to create the bucket replica links
     obj_migrator.create_bucket_replica_links()
