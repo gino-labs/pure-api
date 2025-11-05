@@ -16,6 +16,10 @@ class ConfigMigrator:
         self.logger = PureLog()
         self.watch = Stopwatch()
     
+    def refresh_api_session(self):
+        self.legacy = FlashBladeAPI(*pb1_vars)
+        self.s200 = FlashBladeAPI(*pb2_vars)
+        
     # Migrate subnets, verify name, vlan, subnet prefix
     def migrate_config_subnets(self):
         legacy_subnets = self.legacy.get_subnets()
