@@ -1,14 +1,6 @@
 from purefb_log import *
 from purefb_api import *
 
-'''
-What to check?
-- Matching File System names
-- Matching data interface names
-- Replication links
-- File systems without repliaction links won't be demotable if snapshot is taken.
-'''
-
 # Logger object for logs
 logger = PureLog()
 
