@@ -368,16 +368,18 @@ class ConfigMigrator:
                 sys.exit(1)
 
 if __name__ == "__main__":
-    migrator = ConfigMigrator()
+    # Configuration Migrator instance
+    cfg_migrator = ConfigMigrator()
 
-    migrator.migrate_config_subnets()
-    migrator.migrate_snapshot_polices()
-    migrator.migrate_attached_snapshot_policies_to_filesystems()
-    migrator.configure_replication_snapshot_policy()
-    migrator.create_replication_net()
-    migrator.migrate_config_array_connection()
-    migrator.migrate_certificate()
-    migrator.migrate_directory_service()
-    migrator.migrate_directory_service_roles()
-    migrator.configure_data_interface()
+    # Congifuration migration operations
+    cfg_migrator.migrate_config_subnets()
+    cfg_migrator.migrate_snapshot_polices()
+    cfg_migrator.migrate_attached_snapshot_policies_to_filesystems()
+    cfg_migrator.configure_replication_snapshot_policy()
+    cfg_migrator.create_replication_net()
+    cfg_migrator.migrate_config_array_connection()
+    cfg_migrator.migrate_certificate()
+    cfg_migrator.migrate_directory_service()
+    cfg_migrator.migrate_directory_service_roles()
+    cfg_migrator.configure_data_interface()
     
