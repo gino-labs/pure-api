@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
 from purefb_api import *
 from purefb_log import *
-
-'''
-TODO / Optional
-- Migrate/Configure roles
-- Migrate/Configure Interfaces (Data/Replcation, ensure no duplicate IPs between blades)
-'''
+import ipaddress
 
 # Logger object for logs
 logger = PureLog()
@@ -86,6 +81,40 @@ class ConfigMigrator:
                         self.s200.post_subnet(sub["name"], payload)
                     except ApiError as e:
                         e.check_details(show_code=True, show_context=True)
+
+    # Migrate / configure main data interface
+    def configure_data_interface(self):
+        while True:
+            subnet_match = False
+            s200_subnets = [sub["name"] for sub in s200.get_subnets() ]
+            try:
+                ip = ipaddress.ip_address(input("Please enter IP for data interface: "))
+                print()
+                payload = {
+                    "address": str(ip),
+                    "services": ["data"],
+                    "type": "vip"
+                }
+                for sub in s200.get_subnets():
+                    net = ipaddress.ip_network(sub["prefix"])
+                    if ip in net:
+                        if "subnet" in sub["name"]:
+                            iface_name = sub["name"].replace("subnet", "interface")
+                        else:
+                            iface_name = sub["name"] + "-interface"
+                        subnet_match = True
+                        break
+                
+                if subnet_match:
+                    s200.post_interface(iface_name, payload)
+                    break
+            except ApiError as e:
+                if "exists" in e.message:
+                    logger.write_log(e.message)
+                    break
+                else:
+                    e.check_details()
+                    sys.exit(1)
 
     # Migrate Snapshot policies TODO
     def migrate_snapshot_polices(self):
@@ -301,6 +330,23 @@ class ConfigMigrator:
             e.check_details()
             sys.exit(1)
 
+    # Migrate directory service roles
+    def migrate_directory_service_roles(self):
+        dir_svc_roles = [legacy.get_directory_service_roles()]
+
+        for role in dir_svc_roles:
+            try:
+                payload = {
+                    "role": { "name": role["role"]["name"] },
+                    "group": role["group"],
+                    "group_base": role["group_base"]
+                }
+                s200.patch_directory_service_role(role["role"]["name"], payload=payload)
+            except ApiError as e:
+                e.check_details()
+                sys.exit(1)
+        
+
 if __name__ == "__main__":
     migrator = ConfigMigrator()
 
@@ -311,3 +357,5 @@ if __name__ == "__main__":
     migrator.migrate_config_array_connection()
     migrator.migrate_certificate()
     migrator.migrate_directory_service()
+    migrator.migrate_directory_service_roles()
+    migrator.configure_data_interface()
