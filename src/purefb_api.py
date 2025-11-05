@@ -18,6 +18,8 @@ class SiteVars:
         self.PB2 = os.getenv("PB2")
         self.PB1_MGT = os.getenv("PB1_MGT")
         self.PB2_MGT = os.getenv("PB2_MGT")
+        self.PB1_NAME = os.getenv("PB1_NAME")
+        self.PB2_NAME = os.getenv("PB2_NAME")
         self.PB1_REPLICATION = os.getenv("PB1_REPLICATION")
         self.PB2_REPLICATION = os.getenv("PB2_REPLICATION")
         self.PB1_API_TOKEN = os.getenv("PB1_API_TOKEN")
@@ -119,6 +121,13 @@ class SiteVars:
         finally:
             s.close()
 
+    # Get PB1 hostnames / cnames
+    def get_pb1_name(self):
+        return self.PB1_NAME
+    
+# Get PB1 hostnames / cnames
+    def get_pb2_name(self):
+        return self.PB2_NAME
 
 # Custom exception class built for handling api errors 
 class ApiError(Exception):
