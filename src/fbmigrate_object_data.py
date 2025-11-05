@@ -261,6 +261,7 @@ class ObjectMigrator:
 
         # For each bucket, determine the associated account, then the associated user to use with the proper credentials
         for bucket in buckets:
+            self.refresh_api_session()
             bucket_account = bucket["account"]["name"]
 
             for user in users:
@@ -320,6 +321,7 @@ class ObjectMigrator:
 
     # Remove temporary object store users on legacy used for rclone
     def remove_temporary_migration_users(self):
+        self.refresh_api_session()
         self.logger.write_log("Remove temporary migration users on legacy", show_output=True)
 
         users = self.legacy.get_object_store_users()
