@@ -4,7 +4,6 @@ from purefb_log import *
 
 '''
 TODO / Optional
-- Migrate/Configure Directory Service
 - Migrate/Configure roles
 - Migrate/Configure Interfaces (Data/Replcation, ensure no duplicate IPs between blades)
 '''
@@ -283,6 +282,24 @@ class ConfigMigrator:
                 e.check_details()
                 sys.exit(1)
         
+    # Migrate directory services besides bind password, and leave disabled
+    def migrate_directory_service(self):
+        dir_svc = legacy.get_directory_services()
+        if isinstance(dir_svc, list):
+            dir_svc = dir_svc[0]
+
+        payload = {
+            "base_dn": dir_svc["base_dn"],
+            "bind_user": dir_svc["bind_user"],
+            "uris": dir_svc["uris"],
+            "enabled": False
+        }
+
+        try:
+            s200.patch_directory_services(dir_svc["name"], payload=payload)
+        except ApiError as e:
+            e.check_details()
+            sys.exit(1)
 
 if __name__ == "__main__":
     migrator = ConfigMigrator()
@@ -293,3 +310,4 @@ if __name__ == "__main__":
     migrator.create_replication_net()
     migrator.migrate_config_array_connection()
     migrator.migrate_certificate()
+    migrator.migrate_directory_service()
