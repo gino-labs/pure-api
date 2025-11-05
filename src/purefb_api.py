@@ -849,6 +849,13 @@ class FlashBladeAPI:
         msg = f"filesystem bucket: {bucket}"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Patch directory services
+    def patch_directory_services(self, name, payload, dumpjson=False):
+        url = self.baseurl + f"directory-services?names={name}"
+        msg = f"directory service: {name}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
         
 
     ##########################
