@@ -3,28 +3,18 @@ from purefb_api import *
 from purefb_log import *
 import ipaddress
 
-# Logger object for logs
-logger = PureLog()
-
-# Stopwatch for script runtimes
-watch = Stopwatch()
-
 # Site environment variables sourced from shell
 rrc_site = SiteVars()
 pb1_vars = rrc_site.get_pb1_vars()
 pb2_vars = rrc_site.get_pb2_vars()
 
-# Create API object instances of each array
-legacy = FlashBladeAPI(*pb1_vars)
-s200 = FlashBladeAPI(*pb2_vars)
-
 class ConfigMigrator:
     def __init__(self):
         self.rrc_site = rrc_site
-        self.legacy = legacy
-        self.s200 = s200
-        self.logger = logger
-        self.watch = watch
+        self.legacy = FlashBladeAPI(*pb1_vars)
+        self.s200 = FlashBladeAPI(*pb2_vars)
+        self.logger = PureLog()
+        self.watch = Stopwatch()
     
     # Migrate subnets, verify name, vlan, subnet prefix
     def migrate_config_subnets(self):
@@ -86,7 +76,7 @@ class ConfigMigrator:
     def configure_data_interface(self):
         while True:
             subnet_match = False
-            s200_subnets = [sub["name"] for sub in s200.get_subnets() ]
+            s200_subnets = [sub["name"] for sub in self.s200.get_subnets() ]
             try:
                 ip = ipaddress.ip_address(input("Please enter IP for data interface: "))
                 print()
@@ -95,7 +85,7 @@ class ConfigMigrator:
                     "services": ["data"],
                     "type": "vip"
                 }
-                for sub in s200.get_subnets():
+                for sub in self.s200.get_subnets():
                     net = ipaddress.ip_network(sub["prefix"])
                     if ip in net:
                         if "subnet" in sub["name"]:
@@ -106,11 +96,11 @@ class ConfigMigrator:
                         break
                 
                 if subnet_match:
-                    s200.post_interface(iface_name, payload)
+                    self.s200.post_interface(iface_name, payload)
                     break
             except ApiError as e:
                 if "exists" in e.message:
-                    logger.write_log(e.message)
+                    self.logger.write_log(e.message)
                     break
                 else:
                     e.check_details()
@@ -118,7 +108,7 @@ class ConfigMigrator:
 
     # Migrate Snapshot policies TODO
     def migrate_snapshot_polices(self):
-        legacy_snapshot_polices = legacy.get_snapshot_policies()
+        legacy_snapshot_polices = self.legacy.get_snapshot_policies()
 
         for pol in legacy_snapshot_polices:
             payload = {
@@ -127,38 +117,38 @@ class ConfigMigrator:
                 "rules": pol["rules"]
             }
             try:
-                s200.post_snapshot_policy(pol["name"], payload)
+                self.s200.post_snapshot_policy(pol["name"], payload)
             except ApiError as e:
                 if "exists" in e.message:
-                    logger.write_log(e.message, show_output=True)
+                    self.logger.write_log(e.message, show_output=True)
                 else:
                     e.check_details()
                     sys.exit(1)
 
     # Migrate attached policies to file systems TODO
     def migrate_attached_snapshot_policies_to_filesystems(self):
-        policies = legacy.get_snapshot_policies()
+        policies = self.legacy.get_snapshot_policies()
         if isinstance(policies, dict):
             policies = [policies]
 
         for policy in policies:
-            members = legacy.get_snapshot_policy_members(policy["name"])
+            members = self.legacy.get_snapshot_policy_members(policy["name"])
             if isinstance(members, dict):
                 members = [members]
             for member in members:
                 # Match scheduled snapshot policies from legacy to s200 file systems
                 try: 
-                    s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
+                    self.s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
                 except ApiError as e:
                     if "exists" in e.message:
-                        logger.write_log(e.message, show_output=True)
+                        self.logger.write_log(e.message, show_output=True)
                     else:
                         e.check_details()
                         sys.exit(1)
 
     # Migrate NFS rules
     def migrate_nfs_rules(self):
-        legacy_filesystems = legacy.get_filesystems()
+        legacy_filesystems = self.legacy.get_filesystems()
 
         for fs in legacy_filesystems:
             nfs_config = fs["nfs"]
@@ -167,11 +157,11 @@ class ConfigMigrator:
                     "rules": nfs_config["rules"]
                 }
             }
-            s200.patch_filesystem(fs["name"], payload)
+            self.s200.patch_filesystem(fs["name"], payload)
     
     # Migrate NFS export policies
     def migrate_nfs_policies(self):
-        legacy_polices = legacy.get_nfs_export_policies()
+        legacy_polices = self.legacy.get_nfs_export_policies()
 
         if isinstance(legacy_polices, dict):
             legacy_polices = list(legacy_polices)
@@ -198,25 +188,25 @@ class ConfigMigrator:
                 "rules": rules
             }
             try:
-                s200.post_nfs_export_policy(pol["name"], payload)
+                self.s200.post_nfs_export_policy(pol["name"], payload)
             except ApiError as e:
                 if e.code == 1:
                     print(e.message + f" : {pol['name']}", end="\n\n")
 
     # Migrate syslog server configuration
     def migrate_syslog_server(self):
-        legacy_syslog = legacy.get_syslog_servers()
+        legacy_syslog = self.legacy.get_syslog_servers()
 
         if isinstance(legacy_syslog, dict):
-            s200.post_syslog_server(legacy_syslog["name"], legacy_syslog["uri"])
+            self.s200.post_syslog_server(legacy_syslog["name"], legacy_syslog["uri"])
         else:
             for syslog in legacy_syslog:
-                s200.post_syslog_server(syslog["name"], syslog["uri"])
+                self.s200.post_syslog_server(syslog["name"], syslog["uri"])
             
     # Migrate array connections
     def migrate_config_array_connection(self):
         # Get/Post connection key from s200
-        key_data = s200.post_connection_key()
+        key_data = self.s200.post_connection_key()
 
         conn_key = key_data["connection_key"]
 
@@ -230,7 +220,7 @@ class ConfigMigrator:
             "replication_addresses": rrc_site.get_pb2_replication_ip(),
             "connection_key": conn_key
         }
-        legacy.post_array_connection(payload)
+        self.legacy.post_array_connection(payload)
 
     # Create replication subnet/interface
     def create_replication_net(self):
@@ -242,12 +232,12 @@ class ConfigMigrator:
             "vlan": 400
         }
 
-        for fb in (legacy, s200):
+        for fb in (self.legacy, self.s200):
             try:
                 fb.post_subnet("replication-subnet", subnet_payload)
             except ApiError as e:
                 if "exists" in e.message:
-                    logger.write_log(e.message, show_output=True)
+                    self.logger.write_log(e.message, show_output=True)
                 else:
                     e.check_details()
                     sys.exit(1)
@@ -265,26 +255,26 @@ class ConfigMigrator:
         }
 
         try:
-            legacy.post_interface("replication-interface", legacy_iface_payload)
+            self.legacy.post_interface("replication-interface", legacy_iface_payload)
         except ApiError as e:
             if "exists" in e.message:
-                logger.write_log(e.message, show_output=True)
+                self.logger.write_log(e.message, show_output=True)
             else:
                 e.check_details()
                 sys.exit(1)
 
         try:
-            s200.post_interface("replication-interface", s200_iface_payload)
+            self.s200.post_interface("replication-interface", s200_iface_payload)
         except ApiError as e:
             if "exists" in e.message:
-                logger.write_log(e.message, show_output=True)
+                self.logger.write_log(e.message, show_output=True)
             else:
                 e.check_details()
                 sys.exit(1)
 
     # Migrate export/import certificate from s200 to legacy
     def migrate_certificate(self):
-        s200_global_cert = s200.get_certificates(certificates="global")
+        s200_global_cert = self.s200.get_certificates(certificates="global")
         
         payload = {
             "certificate": s200_global_cert["certificate"],
@@ -293,27 +283,27 @@ class ConfigMigrator:
         }
 
         try:
-            legacy.post_certificate(rrc_site.get_pb2_name(), payload)
-            legacy.post_certificate_to_group()
+            self.legacy.post_certificate(rrc_site.get_pb2_name(), payload)
+            self.legacy.post_certificate_to_group()
         except ApiError as e:
             if "exists" in e.message:
-                logger.write_log(e.message, show_output=True)
+                self.logger.write_log(e.message, show_output=True)
             else:
                 e.check_details()
                 sys.exit(1)
 
         try:
-            legacy.post_certificate_to_group()
+            self.legacy.post_certificate_to_group()
         except ApiError as e:
             if "exists" in e.message:
-                logger.write_log(e.message, show_output=True)
+                self.logger.write_log(e.message, show_output=True)
             else:
                 e.check_details()
                 sys.exit(1)
         
     # Migrate directory services besides bind password, and leave disabled
     def migrate_directory_service(self):
-        dir_svc = legacy.get_directory_services()
+        dir_svc = self.legacy.get_directory_services()
         if isinstance(dir_svc, list):
             dir_svc = dir_svc[0]
 
@@ -325,14 +315,14 @@ class ConfigMigrator:
         }
 
         try:
-            s200.patch_directory_services(dir_svc["name"], payload=payload)
+            self.s200.patch_directory_services(dir_svc["name"], payload=payload)
         except ApiError as e:
             e.check_details()
             sys.exit(1)
 
     # Migrate directory service roles
     def migrate_directory_service_roles(self):
-        dir_svc_roles = [legacy.get_directory_service_roles()]
+        dir_svc_roles = [self.egacy.get_directory_service_roles()]
 
         for role in dir_svc_roles:
             try:
@@ -341,7 +331,7 @@ class ConfigMigrator:
                     "group": role["group"],
                     "group_base": role["group_base"]
                 }
-                s200.patch_directory_service_role(role["role"]["name"], payload=payload)
+                self.s200.patch_directory_service_role(role["role"]["name"], payload=payload)
             except ApiError as e:
                 e.check_details()
                 sys.exit(1)
@@ -359,10 +349,10 @@ class ConfigMigrator:
             ]
         }
         try:
-            legacy.post_snapshot_policy("5_mins", payload)
+            self.legacy.post_snapshot_policy("5_mins", payload)
         except ApiError as e:
             if "exists" in e.message:
-                logger.write_log(e.message)
+                self.logger.write_log(e.message)
             else:
                 e.check_details()
                 sys.exit(1)
