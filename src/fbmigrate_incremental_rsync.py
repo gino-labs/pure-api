@@ -135,7 +135,9 @@ class PureRsyncer:
 
 # Main
 if __name__ == "__main__":
-        rsyncer = PureRsyncer()
-        
-        rsyncer.run_incremental_rsyncs()
+    # Filesystem rsync instance
+    rsyncer = PureRsyncer()
+
+    # Run rsyncs   
+    rsyncer.run_incremental_rsyncs()
 
