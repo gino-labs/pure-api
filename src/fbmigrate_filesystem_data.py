@@ -3,24 +3,9 @@ import sys
 from purefb_api import *
 from purefb_log import *
 from purefb_subprocess import PureSubprocessor
-from fbmigrate_configs import ConfigMigrator
 from fbmigrate_incremental_rsync import PureRsyncer
 
 '''
-Example payload for legacy.post_filesystem_replica_link(filesystem, remote_array, payload)
-
-payload = {
-        "policies": [
-            {
-                "name": "5_mins",
-                "location": {
-                    "name": "bazpureblade1"
-                }
-            }
-        ]
-    }
-
-
 Api Error info for handling errors in script
 
 # Post replication link errors
@@ -30,15 +15,6 @@ purefb_api.ApiError: [Code: 22] Replication is not supported for a file system t
 purefb_api.ApiError: [Code: 22] File system anaconda_linux_tucson already exists.
 
 purefb_api.ApiError: [Code: 6] NFS export policy does not exist.
-'''
-
-'''
-DONE / TEST
-- Migrate file systems and their configurations
-
-TODO / Optional
-- Migrate file data with replication links
-- Migrate file data with pcopy if replication not possible 
 '''
 
 # Logger object for logs
@@ -63,6 +39,45 @@ class FileSystemMigrator:
         self.legacy = FlashBladeAPI(*pb1_vars)
         self.s200 = FlashBladeAPI(*pb2_vars)
 
+    # Try to establish replication links
+    def replicate_filesystems(self):
+        remote_array = self.legacy.get_array_connections()
+
+        if isinstance(remote_array, list):
+            remote_array = remote_array[0]
+        
+        remote_name = remote_array["remote"]["name"]
+
+        legacy_filesystems = self.legacy.get_filesystems()
+
+        legacy_pol = self.legacy.get_snapshot_policies(policies="5_mins")
+        
+        policy_name = legacy_pol["name"]
+        location_name = legacy_pol["location"]["name"]
+
+        self.logger.write_log("Trying to create replication links", show_output=True)
+        for fs in legacy_filesystems():
+            # Try replication link
+            try:
+                payload = {
+                    "policies": [
+                        {
+                            "name": policy_name,
+                            "location": {
+                                "name": location_name
+                            }
+                        }
+                    ]
+                }
+                self.legacy.post_filesystem_replica_link(fs["name"], remote_name, payload)
+            except ApiError as e: 
+                # Replication not supported, append to pcopy
+                if e.code == 22:
+                    self.logger.write_log(f"Unable to replicate {fs['name']}. ERROR: {e.message}", show_output=True)
+                else:
+                    e.check_details()
+                    sys.exit(1)
+
     # Migrate file systems created and their configurations
     def migrate_filesystem_configs(self):
         legacy_filesystems = self.legacy.get_filesystems()
@@ -78,17 +93,23 @@ class FileSystemMigrator:
                 "nfs": fs["nfs"], 
                 "provisioned": fs["provisioned"], 
                 "smb": fs["smb"], 
-                "snapshot_directory_enabled": fs["snapshot_directory_enabled"], 
-                "writable": fs["writable"], 
+                "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
+                "requested_promotion_state": "demoted", 
+                "writable": False, 
             }
 
             try:
                 self.s200.post_filesystem(fs["name"], payload)
             except ApiError as e:
+                # Code 22 filesystem already exists
                 if e.code == 22:
-                    print(e.message, end="\n\n")
+                    self.logger.write_log(e.message, show_output=True)
+                    try:
+                        self.s200.patch_filesystem(fs["name"], payload)
+                    except ApiError as e:
+                        e.check_details()
+                        sys.exit(1)
                 elif e.code == 6:
-                    # TODO NFS Export policy doesn't exist
                     export_policy = fs["nfs"]["export_policy"]["name"]
                     pol = self.legacy.get_nfs_export_policies(policies=export_policy)
                     rules = []
@@ -114,88 +135,61 @@ class FileSystemMigrator:
                     self.s200.post_nfs_export_policy(export_policy, export_payload)
                     time.sleep(2.5)
                     self.s200.post_filesystem(fs["name"], payload)
+                else:
+                    e.check_details()
+                    sys.exit(1)
 
     
-    # Migrate file system data via replication/pcopy
-    def migrate_filesystem_data(self):
+    # Migrate file system data via pcopy
+    def pcopy_filesystems(self):
 
-        # Try replication first, needs local file system, remote array, and remote file system optional
-        remote_array = self.legacy.get_array_connections()
+        legacy_filesystems = [fs["name"] for fs in self.legacy.get_filesystems()]
+        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_bucket_replia_links()]  
 
-        if isinstance(remote_array, dict):
-            remote_name = remote_array["remote"]["name"]
-        else:
-            if len(remote_array) == 0:
-                # No remote arrays found, configure one
-                sys.exit("No remote arrays found. Please configure a remote array for replication. Exiting.\n")
+        # list of non replication file systems
+        pcopy_list = list(set(legacy_filesystems) - set(replication_filesystems))
 
-        legacy_filesystems = self.legacy.get_filesystems()
-
-        legacy_snapshot_polices = self.legacy.get_snapshot_policies()
-        max_frequency = float("inf")
-        for pol in legacy_snapshot_polices:
-            if pol["rules"]:
-                for rule in pol["rules"]:
-                    if rule["every"] < max_frequency:
-                        max_frequency = rule["every"]
-                        policy_name = pol["name"]
-                        location_name = pol["location"]["name"]
-
-        logger.write_log("Trying to create replication links, then falling back to pcopy if not supported.", show_output=True)
-        pcopy_filesystem_list = []
-        for fs in legacy_filesystems():
-            # Try replication link
-            try:
-                payload = {
-                    "policies": [
-                        {
-                            "name": policy_name,
-                            "location": {
-                                "name": location_name
-                            }
-                        }
-                    ]
-                }
-                self.legacy.post_filesystem_replica_link(fs["name"], remote_name, payload)
-            except ApiError as e: 
-                # Replication not supported, append to pcopy
-                if e.code == 22:
-                    print(e.message)
-                    logger.write_log(f"Adding {fs['name']} to list of filesystems to pcopy", show_output=True)
-                    pcopy_filesystem_list.append(fs)
-
-        # Pcopy file systems with no replication support
-        if len(pcopy_filesystem_list) > 0:
-            for fs in pcopy_filesystem_list:
-                self.refresh_api_session()
-                
-                pcopier = PureSubprocessor(fs["name"], rrc_site.get_pb1_data_host(), rrc_site.get_pb2_data_host())
-                
-                local_ip = rrc_site.get_local_ip()
-                if f"{local_ip}(ro,no_root_squash)" not in fs["nfs"]["rules"]:
-                    self.legacy.patch_nfs_rule(fs["name"], f"{local_ip}(ro,no_root_squash)")
-                    self.s200.patch_nfs_rule(fs["name"], f"{local_ip}(rw,no_root_squash)")
-                
-                pcopier.mkdir()
-
-                pcopier.mount()
-
-                pcopier.pcopy()
-
-                pcopier.umount()
-
-                self.legacy.patch_nfs_rule(fs["name"], f"{local_ip}(ro,no_root_squash)", remove=True)
-                self.s200.patch_nfs_rule(fs["name"], f"{local_ip}(rw,no_root_squash)", remove=True)
-
-            # Run incremental rsyncs after pcopy
-            rsyncer = PureRsyncer()
-
-            rsyncer.run_incremental_rsyncs(fs_list=pcopy_filesystem_list)
-
-
-
-
-                    
+        # Process each filesystem and add rules if necessary
+        for fs in pcopy_list:
+            pcopier = PureSubprocessor(fs["name"], rrc_site.get_pb1_data_host(), rrc_site.get_pb2_data_host())
             
-        
-                    
+            local_ip = rrc_site.get_local_ip()
+            if f"{local_ip}(ro,no_root_squash)" not in fs["nfs"]["rules"]:
+                self.legacy.patch_nfs_rule(fs["name"], f"{local_ip}(ro,no_root_squash)")
+                self.s200.patch_nfs_rule(fs["name"], f"{local_ip}(rw,no_root_squash)")
+            
+            pcopier.mkdir()
+
+            pcopier.mount()
+
+            pcopier.pcopy()
+
+            pcopier.umount()
+
+            self.refresh_api_session()
+            self.legacy.patch_nfs_rule(fs["name"], f"{local_ip}(ro,no_root_squash)", remove=True)
+            self.s200.patch_nfs_rule(fs["name"], f"{local_ip}(rw,no_root_squash)", remove=True)
+
+    # Run incremental rsyncs after pcopy
+    def rsync_filesystems(self):
+        rsyncer = PureRsyncer()
+
+        legacy_filesystems = [fs["name"] for fs in self.legacy.get_filesystems()]
+        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_bucket_replia_links()]  
+
+        # list of non replication file systems
+        rsync_list = list(set(legacy_filesystems) - set(replication_filesystems))
+
+        rsyncer.run_incremental_rsyncs(fs_list=rsync_list)
+
+
+# Main
+if __name__ == "__main__":
+    # Filesystem Migrator Instance
+    fs_migrator = FileSystemMigrator()
+
+    # Filesystem migration operations in the following order
+    fs_migrator.replicate_filesystems()       
+    fs_migrator.migrate_filesystem_configs()
+    fs_migrator.pcopy_filesystems()
+    fs_migrator.rsync_filesystems()
