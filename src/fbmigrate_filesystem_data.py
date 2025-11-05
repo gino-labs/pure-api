@@ -17,12 +17,6 @@ purefb_api.ApiError: [Code: 22] File system anaconda_linux_tucson already exists
 purefb_api.ApiError: [Code: 6] NFS export policy does not exist.
 '''
 
-# Logger object for logs
-logger = PureLog()
-
-# Stopwatch for script runtimes
-watch = Stopwatch()
-
 # Site environment variables sourced from shell
 rrc_site = SiteVars()
 pb1_vars = rrc_site.get_pb1_vars()
@@ -32,8 +26,8 @@ class FileSystemMigrator:
     def __init__(self):
         self.legacy = FlashBladeAPI(*pb1_vars)
         self.s200 = FlashBladeAPI(*pb2_vars)
-        self.logger = logger
-        self.watch = watch
+        self.logger = PureLog()
+        self.watch = Stopwatch()
 
     def refresh_api_session(self):
         self.legacy = FlashBladeAPI(*pb1_vars)
