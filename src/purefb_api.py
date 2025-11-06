@@ -65,25 +65,25 @@ class SiteVars:
     
      # Get pb1 mgt ip
     def get_pb1_mgt_host(self, ip_addr=True):
-        if ip_addr:
+        if ip_addr and self.PB1_MGT:
             return socket.gethostbyname(self.PB1_MGT)
         return self.PB1_MGT
 
     # Get pb2 mgt ip
     def get_pb2_mgt_host(self, ip_addr=True):
-        if ip_addr:
+        if ip_addr and self.PB2_MGT:
             return socket.gethostbyname(self.PB2_MGT)
         return self.PB2_MGT
 
     # Get pb1 data ip
     def get_pb1_data_host(self, ip_addr=True):
-        if ip_addr:
+        if ip_addr and self.PB1:
             return socket.gethostbyname(self.PB1)
         return self.PB1
 
     # Get pb2 data ip
     def get_pb2_data_host(self, ip_addr=True):
-        if ip_addr:
+        if ip_addr and self.PB2:
             return socket.gethostbyname(self.PB2)
         return self.PB2
     
@@ -162,7 +162,6 @@ class ApiError(Exception):
 class FlashBladeAPI:
     def __init__(self, data_ip, mgt_ip, api_token):
         try:
-            self.name = mgt_ip.split("-")[0]
             self.data_ip = data_ip
             self.mgt_ip = mgt_ip
             self.api_token = api_token
@@ -179,7 +178,6 @@ class FlashBladeAPI:
     # Get site environment variables as a dictionary
     def get_env_vars(self):
         env_vars = {
-            "name": self.name,
             "data_ip": self.data_ip,
             "mgt_ip": self.mgt_ip,
             "api_token": self.api_token,
