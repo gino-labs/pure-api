@@ -92,44 +92,12 @@ class FileSystemMigrator:
             try:
                 self.s200.post_filesystem(fs["name"], payload)
             except ApiError as e:
-                # Code 22 filesystem already exists
-                if e.code == 22:
-                    self.logger.write_log(e.message, show_output=True)
+                if "exists" in e.message:
                     try:
                         self.s200.patch_filesystem(fs["name"], payload)
-                    except ApiError as e:
-                        e.check_details()
-                        sys.exit(1)
-                elif e.code == 6:
-                    export_policy = fs["nfs"]["export_policy"]["name"]
-                    pol = self.legacy.get_nfs_export_policies(policies=export_policy)
-                    rules = []
-                    for rule in pol["rules"]:
-                        rules.append(
-                            {
-                                "access": rule["access"],
-                                "anongid": rule["anongid"],
-                                "anonuid": rule["anonuid"],
-                                "atime": rule["atime"],
-                                "client": rule["client"],
-                                "fileid_32bit": rule["fileid_32bit"],
-                                "permission": rule["permission"],
-                                "secure": rule["secure"],
-                                "security": rule["security"],
-                            }
-                        )
-                    export_payload = {
-                        "name": pol["name"],
-                        "enabled": pol["enabled"],
-                        "rules": rules
-                    }
-                    self.s200.post_nfs_export_policy(export_policy, export_payload)
-                    time.sleep(2.5)
-                    self.s200.post_filesystem(fs["name"], payload)
-                else:
-                    e.check_details()
-                    sys.exit(1)
-
+                    except ApiError:
+                        pass
+                e.check_details(show_code=True)
     
     # Migrate file system data via pcopy
     def pcopy_filesystems(self):
