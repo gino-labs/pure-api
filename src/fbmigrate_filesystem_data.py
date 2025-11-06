@@ -103,7 +103,7 @@ class FileSystemMigrator:
     def pcopy_filesystems(self):
 
         legacy_filesystems = [fs["name"] for fs in self.legacy.get_filesystems()]
-        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_bucket_replia_links()]  
+        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesytem_replica_links()]  
 
         # list of non replication file systems
         pcopy_list = list(set(legacy_filesystems) - set(replication_filesystems))
