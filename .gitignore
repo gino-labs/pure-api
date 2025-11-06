@@ -3,6 +3,7 @@
 
 # Ignore virtual env
 **.pureenv
+**.venv
 
 # Ignore .vscode
 **.vscode
@@ -14,9 +15,9 @@
 **.secrets
 
 # Ignore site vars containing API tokens
-**va_pure_env
-**co_pure_env
-**az_pure_env
+**va_pure_env*
+**co_pure_env*
+**az_pure_env*
 
 # Ignore logs directory
 **/logs/
