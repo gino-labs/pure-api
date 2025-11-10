@@ -72,6 +72,7 @@ class FileSystemMigrator:
     def migrate_filesystem_configs(self):
         legacy_filesystems = self.legacy.get_filesystems()
         s200_filesystems = [fs["name"] for fs in self.s200.get_filesystems()]
+        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesytem_replica_links()]  
          
         for fs in legacy_filesystems:
             try:
@@ -79,6 +80,11 @@ class FileSystemMigrator:
                     nfs = {"export_policy": { "name": fs["nfs"]["export_policy"]["name"] }}
                 else:
                     nfs = { "rules": fs["nfs"]["rules"]}
+                
+                if fs in replication_filesystems:
+                    writable = False
+                else:
+                    writable = True
 
                 payload = {
                     "default_group_quota": fs["default_group_quota"],
@@ -90,7 +96,7 @@ class FileSystemMigrator:
                     "nfs": fs["nfs"], 
                     "provisioned": fs["provisioned"], 
                     "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
-                    "writable": True, 
+                    "writable": writable, 
                 }               
 
                 if fs["name"] in s200_filesystems:
