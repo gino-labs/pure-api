@@ -83,10 +83,10 @@ class PureSubprocessor:
 
         if src_rc == 0 and dest_rc == 0:
             if extra_args:
-                pcopy_args = ["pcopy", "-pr"] + extra_args + [self.src_mount, self.dest_mount]
+                pcopy_args = ["pcopy", "-prP", "--remove-destination"] + extra_args + [self.src_mount, self.dest_mount]
                 subprocess.run(pcopy_args)
             else:
-                pcopy_args = ["pcopy", "-pr", self.src_mount, self.dest_mount]
+                pcopy_args = ["pcopy", "-prP", "--remove-destination", self.src_mount, self.dest_mount]
                 subprocess.run(pcopy_args)
         else:
             if src_rc != 0:
