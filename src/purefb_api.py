@@ -902,7 +902,7 @@ class FlashBladeAPI:
 
     # Delete an object store remote credential
     def delete_object_store_remote_credential(self, credential_name, dumpjson=False):
-        url = self.baseurl + f"object-store-remote_credentials?names={credential_name}"
+        url = self.baseurl + f"object-store-remote-credentials?names={credential_name}"
         msg = f"credential name: {credential_name}"
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
