@@ -83,10 +83,8 @@ class FileSystemMigrator:
                 "multi_protocol": fs["multi_protocol"], 
                 "nfs": fs["nfs"], 
                 "provisioned": fs["provisioned"], 
-                "smb": fs["smb"], 
                 "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
-                "requested_promotion_state": "demoted", 
-                "writable": False, 
+                "writable": True, 
             }
 
             try:
