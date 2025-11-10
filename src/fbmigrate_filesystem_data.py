@@ -62,40 +62,43 @@ class FileSystemMigrator:
                 }
                 self.legacy.post_filesystem_replica_link(fs["name"], remote_name, payload)
             except ApiError as e: 
-                # Replication not supported, append to pcopy
+                # Replication not supported
                 if e.code == 22:
                     self.logger.write_log(f"Unable to replicate {fs['name']}. ERROR: {e.message}", show_output=True)
                 else:
-                    e.check_details()
-                    sys.exit(1)
+                    e.check_details(show_code=True)
 
     # Migrate file systems created and their configurations
     def migrate_filesystem_configs(self):
         legacy_filesystems = self.legacy.get_filesystems()
+        s200_filesystems = [fs["name"] for fs in self.s200.get_filesystems()]
         for fs in legacy_filesystems:
-        
-            payload = {
-                "default_group_quota": fs["default_group_quota"],
-                "default_user_quota": fs["default_user_quota"],
-                "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
-                "hard_limit_enabled": fs["hard_limit_enabled"], 
-                "http": fs["http"], 
-                "multi_protocol": fs["multi_protocol"], 
-                "nfs": fs["nfs"], 
-                "provisioned": fs["provisioned"], 
-                "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
-                "writable": True, 
-            }
+            
+            if fs["name"] in s200_filesystems:
+                self.s200.patch_filesystem(fs["name"], payload)
+            else:
+                payload = {
+                    "default_group_quota": fs["default_group_quota"],
+                    "default_user_quota": fs["default_user_quota"],
+                    "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
+                    "hard_limit_enabled": fs["hard_limit_enabled"], 
+                    "http": fs["http"], 
+                    "multi_protocol": fs["multi_protocol"], 
+                    "nfs": fs["nfs"], 
+                    "provisioned": fs["provisioned"], 
+                    "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
+                    "writable": True, 
+                }
 
-            try:
-                self.s200.post_filesystem(fs["name"], payload)
-            except ApiError as e:
-                if "exists" in e.message:
-                    try:
-                        self.s200.patch_filesystem(fs["name"], payload)
-                    except ApiError:
-                        pass
-                e.check_details(show_code=True)
+                try:
+                    self.s200.post_filesystem(fs["name"], payload)
+                except ApiError as e:
+                    if "exists" in e.message:
+                        try:
+                            self.logger.write_log(e.message, show_output=True)
+                        except ApiError:
+                            pass
+                    e.check_details(show_code=True)
     
     # Migrate file system data via pcopy
     def pcopy_filesystems(self):
