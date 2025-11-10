@@ -116,6 +116,10 @@ class Stopwatch:
             time.sleep(1)
         print("\nTime Elapsed. Continuing...")
         print()
+
+    def pause(self):
+        input = ("Press enter to continue...")
+        return
         
     def show_time_elapsed(self, show_output=True):
         time_elapsed = self.get_time_elapsed(dictionary=True)
