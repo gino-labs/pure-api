@@ -80,21 +80,22 @@ class FileSystemMigrator:
                 else:
                     nfs = { "rules": fs["nfs"]["rules"]}
 
+                payload = {
+                    "default_group_quota": fs["default_group_quota"],
+                    "default_user_quota": fs["default_user_quota"],
+                    "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
+                    "hard_limit_enabled": fs["hard_limit_enabled"], 
+                    "http": fs["http"], 
+                    "multi_protocol": fs["multi_protocol"], 
+                    "nfs": fs["nfs"], 
+                    "provisioned": fs["provisioned"], 
+                    "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
+                    "writable": True, 
+                }               
+
                 if fs["name"] in s200_filesystems:
                     self.s200.patch_filesystem(fs["name"], payload)
-                else:
-                    payload = {
-                        "default_group_quota": fs["default_group_quota"],
-                        "default_user_quota": fs["default_user_quota"],
-                        "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
-                        "hard_limit_enabled": fs["hard_limit_enabled"], 
-                        "http": fs["http"], 
-                        "multi_protocol": fs["multi_protocol"], 
-                        "nfs": fs["nfs"], 
-                        "provisioned": fs["provisioned"], 
-                        "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
-                        "writable": True, 
-                    }                
+                else: 
                     self.s200.post_filesystem(fs["name"], payload)
             except ApiError as e:
                 self.logger.write_log(e.message)
