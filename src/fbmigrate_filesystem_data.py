@@ -77,9 +77,9 @@ class FileSystemMigrator:
         for fs in legacy_filesystems:
             try:
                 if fs["nfs"]["export_policy"]["name"]:
-                    nfs = {"export_policy": { "name": fs["nfs"]["export_policy"]["name"] }}
+                    nfs = { "v3_enabled": fs["nfs"]["v3_enabled"], "v4_1_enabled": fs["nfs"]["v4_1_enabled"], "export_policy": {"name": fs["nfs"]["export_policy"]["name"]} }
                 else:
-                    nfs = { "rules": fs["nfs"]["rules"]}
+                    nfs = { "v3_enabled": fs["nfs"]["v3_enabled"], "v4_1_enabled": fs["nfs"]["v4_1_enabled"], "rules": fs["nfs"]["rules"] }
                 
                 if fs in replication_filesystems:
                     writable = False
@@ -93,7 +93,7 @@ class FileSystemMigrator:
                     "hard_limit_enabled": fs["hard_limit_enabled"], 
                     "http": fs["http"], 
                     "multi_protocol": fs["multi_protocol"], 
-                    "nfs": fs["nfs"], 
+                    "nfs": nfs, 
                     "provisioned": fs["provisioned"], 
                     "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
                     "writable": writable, 
