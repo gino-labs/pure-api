@@ -263,41 +263,48 @@ class ObjectMigrator:
         for bucket in buckets:
             self.refresh_api_session()
             bucket_account = bucket["account"]["name"]
-
+            
+            matching_legacy_user = None
             for user in users:
                 # Same account for user and bucket, and migration in user name
                 if user["account"]["name"] == bucket_account and "migration" in user["name"]:
                     matching_legacy_user = user
                     self.logger.write_log(f"Using legacy user: {matching_legacy_user['name']}", show_output=True)
                     break
-                    
+
+            legacy_key = None      
             for key in legacy_migration_keys:
-                if key["user"]["name"] == matching_legacy_user["name"]:
+                if matching_legacy_user and key["user"]["name"] == matching_legacy_user["name"]:
                     legacy_key = key
                     self.logger.write_log(f"Using legacy key: {key['user']['name']} - {legacy_key['name']}", show_output=True)
                     break
-
+            
+            matching_s200_user = None
             for user in s200_users:
                 if user["account"]["name"] == bucket_account:
                     matching_s200_user = user
                     self.logger.write_log(f"Using s200 user: {matching_s200_user['name']}", show_output=True)
                     break
-
+            
+            s200_key = None
             for key in s200_migration_keys:
-                if key["user"]["name"] == matching_s200_user["name"]:
+                if matching_s200_user and key["user"]["name"] == matching_s200_user["name"]:
                     s200_key = key
                     self.logger.write_log(f"Using s200 key: {s200_key['user']['name']} - {s200_key['name']}", show_output=True)
                     break
 
             # Using rclone.conf.j2 jinja template to render with config data
-            config_data = {
-                "access_key_src": legacy_key["name"],
-                "secret_key_src": legacy_key["secret_access_key"],
-                "data_ip_src": rrc_site.get_pb1_data_host(),
-                "access_key_dest": s200_key["name"],
-                "secret_key_dest": s200_key["secret_access_key"],
-                "data_ip_dest": rrc_site.get_pb2_data_host()
-            }
+            if s200_key and legacy_key:
+                config_data = {
+                    "access_key_src": legacy_key["name"],
+                    "secret_key_src": legacy_key["secret_access_key"],
+                    "data_ip_src": rrc_site.get_pb1_data_host(),
+                    "access_key_dest": s200_key["name"],
+                    "secret_key_dest": s200_key["secret_access_key"],
+                    "data_ip_dest": rrc_site.get_pb2_data_host()
+                }
+            else:
+                sys.exit("No migration keys found for either s200 or legacy.")
 
             env = Environment(loader=FileSystemLoader('ansible/templates'))
             template = env.get_template('rclone.conf.j2')
@@ -312,7 +319,7 @@ class ObjectMigrator:
                 subprocess.run(rclone_cmd)
                 print()
                 msg = f"Rclone success for {bucket['name']}"
-                self.logger.write_log(msg, show_output=True, show_output=True)
+                self.logger.write_log(msg, show_output=True)
             except Exception as e:
                 self.logger.write_log(f"Exception has occured trying to rclone {bucket['name']}: {e}", show_output=True)
 
@@ -404,6 +411,7 @@ class ObjectMigrator:
                 continue
             account = bucket["account"]["name"]
 
+            replication_credential = None
             for cred in credentials:
                 if account in cred["name"]:
                     replication_credential = cred
@@ -421,8 +429,11 @@ class ObjectMigrator:
                 "cascading_enabled": False
             }
             
-            self.legacy.post_bucket_replica_link(bucket["name"], replication_credential['name'], payload)
-            buckets_linked += 1
+            if replication_credential:
+                self.legacy.post_bucket_replica_link(bucket["name"], replication_credential['name'], payload)
+                buckets_linked += 1
+            else:
+                self.logger.write_log(f"Replication credential not found for {bucket['name']}")
 
         if buckets_linked == 0:
             self.logger.write_log("Bucket Replica links already established.", show_output=True)
@@ -440,11 +451,11 @@ class ObjectMigrator:
         for link in bucket_links:
             self.legacy.delete_bucket_replica_link(link["local_bucket"]["name"], remote_name)
 
-        # Delete legacy remote credentials #TODO TEST
+        # Delete legacy remote credentials
         for cred in self.legacy.get_object_store_remote_credentials():
             self.legacy.delete_object_store_remote_credential(cred["name"])
 
-    # Delete S200 access keys for fresh reset #TODO TEST
+    # Delete S200 access keys for fresh reset 
     def delete_s200_access_keys(self):
         self.logger.write_log("Deleting S200 access keys for fresh reset", show_output=True)
 
