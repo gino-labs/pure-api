@@ -60,7 +60,8 @@ class ConfigMigrator:
                     continue
                 
                 # Check services of subnet before posting
-                if not set(["replication", "management", "support"]) & set(sub.get("services")):
+                sub_svcs = sub.get("services")
+                if (sub.get("services") and ("data" in sub_svcs) and ("replication" not in sub_svcs)):
                     payload = {
                         "gateway": sub["gateway"],
                         "link_aggregation_group": {
@@ -80,7 +81,6 @@ class ConfigMigrator:
     def configure_data_interface(self):
         while True:
             subnet_match = False
-            s200_subnets = [sub["name"] for sub in self.s200.get_subnets() ]
             try:
                 ip = ipaddress.ip_address(input("Please enter IP for data interface: "))
                 print()
@@ -89,6 +89,9 @@ class ConfigMigrator:
                     "services": ["data"],
                     "type": "vip"
                 }
+
+                # Default iface name or configure a subnet based one
+                iface_name = "migration-interface"
                 for sub in self.s200.get_subnets():
                     net = ipaddress.ip_network(sub["prefix"])
                     if ip in net:
@@ -326,7 +329,10 @@ class ConfigMigrator:
 
     # Migrate directory service roles
     def migrate_directory_service_roles(self):
-        dir_svc_roles = [self.egacy.get_directory_service_roles()]
+        dir_svc_roles = [self.legacy.get_directory_service_roles()]
+
+        if not isinstance(dir_svc_roles, list):
+            dir_svc_roles = [dir_svc_roles]
 
         for role in dir_svc_roles:
             try:
