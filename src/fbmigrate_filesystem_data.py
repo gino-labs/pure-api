@@ -108,7 +108,7 @@ class FileSystemMigrator:
                 e.check_details(show_code=True)
     
     # Migrate file system data via pcopy
-    def pcopy_filesystems(self):
+    def pcopy_filesystems(self, sparse_filesystems=[]):
 
         legacy_filesystems = [fs["name"] for fs in self.legacy.get_filesystems()]
         replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesytem_replica_links()]  
@@ -128,8 +128,11 @@ class FileSystemMigrator:
             pcopier.mkdir()
 
             pcopier.mount()
-
-            pcopier.pcopy()
+            
+            if fs["name"] in sparse_filesystems:
+                pcopier.pcopy(extra_args=["--sparse=always"])
+            else:
+                pcopier.pcopy()
 
             pcopier.umount()
 
