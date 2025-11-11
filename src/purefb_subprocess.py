@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import subprocess
+from purefb_log import *
 
 class PureSubprocessor:
     def __init__(self, filesystem, src_ip, dest_ip):
@@ -11,6 +12,8 @@ class PureSubprocessor:
         self.dest_ip = dest_ip
         self.dest_export = f"{dest_ip}:/{filesystem}"
         self.dest_mount = f"/mnt/pure_migration/{filesystem}_dest/"
+        self.logger = PureLog()
+        self.watch = Stopwatch()
 
     # Make directories for mount points
     def mkdir(self, src=True, dest=True):
@@ -64,11 +67,10 @@ class PureSubprocessor:
         if src_rc == 0 and dest_rc == 0:
             if extra_args:
                 rsync_args = ["rsync", "-havH"] + extra_args + [f"{self.src_mount}.", self.dest_mount]
-                r = subprocess.run(rsync_args)
             else:
                 rsync_args = ["rsync", "-havH", f"{self.src_mount}.", self.dest_mount]
-                r = subprocess.run(rsync_args)
-            return r
+            self.logger.write_log(f"Running cmd: {' '.join(rsync_args)}", show_output=True)
+            return subprocess.run(rsync_args)
         else:
             if src_rc != 0:
                 print(f"Error: {self.src_mount} Not Mounted")
@@ -84,10 +86,10 @@ class PureSubprocessor:
         if src_rc == 0 and dest_rc == 0:
             if extra_args:
                 pcopy_args = ["pcopy", "-rfp"] + extra_args + [f"{self.src_mount}.", self.dest_mount]
-                subprocess.run(pcopy_args)
             else:
                 pcopy_args = ["pcopy", "-rfp", f"{self.src_mount}.", self.dest_mount]
-                subprocess.run(pcopy_args)
+            self.logger.write_log(f"Running cmd: {' '.join(pcopy_args)}", show_output=True)
+            subprocess.run(pcopy_args)
         else:
             if src_rc != 0:
                 print(f"Error: {self.src_mount} Not Mounted")
