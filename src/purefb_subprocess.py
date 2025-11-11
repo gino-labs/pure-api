@@ -63,10 +63,10 @@ class PureSubprocessor:
 
         if src_rc == 0 and dest_rc == 0:
             if extra_args:
-                rsync_args = ["rsync", "-havH"] + extra_args + [self.src_mount, self.dest_mount]
+                rsync_args = ["rsync", "-havH"] + extra_args + [f"{self.src_mount}.", self.dest_mount]
                 r = subprocess.run(rsync_args)
             else:
-                rsync_args = ["rsync", "-havH", self.src_mount, self.dest_mount]
+                rsync_args = ["rsync", "-havH", f"{self.src_mount}.", self.dest_mount]
                 r = subprocess.run(rsync_args)
             return r
         else:
@@ -83,10 +83,10 @@ class PureSubprocessor:
 
         if src_rc == 0 and dest_rc == 0:
             if extra_args:
-                pcopy_args = ["pcopy", "-prP", "--remove-destination"] + extra_args + [self.src_mount, self.dest_mount]
+                pcopy_args = ["pcopy", "-rfp"] + extra_args + [f"{self.src_mount}.", self.dest_mount]
                 subprocess.run(pcopy_args)
             else:
-                pcopy_args = ["pcopy", "-prP", "--remove-destination", self.src_mount, self.dest_mount]
+                pcopy_args = ["pcopy", "-rfp", f"{self.src_mount}.", self.dest_mount]
                 subprocess.run(pcopy_args)
         else:
             if src_rc != 0:
