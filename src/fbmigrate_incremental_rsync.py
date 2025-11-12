@@ -54,7 +54,7 @@ class PureRsyncer:
         self.s200.patch_nfs_rule(filesystem, s200_rule)
 
         # Initial file system processor class
-        fs_processor = PureSubprocessor(filesystem, rrc_site.get_pb1_data_ip(), rrc_site.get_pb2_data_ip())
+        fs_processor = PureSubprocessor(filesystem, rrc_site.get_pb1_data_host(), rrc_site.get_pb2_data_host())
 
         # Make directories for mount points
         fs_processor.mkdir()
@@ -121,7 +121,7 @@ class PureRsyncer:
         runtime_watch.start_stopwatch(show_start_time=False)
 
         with ThreadPoolExecutor(max_workers=10) as executor:
-            futures = [executor.submit(rsyncer.rsync_filesystem, fs) for fs in filesystems]
+            futures = [executor.submit(self.rsync_filesystem, fs) for fs in filesystems]
             for f in as_completed(futures):
                 try:
                     logger.write_log(f.result(), show_output=True)
