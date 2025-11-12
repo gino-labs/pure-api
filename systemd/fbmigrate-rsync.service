@@ -1,0 +1,11 @@
+[Unit]
+Description=Rsync Pure Storage File Systems (Python Wrapper Script)
+
+[Service]
+Type=oneshot
+WorkingDirectory=/scratch/gxc-purestorage/src
+EnvironmentFile=/scratch/gxc-purestorage/site_vars/az_pure_env
+ExecStart=/scratch/gxc-purestorage/.pureenv/bin/python /scratch/gxc-purestorage/src/fbmigrate_incremental_rsync.py
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+[Unit]
+Description=Scheduled timer for fbmigrate-rsync.service
+
+[Timer]
+OnCalendar=20:00
+Unit=fbmigrate-rsync.service
+
+[Install]
+WantedBy=timers.target
