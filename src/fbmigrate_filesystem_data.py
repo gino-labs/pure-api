@@ -145,7 +145,7 @@ class FileSystemMigrator:
         rsyncer = PureRsyncer()
 
         legacy_filesystems = [fs["name"] for fs in self.legacy.get_filesystems()]
-        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_bucket_replia_links()]  
+        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesystem_replica_links()]  
 
         # list of non replication file systems
         rsync_list = list(set(legacy_filesystems) - set(replication_filesystems))
