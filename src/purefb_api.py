@@ -96,11 +96,11 @@ class SiteVars:
         return self.PB2_REPLICATION
     
     # Set pb1 data ip
-    def set_pb1_data_ip(self, host_or_ip):
+    def set_pb1_data_host(self, host_or_ip):
         self.PB1 = host_or_ip
 
     # Set pb2 data ip
-    def set_pb2_data_ip(self, host_or_ip):
+    def set_pb2_data_host(self, host_or_ip):
         self.PB2 = host_or_ip
     
     # Set pb1 replication ip
