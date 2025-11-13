@@ -53,10 +53,13 @@ class ConfigMigrator:
             for sub in legacy_subnets:
                 # Skip if subnet name, prefix, or vlan already exist from s200 info gathered in s200_sub_details
                 if sub["name"] in s200_subnames:
+                    self.logger.write_log(f"Subnet with {sub['name']} already exists.", show_output=True)
                     continue
                 if sub["prefix"] in s200_prefixes:
+                    self.logger.write_log(f"Subnet with {sub['prefix']} already exists.", show_output=True)
                     continue
                 if sub["vlan"] in s200_vlans:
+                    self.logger.write_log(f"Subnet with {sub['vlan']} already exists.", show_output=True)
                     continue
                 
                 # Check services of subnet before posting
