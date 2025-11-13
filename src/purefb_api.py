@@ -24,6 +24,7 @@ class SiteVars:
         self.PB2_REPLICATION = os.getenv("PB2_REPLICATION")
         self.PB1_API_TOKEN = os.getenv("PB1_API_TOKEN")
         self.PB2_API_TOKEN = os.getenv("PB2_API_TOKEN")
+        self.PB_DATA_VLAN = os.getenv("PB_DATA_VLAN")
 
     # Return Environment variables as dictionary
     def get_site_vars(self):
@@ -36,6 +37,7 @@ class SiteVars:
             "pb2_replication": self.PB2_REPLICATION,
             "legacy_api_token": self.PB1_API_TOKEN,
             "s200_api_token": self.PB2_API_TOKEN,
+            "data_vlan": self.PB_DATA_VLAN
         }
         return site_vars
     
@@ -125,9 +127,17 @@ class SiteVars:
     def get_pb1_name(self):
         return self.PB1_NAME
     
-# Get PB1 hostnames / cnames
+    # Get PB1 hostnames / cnames
     def get_pb2_name(self):
         return self.PB2_NAME
+    
+    # Get data vlan
+    def get_data_vlan(self):
+        return int(self.PB_DATA_VLAN)
+    
+    # Get site initials
+    def get_site_initials(self):
+        return self.get_pb2_name()[:2]
 
 # Custom exception class built for handling api errors 
 class ApiError(Exception):
