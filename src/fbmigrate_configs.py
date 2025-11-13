@@ -303,7 +303,7 @@ class ConfigMigrator:
                 sys.exit(1)
 
         try:
-            self.legacy.post_certificate_to_group()
+            self.legacy.post_certificate_to_group(rrc_site.get_pb2_name(), "_default_replication_certs")
         except ApiError as e:
             if "exists" in e.message:
                 self.logger.write_log(e.message, show_output=True)
