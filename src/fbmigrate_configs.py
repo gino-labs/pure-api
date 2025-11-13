@@ -229,6 +229,8 @@ class ConfigMigrator:
             except ApiError as e:
                 e.check_details()
 
+    # TODO : REFACTOR / CHECK below #
+    
     # Create replication subnet/interface
     def configure_replication_net(self):
         subnet_payload = {
