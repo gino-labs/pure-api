@@ -97,7 +97,7 @@ class ConfigMigrator:
 
                 for iface in s200_ifaces:
                     if ip == iface["address"]:
-                        self.logger.write_log(f"Data ip {iface['address']} already configured.")
+                        self.logger.write_log(f"Data ip {iface['address']} already configured.", show_output=True)
                         break
 
                 ip = ipaddress.ip_address(ip)
@@ -126,25 +126,24 @@ class ConfigMigrator:
             except ApiError as e:
                 e.check_details()
 
-
     # Migrate Snapshot policies TODO
     def migrate_snapshot_polices(self):
         legacy_snapshot_polices = self.legacy.get_snapshot_policies()
+        s200_snapshot_policies = [pol["name"] for pol in self.s200.get_snapshot_policies()]
 
         for pol in legacy_snapshot_polices:
-            payload = {
-                "name": pol["name"],
-                "enabled": pol["enabled"],
-                "rules": pol["rules"]
-            }
-            try:
-                self.s200.post_snapshot_policy(pol["name"], payload)
-            except ApiError as e:
-                if "exists" in e.message:
-                    self.logger.write_log(e.message, show_output=True)
-                else:
+            if pol["name"] in s200_snapshot_policies:
+                self.logger.write_log(f"Snapshot policy {pol['name']} already configured.", show_output=True)
+            else:
+                payload = {
+                    "name": pol["name"],
+                    "enabled": pol["enabled"],
+                    "rules": pol["rules"]
+                }
+                try:
+                    self.s200.post_snapshot_policy(pol["name"], payload)
+                except ApiError as e:
                     e.check_details()
-                    sys.exit(1)
 
     # Migrate attached policies to file systems TODO
     def migrate_attached_snapshot_policies_to_filesystems(self):
