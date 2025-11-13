@@ -2,6 +2,8 @@
 from purefb_api import *
 from purefb_log import *
 import ipaddress
+import os
+import re
 
 # Site environment variables sourced from shell
 rrc_site = SiteVars()
@@ -53,13 +55,13 @@ class ConfigMigrator:
             for sub in legacy_subnets:
                 # Skip if subnet name, prefix, or vlan already exist from s200 info gathered in s200_sub_details
                 if sub["name"] in s200_subnames:
-                    self.logger.write_log(f"Subnet with {sub['name']} already exists.", show_output=True)
+                    self.logger.write_log(f"Subnet with {sub['name']} already configured.", show_output=True)
                     continue
                 if sub["prefix"] in s200_prefixes:
-                    self.logger.write_log(f"Subnet with {sub['prefix']} already exists.", show_output=True)
+                    self.logger.write_log(f"Subnet with {sub['prefix']} already configured.", show_output=True)
                     continue
                 if sub["vlan"] in s200_vlans:
-                    self.logger.write_log(f"Subnet with {sub['vlan']} already exists.", show_output=True)
+                    self.logger.write_log(f"Subnet with {sub['vlan']} already configured.", show_output=True)
                     continue
                 
                 # Check services of subnet before posting
@@ -76,7 +78,10 @@ class ConfigMigrator:
                     }
                     # Post subnets to s200
                     try:
-                        self.s200.post_subnet(sub["name"], payload)
+                        if sub["vlan"] == rrc_site.get_data_vlan() and not re.match(r"^pb.*data$", sub["name"]):
+                            self.s200.post_subnet(f"pb{rrc_site.get_site_initials()}-data")
+                        else:
+                            self.s200.post_subnet(sub["name"], payload)
                     except ApiError as e:
                         e.check_details(show_code=True, show_context=True)
 
