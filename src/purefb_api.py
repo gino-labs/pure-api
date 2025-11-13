@@ -150,7 +150,7 @@ class ApiError(Exception):
             self.logger.write_log(f"Continuing with script after encountering error related to: \"{self.context}\"", show_output=True)
             return True
 
-    def check_details(self, show_code=False, show_context=False, show_message=True, ask_to_continue=True):
+    def check_details(self, show_context=False, show_code=True, show_message=True, ask_to_continue=True):
         self.logger.write_log(f"API error code: {self.code}", show_output=show_code, end_print="\n")
         self.logger.write_log(f"API error context: \"{self.context}\"", show_output=show_context, end_print="\n")
         self.logger.write_log(f"API error message: \"{self.message}\"", show_output=show_message)
