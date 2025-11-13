@@ -187,5 +187,6 @@ if __name__ == "__main__":
     # Filesystem migration operations in the following order
     fs_migrator.replicate_filesystems()       
     fs_migrator.migrate_filesystem_configs()
+    fs_migrator.migrate_attached_snapshot_policies_to_filesystems()
     fs_migrator.pcopy_filesystems()
     fs_migrator.rsync_filesystems()
