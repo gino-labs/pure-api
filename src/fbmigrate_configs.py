@@ -203,26 +203,34 @@ class ConfigMigrator:
                 self.s200.post_syslog_server(syslog["name"], syslog["uri"])
             
     # Migrate array connections
-    def migrate_config_array_connection(self):
-        # Get/Post connection key from s200
-        key_data = self.s200.post_connection_key()
+    def configure_array_connection(self):
+        legacy_array_conn = self.legacy.get_array_connections()
 
-        conn_key = key_data["connection_key"]
+        if legacy_array_conn and rrc_site.get_pb2_name() == legacy_array_conn["remote"]["name"]:
+            self.logger.write_log(f"Remote array connection to {legacy_array_conn['remote']['name']} already configured.", show_output=True)
+        else:
+            try:
+                # Get/Post connection key from s200
+                key_data = self.s200.post_connection_key()
 
-        with open("logs/conn_key.txt", "w") as f:
-            f.write(conn_key)
+                conn_key = key_data["connection_key"]
 
-        # Post new array connection with s200 connection key
-        payload = {
-            "encrypted": False,
-            "management_address": rrc_site.get_pb2_mgt_host(ip_addr=True),
-            "replication_addresses": [rrc_site.get_pb2_replication_ip()],
-            "connection_key": conn_key
-        }
-        self.legacy.post_array_connection(payload)
+                with open("logs/conn_key.txt", "w") as f:
+                    f.write(conn_key)
+
+                # Post new array connection with s200 connection key
+                payload = {
+                    "encrypted": False,
+                    "management_address": rrc_site.get_pb2_mgt_host(ip_addr=True),
+                    "replication_addresses": [rrc_site.get_pb2_replication_ip()],
+                    "connection_key": conn_key
+                }
+                self.legacy.post_array_connection(payload)
+            except ApiError as e:
+                e.check_details()
 
     # Create replication subnet/interface
-    def create_replication_net(self):
+    def configure_replication_net(self):
         subnet_payload = {
             "gateway": "172.20.0.1",
             "link_aggregation_group": {"name": "uplink"},
@@ -368,8 +376,8 @@ if __name__ == "__main__":
     cfg_migrator.migrate_config_subnets()
     cfg_migrator.migrate_snapshot_polices()
     cfg_migrator.configure_replication_snapshot_policy()
-    cfg_migrator.create_replication_net()
-    cfg_migrator.migrate_config_array_connection()
+    cfg_migrator.configure_replication_net()
+    cfg_migrator.configure_array_connection()
     cfg_migrator.migrate_certificate()
     cfg_migrator.migrate_directory_service()
     cfg_migrator.migrate_directory_service_roles()
