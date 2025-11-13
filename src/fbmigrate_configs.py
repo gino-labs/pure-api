@@ -147,7 +147,7 @@ class ConfigMigrator:
                 try: 
                     self.s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
                 except ApiError as e:
-                    if "exists" in e.message:
+                    if "Policy has already been added" in e.message:
                         self.logger.write_log(e.message, show_output=True)
                     else:
                         e.check_details()

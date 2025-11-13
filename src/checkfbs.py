@@ -82,7 +82,7 @@ def check_filesystems_replica_links(show_fs_data=False):
     logger.write_log("Check if legacy file systems have replication links.", show_output=True)
 
     legacy_filesystems = legacy.get_filesystems()
-    legacy_replica_links = legacy.get_filesytem_replica_links()
+    legacy_replica_links = legacy.get_filesystem_replica_links()
     
     legacy_fs_list = [fs["name"] for fs in legacy_filesystems]
     legacy_replica_fs_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
@@ -125,8 +125,8 @@ def check_snapshot_policies():
 def check_matching_attached_snapshot_policies():
     logger.write_log("Check if file systems have matching snapshot polices attached between FBs.", show_output=True)
 
-    legacy_fs_attch_pols = legacy.get_filesystems_attached_to_snapshot_policy()
-    s200_fs_attch_pols = s200.get_filesystems_attached_to_snapshot_policy()
+    legacy_fs_attch_pols = legacy.get_snapshot_policy_members()
+    s200_fs_attch_pols = s200.get_snapshot_policy_members()
 
     # Build out dictionary containing legacy policies and associated file system members
     legacy_policy_and_members = {}
