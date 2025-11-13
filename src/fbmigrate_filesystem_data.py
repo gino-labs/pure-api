@@ -106,7 +106,33 @@ class FileSystemMigrator:
             except ApiError as e:
                 self.logger.write_log(e.message)
                 e.check_details(show_code=True)
-    
+
+    # Migrate attached policies to file systems
+    def migrate_attached_snapshot_policies_to_filesystems(self):
+        policies = self.legacy.get_snapshot_policies()
+        if isinstance(policies, dict):
+            policies = [policies]
+
+        for policy in policies:
+            members = self.legacy.get_snapshot_policy_members(policy["name"])
+            s200_members = [member["member"]["name"] for member in self.s200.get_snapshot_policy_members(policy["name"])]
+
+            if isinstance(members, dict):
+                members = [members]
+
+            if isinstance(s200_members, dict):
+                s200_members = [s200_members]
+
+            for member in members:
+                # Match scheduled snapshot policies from legacy to s200 file systems
+                if member["member"]["name"] in s200_members:
+                    self.logger.write_log(f"Filesystem {member['member']['name']} already attach with {policy['name']}", show_output=True)
+                else:
+                    try: 
+                        self.s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
+                    except ApiError as e:
+                        e.check_details()
+
     # Migrate file system data via pcopy
     def pcopy_filesystems(self, sparse_filesystems=[]):
 

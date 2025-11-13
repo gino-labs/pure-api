@@ -145,27 +145,6 @@ class ConfigMigrator:
                 except ApiError as e:
                     e.check_details()
 
-    # Migrate attached policies to file systems TODO
-    def migrate_attached_snapshot_policies_to_filesystems(self):
-        policies = self.legacy.get_snapshot_policies()
-        if isinstance(policies, dict):
-            policies = [policies]
-
-        for policy in policies:
-            members = self.legacy.get_snapshot_policy_members(policy["name"])
-            if isinstance(members, dict):
-                members = [members]
-            for member in members:
-                # Match scheduled snapshot policies from legacy to s200 file systems
-                try: 
-                    self.s200.post_snapshot_policy_to_filesystem(policy["name"], member["member"]["name"])
-                except ApiError as e:
-                    if "Policy has already been added" in e.message:
-                        self.logger.write_log(e.message, show_output=True)
-                    else:
-                        e.check_details()
-                        sys.exit(1)
-
     # Migrate NFS rules
     def migrate_nfs_rules(self):
         legacy_filesystems = self.legacy.get_filesystems()
