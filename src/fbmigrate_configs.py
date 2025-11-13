@@ -224,7 +224,7 @@ class ConfigMigrator:
         payload = {
             "encrypted": False,
             "management_address": rrc_site.get_pb2_mgt_host(ip_addr=True),
-            "replication_addresses": rrc_site.get_pb2_replication_ip(),
+            "replication_addresses": [rrc_site.get_pb2_replication_ip()],
             "connection_key": conn_key
         }
         self.legacy.post_array_connection(payload)
@@ -353,7 +353,7 @@ class ConfigMigrator:
             "enabled": True,
             "rules": [
                 {
-                    "every": 30000,
+                    "every": 300000,
                     "keep_for": 3600000
                 }
             ]
@@ -375,7 +375,7 @@ if __name__ == "__main__":
     # Congifuration migration operations
     cfg_migrator.migrate_config_subnets()
     cfg_migrator.migrate_snapshot_polices()
-    cfg_migrator.migrate_attached_snapshot_policies_to_filesystems()
+    #cfg_migrator.migrate_attached_snapshot_policies_to_filesystems()
     cfg_migrator.configure_replication_snapshot_policy()
     cfg_migrator.create_replication_net()
     cfg_migrator.migrate_config_array_connection()
