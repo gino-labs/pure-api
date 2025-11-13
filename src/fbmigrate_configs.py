@@ -87,11 +87,21 @@ class ConfigMigrator:
 
     # Migrate / configure main data interface
     def configure_data_interface(self):
+        s200_ifaces = self.s200.get_interfaces()
+            
         while True:
             subnet_match = False
             try:
-                ip = ipaddress.ip_address(input("Please enter IP for data interface: "))
+                ip = input("Please enter IP for data interface: ")
                 print()
+
+                for iface in s200_ifaces:
+                    if ip == iface["address"]:
+                        self.logger.write_log(f"Data ip {iface['address']} already configured.")
+                        break
+
+                ip = ipaddress.ip_address(ip)
+
                 payload = {
                     "address": str(ip),
                     "services": ["data"],
@@ -114,12 +124,8 @@ class ConfigMigrator:
                     self.s200.post_interface(iface_name, payload)
                     break
             except ApiError as e:
-                if "exists" in e.message:
-                    self.logger.write_log(e.message)
-                    break
-                else:
-                    e.check_details()
-                    sys.exit(1)
+                e.check_details()
+
 
     # Migrate Snapshot policies TODO
     def migrate_snapshot_polices(self):
