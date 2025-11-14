@@ -341,7 +341,6 @@ class ConfigMigrator:
             self.s200.patch_directory_services(dir_svc["name"], payload=payload)
         except ApiError as e:
             e.check_details()
-            sys.exit(1)
 
     # Migrate directory service roles
     def migrate_directory_service_roles(self):
@@ -360,28 +359,28 @@ class ConfigMigrator:
                 self.s200.patch_directory_service_role(role["role"]["name"], payload=payload)
             except ApiError as e:
                 e.check_details()
-                sys.exit(1)
 
     # Configure 5_mins snapshot policy for replication
     def configure_replication_snapshot_policy(self):
-        payload = {
-            "name": "5_mins",
-            "enabled": True,
-            "rules": [
-                {
-                    "every": 300000,
-                    "keep_for": 3600000
+        policies = [pol["name"] for pol in self.legacy.get_snapshot_policies()]
+
+        if "5_mins" in policies:
+            self.logger.write_log("5 mins replication policy already configured", show_output=True)
+        else:
+            try:
+                payload = {
+                    "name": "5_mins",
+                    "enabled": True,
+                    "rules": [
+                        {
+                            "every": 300000,
+                            "keep_for": 3600000
+                        }
+                    ]
                 }
-            ]
-        }
-        try:
-            self.legacy.post_snapshot_policy("5_mins", payload)
-        except ApiError as e:
-            if "exists" in e.message:
-                self.logger.write_log(e.message)
-            else:
+                self.legacy.post_snapshot_policy("5_mins", payload)
+            except ApiError as e:
                 e.check_details()
-                sys.exit(1)
 
 # Main
 if __name__ == "__main__":
