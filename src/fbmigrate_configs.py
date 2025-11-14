@@ -5,10 +5,12 @@ import ipaddress
 import os
 import re
 
+
 # Site environment variables sourced from shell
 rrc_site = SiteVars()
 pb1_vars = rrc_site.get_pb1_vars()
 pb2_vars = rrc_site.get_pb2_vars()
+
 
 class ConfigMigrator:
     def __init__(self):
@@ -207,7 +209,8 @@ class ConfigMigrator:
 
                 conn_key = key_data["connection_key"]
 
-                with open("logs/conn_key.txt", "w") as f:
+                os.makedirs(".secrets", exist_ok=True)
+                with open(".secrets/conn_key.txt", "w") as f:
                     f.write(conn_key)
 
                 # Post new array connection with s200 connection key
@@ -381,6 +384,7 @@ class ConfigMigrator:
         else:
             for syslog in legacy_syslog:
                 self.s200.post_syslog_server(syslog["name"], syslog["uri"])
+
 
 # Main
 if __name__ == "__main__":
