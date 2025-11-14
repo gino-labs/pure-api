@@ -84,7 +84,7 @@ class FileSystemMigrator:
                 else:
                     nfs = { "v3_enabled": fs["nfs"]["v3_enabled"], "v4_1_enabled": fs["nfs"]["v4_1_enabled"], "rules": fs["nfs"]["rules"] }
                 
-                if fs in replication_filesystems:
+                if fs["name"] in replication_filesystems:
                     writable = False
                 else:
                     writable = True
