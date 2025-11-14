@@ -25,6 +25,12 @@ class FileSystemMigrator:
     # Try to establish replication links
     def replicate_filesystems(self):
         remote_array = self.legacy.get_array_connections()
+        replication_links = self.legacy.get_filesystem_replica_links()
+
+        if replication_links and isinstance(replication_links, list):
+            existing_links = [link["local_file_system"]["name"] for link in replication_links]
+        else:
+            existing_links = [replication_links["local_file_system"]["name"]]
 
         if isinstance(remote_array, list):
             remote_array = remote_array[0]
@@ -40,25 +46,30 @@ class FileSystemMigrator:
 
         self.logger.write_log("Trying to create replication links", show_output=True)
         for fs in legacy_filesystems:
-            # Try replication link
-            try:
-                payload = {
-                    "policies": [
-                        {
-                            "name": policy_name,
-                            "location": {
-                                "name": location_name
+
+            if fs["name"] in existing_links:
+                self.logger.write_log(f"Replication link for {fs['name']} already configured.", show_output=True)
+                continue
+            else:
+                # Try replication link
+                try:
+                    payload = {
+                        "policies": [
+                            {
+                                "name": policy_name,
+                                "location": {
+                                    "name": location_name
+                                }
                             }
-                        }
-                    ]
-                }
-                self.legacy.post_filesystem_replica_link(fs["name"], remote_name, payload)
-            except ApiError as e: 
-                # [Code: 22] Replication is not supported for a file system that was created in a version prior to 3.0.0.
-                if e.code == 22:
-                    self.logger.write_log(f"Unable to replicate {fs['name']}. ERROR: {e.message}", show_output=True)
-                else:
-                    e.check_details()
+                        ]
+                    }
+                    self.legacy.post_filesystem_replica_link(fs["name"], remote_name, payload)
+                except ApiError as e: 
+                    # [Code: 22] Replication is not supported for a file system that was created in a version prior to 3.0.0.
+                    if e.code == 22:
+                        self.logger.write_log(f"Unable to replicate {fs['name']}. ERROR: {e.message}", show_output=True)
+                    else:
+                        e.check_details()
 
     # Migrate file systems created and their configurations
     def migrate_filesystem_configs(self):
