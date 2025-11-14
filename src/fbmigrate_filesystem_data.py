@@ -10,6 +10,7 @@ rrc_site = SiteVars()
 pb1_vars = rrc_site.get_pb1_vars()
 pb2_vars = rrc_site.get_pb2_vars()
 
+
 class FileSystemMigrator:
     def __init__(self):
         self.legacy = FlashBladeAPI(*pb1_vars)
