@@ -78,7 +78,7 @@ class ConfigMigrator:
 
     # Migrate directory service roles
     def migrate_directory_service_roles(self):
-        dir_svc_roles = [self.legacy.get_directory_service_roles()]
+        dir_svc_roles = self.legacy.get_directory_service_roles()
 
         if not isinstance(dir_svc_roles, list):
             dir_svc_roles = [dir_svc_roles]
@@ -297,10 +297,15 @@ class ConfigMigrator:
                 ip = input("Please enter IP for data interface: ")
                 print()
 
+                data_ip_configured = False
                 for iface in s200_ifaces:
                     if ip == iface["address"]:
-                        self.logger.write_log(f"Data ip {iface['address']} already configured.", show_output=True)
+                        data_ip_configured = True
                         break
+                
+                if data_ip_configured:
+                    self.logger.write_log(f"Data ip {iface['address']} already configured.", show_output=True)
+                    break
 
                 ip = ipaddress.ip_address(ip)
 
