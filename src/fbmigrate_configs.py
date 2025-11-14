@@ -22,8 +22,207 @@ class ConfigMigrator:
         self.legacy = FlashBladeAPI(*pb1_vars)
         self.s200 = FlashBladeAPI(*pb2_vars)
 
+    # Migrate export/import certificate from s200 to legacy
+    def migrate_certificate(self):
+        s200_global_cert = self.s200.get_certificates(certificates="global")
+        legacy_certs = self.legacy.get_certificates()
+
+        if isinstance(legacy_certs, dict):
+            legacy_certs = [legacy_certs]
+
+        if rrc_site.get_pb2_name() in [cert["name"] for cert in legacy_certs]:
+            self.logger.write_log(f"External certificate {rrc_site.get_pb2_name()} already configured.", show_output=True)
+        else:
+            try:
+                payload = {
+                    "certificate": s200_global_cert["certificate"],
+                    "certificate_type": "external",
+                    "intermediate_certificate": s200_global_cert["intermediate_certificate"],
+                }
+                self.legacy.post_certificate(rrc_site.get_pb2_name(), payload)
+            except ApiError as e:
+                e.check_details()
+        
+        cert_group = self.legacy.get_certificate_group_members("_default_replication_certs")
+        pb2_cert = rrc_site.get_pb2_name()
+        
+        if isinstance(cert_group, dict) and cert_group["member"]["name"] == pb2_cert:
+            self.logger.write_log(f"Certificate {pb2_cert} in _default_replication_certs already configured.", show_output=True)
+        elif cert_group and pb2_cert in [cert["member"]["name"] for cert in cert_group]:
+            self.logger.write_log(f"Certificate {pb2_cert} in _default_replication_certs already configured.", show_output=True)
+        else:
+            try:
+                self.legacy.post_certificate_to_group(rrc_site.get_pb2_name(), "_default_replication_certs")
+            except ApiError as e:
+                e.check_details()
+        
+    # Migrate directory services besides bind password, and leave disabled
+    def migrate_directory_service(self):
+        dir_svc = self.legacy.get_directory_services()
+        if isinstance(dir_svc, list):
+            dir_svc = dir_svc[0]
+
+        payload = {
+            "base_dn": dir_svc["base_dn"],
+            "bind_user": dir_svc["bind_user"],
+            "uris": dir_svc["uris"],
+            "enabled": False
+        }
+
+        try:
+            self.s200.patch_directory_services(dir_svc["name"], payload=payload)
+        except ApiError as e:
+            e.check_details()
+
+    # Migrate directory service roles
+    def migrate_directory_service_roles(self):
+        dir_svc_roles = [self.legacy.get_directory_service_roles()]
+
+        if not isinstance(dir_svc_roles, list):
+            dir_svc_roles = [dir_svc_roles]
+
+        for role in dir_svc_roles:
+            try:
+                payload = {
+                    "role": { "name": role["role"]["name"] },
+                    "group": role["group"],
+                    "group_base": role["group_base"]
+                }
+                self.s200.patch_directory_service_role(role["role"]["name"], payload=payload)
+            except ApiError as e:
+                e.check_details()
+
+    
+    # Migrate Snapshot policies
+    def migrate_snapshot_polices(self):
+        legacy_snapshot_polices = self.legacy.get_snapshot_policies()
+        s200_snapshot_policies = [pol["name"] for pol in self.s200.get_snapshot_policies()]
+
+        for pol in legacy_snapshot_polices:
+            if pol["name"] in s200_snapshot_policies:
+                self.logger.write_log(f"Snapshot policy {pol['name']} already configured.", show_output=True)
+            else:
+                payload = {
+                    "name": pol["name"],
+                    "enabled": pol["enabled"],
+                    "rules": pol["rules"]
+                }
+                try:
+                    self.s200.post_snapshot_policy(pol["name"], payload)
+                except ApiError as e:
+                    e.check_details()
+    
+    # Configure 5_mins snapshot policy for replication
+    def configure_replication_snapshot_policy(self):
+        policies = [pol["name"] for pol in self.legacy.get_snapshot_policies()]
+
+        if "5_mins" in policies:
+            self.logger.write_log("5 mins replication policy already configured", show_output=True)
+        else:
+            try:
+                payload = {
+                    "name": "5_mins",
+                    "enabled": True,
+                    "rules": [
+                        {
+                            "every": 300000,
+                            "keep_for": 3600000
+                        }
+                    ]
+                }
+                self.legacy.post_snapshot_policy("5_mins", payload)
+            except ApiError as e:
+                e.check_details()
+
+
+    # Create replication subnet/interface
+    def configure_replication_net(self):
+        legacy_subnets = [sub["name"] for sub in self.legacy.get_subnets()]
+        s200_subnets = [sub["name"] for sub in self.s200.get_subnets()]
+
+        subnet_payload = {
+            "gateway": "172.20.0.1",
+            "link_aggregation_group": {"name": "uplink"},
+            "mtu": 9000,
+            "prefix": "172.20.0.0/28",
+            "vlan": 400
+        }
+
+        if "replication-subnet" in legacy_subnets:
+            self.logger.write_log(f"Replication subnet for legacy already configured.", show_output=True)
+        else:
+            try:
+                self.legacy.post_subnet("replication-subnet", subnet_payload)
+            except ApiError as e:
+                e.check_details()
+
+        if "replication-subnet" in s200_subnets:
+            self.logger.write_log(f"Replication subnet for s200 already configured.", show_output=True)
+        else:
+            try:
+                self.s200.post_subnet("replication-subnet", subnet_payload)
+            except ApiError as e:
+                e.check_details()
+
+        
+        legacy_interfaces = [iface["name"] for iface in self.legacy.get_interfaces()]
+        s200_interfaces = [iface["name"] for iface in self.s200.get_interfaces()]
+
+        if "replication-interface" in legacy_interfaces:
+            self.logger.write_log("Replication interface for legacy already configured.", show_output=True)
+        else:      
+            try:
+                legacy_iface_payload = {
+                    "address": rrc_site.get_pb1_replication_ip(),
+                    "services": ["replication"],
+                    "type": "vip"
+                }  
+                self.legacy.post_interface("replication-interface", legacy_iface_payload)
+            except ApiError as e:
+                e.check_details()
+
+        if "replication-interface" in s200_interfaces:
+            self.logger.write_log("Replication interface for s200 already configured.", show_output=True)
+        else:
+            try:
+                s200_iface_payload = {
+                    "address": rrc_site.get_pb2_replication_ip(),
+                    "services": ["replication"],
+                    "type": "vip"
+                }
+                self.s200.post_interface("replication-interface", s200_iface_payload)
+            except ApiError as e:
+                e.check_details()
+
+    # Migrate array connections
+    def configure_array_connection(self):
+        legacy_array_conn = self.legacy.get_array_connections()
+
+        if legacy_array_conn and rrc_site.get_pb2_name() == legacy_array_conn["remote"]["name"]:
+            self.logger.write_log(f"Remote array connection to {legacy_array_conn['remote']['name']} already configured.", show_output=True)
+        else:
+            try:
+                # Get/Post connection key from s200
+                key_data = self.s200.post_connection_key()
+
+                conn_key = key_data["connection_key"]
+
+                with open("logs/conn_key.txt", "w") as f:
+                    f.write(conn_key)
+
+                # Post new array connection with s200 connection key
+                payload = {
+                    "encrypted": False,
+                    "management_address": rrc_site.get_pb2_mgt_host(ip_addr=True),
+                    "replication_addresses": [rrc_site.get_pb2_replication_ip()],
+                    "connection_key": conn_key
+                }
+                self.legacy.post_array_connection(payload)
+            except ApiError as e:
+                e.check_details()
+
     # Migrate subnets, verify name, vlan, subnet prefix
-    def migrate_config_subnets(self):
+    def migrate_subnets(self):
         legacy_subnets = self.legacy.get_subnets()
         s200_subnets = self.s200.get_subnets()
 
@@ -126,25 +325,6 @@ class ConfigMigrator:
             except ApiError as e:
                 e.check_details()
 
-    # Migrate Snapshot policies TODO
-    def migrate_snapshot_polices(self):
-        legacy_snapshot_polices = self.legacy.get_snapshot_policies()
-        s200_snapshot_policies = [pol["name"] for pol in self.s200.get_snapshot_policies()]
-
-        for pol in legacy_snapshot_polices:
-            if pol["name"] in s200_snapshot_policies:
-                self.logger.write_log(f"Snapshot policy {pol['name']} already configured.", show_output=True)
-            else:
-                payload = {
-                    "name": pol["name"],
-                    "enabled": pol["enabled"],
-                    "rules": pol["rules"]
-                }
-                try:
-                    self.s200.post_snapshot_policy(pol["name"], payload)
-                except ApiError as e:
-                    e.check_details()
-
     # Migrate NFS rules
     def migrate_nfs_rules(self):
         legacy_filesystems = self.legacy.get_filesystems()
@@ -201,186 +381,6 @@ class ConfigMigrator:
         else:
             for syslog in legacy_syslog:
                 self.s200.post_syslog_server(syslog["name"], syslog["uri"])
-            
-    # Migrate array connections
-    def configure_array_connection(self):
-        legacy_array_conn = self.legacy.get_array_connections()
-
-        if legacy_array_conn and rrc_site.get_pb2_name() == legacy_array_conn["remote"]["name"]:
-            self.logger.write_log(f"Remote array connection to {legacy_array_conn['remote']['name']} already configured.", show_output=True)
-        else:
-            try:
-                # Get/Post connection key from s200
-                key_data = self.s200.post_connection_key()
-
-                conn_key = key_data["connection_key"]
-
-                with open("logs/conn_key.txt", "w") as f:
-                    f.write(conn_key)
-
-                # Post new array connection with s200 connection key
-                payload = {
-                    "encrypted": False,
-                    "management_address": rrc_site.get_pb2_mgt_host(ip_addr=True),
-                    "replication_addresses": [rrc_site.get_pb2_replication_ip()],
-                    "connection_key": conn_key
-                }
-                self.legacy.post_array_connection(payload)
-            except ApiError as e:
-                e.check_details()
-
-    # TODO : REFACTOR / CHECK below #
-    
-    # Create replication subnet/interface
-    def configure_replication_net(self):
-        legacy_subnets = [sub["name"] for sub in self.legacy.get_subnets()]
-        s200_subnets = [sub["name"] for sub in self.s200.get_subnets()]
-
-        subnet_payload = {
-            "gateway": "172.20.0.1",
-            "link_aggregation_group": {"name": "uplink"},
-            "mtu": 9000,
-            "prefix": "172.20.0.0/28",
-            "vlan": 400
-        }
-
-        if "replication-subnet" in legacy_subnets:
-            self.logger.write_log(f"Replication subnet for legacy already configured.", show_output=True)
-        else:
-            try:
-                self.legacy.post_subnet("replication-subnet", subnet_payload)
-            except ApiError as e:
-                e.check_details()
-
-        if "replication-subnet" in s200_subnets:
-            self.logger.write_log(f"Replication subnet for s200 already configured.", show_output=True)
-        else:
-            try:
-                self.s200.post_subnet("replication-subnet", subnet_payload)
-            except ApiError as e:
-                e.check_details()
-
-        
-        legacy_interfaces = [iface["name"] for iface in self.legacy.get_interfaces()]
-        s200_interfaces = [iface["name"] for iface in self.s200.get_interfaces()]
-
-        if "replication-interface" in legacy_interfaces:
-            self.logger.write_log("Replication interface for legacy already configured.", show_output=True)
-        else:      
-            try:
-                legacy_iface_payload = {
-                    "address": rrc_site.get_pb1_replication_ip(),
-                    "services": ["replication"],
-                    "type": "vip"
-                }  
-                self.legacy.post_interface("replication-interface", legacy_iface_payload)
-            except ApiError as e:
-                e.check_details()
-
-        if "replication-interface" in s200_interfaces:
-            self.logger.write_log("Replication interface for s200 already configured.", show_output=True)
-        else:
-            try:
-                s200_iface_payload = {
-                    "address": rrc_site.get_pb2_replication_ip(),
-                    "services": ["replication"],
-                    "type": "vip"
-                }
-                self.s200.post_interface("replication-interface", s200_iface_payload)
-            except ApiError as e:
-                e.check_details()
-
-    # Migrate export/import certificate from s200 to legacy
-    def migrate_certificate(self):
-        s200_global_cert = self.s200.get_certificates(certificates="global")
-        legacy_certs = self.legacy.get_certificates()
-
-        if isinstance(legacy_certs, dict):
-            legacy_certs = [legacy_certs]
-
-        if rrc_site.get_pb2_name() in [cert["name"] for cert in legacy_certs]:
-            self.logger.write_log(f"External certificate {rrc_site.get_pb2_name()} already configured.", show_output=True)
-        else:
-            try:
-                payload = {
-                    "certificate": s200_global_cert["certificate"],
-                    "certificate_type": "external",
-                    "intermediate_certificate": s200_global_cert["intermediate_certificate"],
-                }
-                self.legacy.post_certificate(rrc_site.get_pb2_name(), payload)
-            except ApiError as e:
-                e.check_details()
-        
-        cert_group = self.legacy.get_certificate_group_members("_default_replication_certs")
-        pb2_cert = rrc_site.get_pb2_name()
-        
-        if isinstance(cert_group, dict) and cert_group["member"]["name"] == pb2_cert:
-            self.logger.write_log(f"Certificate {pb2_cert} in _default_replication_certs already configured.", show_output=True)
-        elif cert_group and pb2_cert in [cert["member"]["name"] for cert in cert_group]:
-            self.logger.write_log(f"Certificate {pb2_cert} in _default_replication_certs already configured.", show_output=True)
-        else:
-            try:
-                self.legacy.post_certificate_to_group(rrc_site.get_pb2_name(), "_default_replication_certs")
-            except ApiError as e:
-                e.check_details()
-        
-    # Migrate directory services besides bind password, and leave disabled
-    def migrate_directory_service(self):
-        dir_svc = self.legacy.get_directory_services()
-        if isinstance(dir_svc, list):
-            dir_svc = dir_svc[0]
-
-        payload = {
-            "base_dn": dir_svc["base_dn"],
-            "bind_user": dir_svc["bind_user"],
-            "uris": dir_svc["uris"],
-            "enabled": False
-        }
-
-        try:
-            self.s200.patch_directory_services(dir_svc["name"], payload=payload)
-        except ApiError as e:
-            e.check_details()
-
-    # Migrate directory service roles
-    def migrate_directory_service_roles(self):
-        dir_svc_roles = [self.legacy.get_directory_service_roles()]
-
-        if not isinstance(dir_svc_roles, list):
-            dir_svc_roles = [dir_svc_roles]
-
-        for role in dir_svc_roles:
-            try:
-                payload = {
-                    "role": { "name": role["role"]["name"] },
-                    "group": role["group"],
-                    "group_base": role["group_base"]
-                }
-                self.s200.patch_directory_service_role(role["role"]["name"], payload=payload)
-            except ApiError as e:
-                e.check_details()
-
-    # Configure 5_mins snapshot policy for replication
-    def configure_replication_snapshot_policy(self):
-        policies = [pol["name"] for pol in self.legacy.get_snapshot_policies()]
-
-        if "5_mins" in policies:
-            self.logger.write_log("5 mins replication policy already configured", show_output=True)
-        else:
-            try:
-                payload = {
-                    "name": "5_mins",
-                    "enabled": True,
-                    "rules": [
-                        {
-                            "every": 300000,
-                            "keep_for": 3600000
-                        }
-                    ]
-                }
-                self.legacy.post_snapshot_policy("5_mins", payload)
-            except ApiError as e:
-                e.check_details()
 
 # Main
 if __name__ == "__main__":
@@ -388,13 +388,13 @@ if __name__ == "__main__":
     cfg_migrator = ConfigMigrator()
 
     # Congifuration migration operations
-    cfg_migrator.migrate_config_subnets()
+    cfg_migrator.migrate_certificate()
+    cfg_migrator.migrate_directory_service()
+    cfg_migrator.migrate_directory_service_roles()
     cfg_migrator.migrate_snapshot_polices()
     cfg_migrator.configure_replication_snapshot_policy()
     cfg_migrator.configure_replication_net()
     cfg_migrator.configure_array_connection()
-    cfg_migrator.migrate_certificate()
-    cfg_migrator.migrate_directory_service()
-    cfg_migrator.migrate_directory_service_roles()
+    cfg_migrator.migrate_subnets()
     cfg_migrator.configure_data_interface()
     
