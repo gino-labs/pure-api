@@ -563,7 +563,7 @@ class FlashBladeAPI:
         if certificates is not None:
             cert_list = self.to_csv(certificates)
             url = self.baseurl + f"certificates?names={cert_list}"
-            msg = f"certificate: {certificates}"
+            msg = f"certificates: {certificates}"
         else:
             url = self.baseurl + "certificates"
             msg = "certifcates"
@@ -575,12 +575,19 @@ class FlashBladeAPI:
     def get_certificate_groups(self, groups=None, dumpjson=False):
         if groups is not None:
             group_list = self.to_csv(groups)
-            url = self.baseurl + f"groups?names={group_list}"
-            msg = f"certificate group: {groups}"
+            url = self.baseurl + f"certificate-groups?names={group_list}"
+            msg = f"certificate groups: {groups}"
         else:
             url = self.baseurl + "certificate-groups"
             msg = "certificate groups"
 
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Get certificate group memebers
+    def get_certificate_group_members(self, group, dumpjson=True):
+        url = self.baseurl + f"certificate-groups/certificate?certificate_group_names={group}"
+        msg = "certificate group members"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     
