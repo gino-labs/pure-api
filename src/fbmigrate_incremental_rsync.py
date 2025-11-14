@@ -135,9 +135,17 @@ class PureRsyncer:
 
 # Main
 if __name__ == "__main__":
-    # Filesystem rsync instance
+    # Class instances
     rsyncer = PureRsyncer()
+    legacy = FlashBladeAPI(*pb1_vars)
 
-    # Run rsyncs   
-    rsyncer.run_incremental_rsyncs()
+    # File systems
+    legacy_filesystems = [fs["name"] for fs in legacy.get_filesystems()]
+    replication_filesystems = [link["local_file_system"]["name"] for link in legacy.get_filesystem_replica_links()]  
+
+    # list of non replication file systems
+    rsync_list = list(set(legacy_filesystems) - set(replication_filesystems))
+
+    # Run rsyncs
+    rsyncer.run_incremental_rsyncs(fs_list=rsync_list)
 
