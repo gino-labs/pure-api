@@ -293,31 +293,36 @@ class ConfigMigrator:
     # Migrate export/import certificate from s200 to legacy
     def migrate_certificate(self):
         s200_global_cert = self.s200.get_certificates(certificates="global")
+        legacy_certs = self.legacy.get_certificates()
+
+        if isinstance(legacy_certs, dict):
+            legacy_certs = [legacy_certs]
+
+        if rrc_site.get_pb2_name() in [cert["name"] for cert in legacy_certs]:
+            self.logger.write_log(f"External certificate {rrc_site.get_pb2_name()} already configured.", show_output=True)
+        else:
+            try:
+                payload = {
+                    "certificate": s200_global_cert["certificate"],
+                    "certificate_type": "external",
+                    "intermediate_certificate": s200_global_cert["intermediate_certificate"],
+                }
+                self.legacy.post_certificate(rrc_site.get_pb2_name(), payload)
+            except ApiError as e:
+                e.check_details()
         
-        payload = {
-            "certificate": s200_global_cert["certificate"],
-            "certificate_type": s200_global_cert["certificate_type"],
-            "intermediate_certificate": s200_global_cert["intermediate_certificate"],
-        }
-
-        try:
-            self.legacy.post_certificate(rrc_site.get_pb2_name(), payload)
-            self.legacy.post_certificate_to_group()
-        except ApiError as e:
-            if "exists" in e.message:
-                self.logger.write_log(e.message, show_output=True)
-            else:
+        cert_group = self.legacy.get_certificate_group_members("_default_replication_certs")
+        pb2_cert = rrc_site.get_pb2_name()
+        
+        if isinstance(cert_group, dict) and cert_group["member"]["name"] == pb2_cert:
+            self.logger.write_log(f"Certificate {pb2_cert} in _default_replication_certs already configured.", show_output=True)
+        elif cert_group and pb2_cert in [cert["member"]["name"] for cert in cert_group]:
+            self.logger.write_log(f"Certificate {pb2_cert} in _default_replication_certs already configured.", show_output=True)
+        else:
+            try:
+                self.legacy.post_certificate_to_group(rrc_site.get_pb2_name(), "_default_replication_certs")
+            except ApiError as e:
                 e.check_details()
-                sys.exit(1)
-
-        try:
-            self.legacy.post_certificate_to_group(rrc_site.get_pb2_name(), "_default_replication_certs")
-        except ApiError as e:
-            if "exists" in e.message:
-                self.logger.write_log(e.message, show_output=True)
-            else:
-                e.check_details()
-                sys.exit(1)
         
     # Migrate directory services besides bind password, and leave disabled
     def migrate_directory_service(self):
