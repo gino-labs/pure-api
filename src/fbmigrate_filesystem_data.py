@@ -39,7 +39,7 @@ class FileSystemMigrator:
         location_name = legacy_pol["location"]["name"]
 
         self.logger.write_log("Trying to create replication links", show_output=True)
-        for fs in legacy_filesystems():
+        for fs in legacy_filesystems:
             # Try replication link
             try:
                 payload = {
@@ -64,7 +64,7 @@ class FileSystemMigrator:
     def migrate_filesystem_configs(self):
         legacy_filesystems = self.legacy.get_filesystems()
         s200_filesystems = [fs["name"] for fs in self.s200.get_filesystems()]
-        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesytem_replica_links()]  
+        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesystem_replica_links()]  
          
         for fs in legacy_filesystems:
             try:
@@ -128,7 +128,7 @@ class FileSystemMigrator:
     def pcopy_filesystems(self, sparse_filesystems=[]):
 
         legacy_filesystems = [fs["name"] for fs in self.legacy.get_filesystems()]
-        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesytem_replica_links()]  
+        replication_filesystems = [link["local_file_system"]["name"] for link in self.legacy.get_filesystem_replica_links()]  
 
         # list of non replication file systems
         pcopy_list = list(set(legacy_filesystems) - set(replication_filesystems))
