@@ -233,6 +233,9 @@ class ConfigMigrator:
     
     # Create replication subnet/interface
     def configure_replication_net(self):
+        legacy_subnets = [sub["name"] for sub in self.legacy.get_subnets()]
+        s200_subnets = [sub["name"] for sub in self.s200.get_subnets()]
+
         subnet_payload = {
             "gateway": "172.20.0.1",
             "link_aggregation_group": {"name": "uplink"},
@@ -241,45 +244,51 @@ class ConfigMigrator:
             "vlan": 400
         }
 
-        for fb in (self.legacy, self.s200):
+        if "replication-subnet" in legacy_subnets:
+            self.logger.write_log(f"Replication subnet for legacy already configured.", show_output=True)
+        else:
             try:
-                fb.post_subnet("replication-subnet", subnet_payload)
+                self.legacy.post_subnet("replication-subnet", subnet_payload)
             except ApiError as e:
-                if "exists" in e.message:
-                    self.logger.write_log(e.message, show_output=True)
-                else:
-                    e.check_details()
-                    sys.exit(1)
-
-        legacy_iface_payload = {
-            "address": rrc_site.get_pb1_replication_ip(),
-            "services": ["replication"],
-            "type": "vip"
-        }
-
-        s200_iface_payload = {
-            "address": rrc_site.get_pb2_replication_ip(),
-            "services": ["replication"],
-            "type": "vip"
-        }
-
-        try:
-            self.legacy.post_interface("replication-interface", legacy_iface_payload)
-        except ApiError as e:
-            if "exists" in e.message:
-                self.logger.write_log(e.message, show_output=True)
-            else:
                 e.check_details()
-                sys.exit(1)
 
-        try:
-            self.s200.post_interface("replication-interface", s200_iface_payload)
-        except ApiError as e:
-            if "exists" in e.message:
-                self.logger.write_log(e.message, show_output=True)
-            else:
+        if "replication-subnet" in s200_subnets:
+            self.logger.write_log(f"Replication subnet for s200 already configured.", show_output=True)
+        else:
+            try:
+                self.s200.post_subnet("replication-subnet", subnet_payload)
+            except ApiError as e:
                 e.check_details()
-                sys.exit(1)
+
+        
+        legacy_interfaces = [iface["name"] for iface in self.legacy.get_interfaces()]
+        s200_interfaces = [iface["name"] for iface in self.s200.get_interfaces()]
+
+        if "replication-interface" in legacy_interfaces:
+            self.logger.write_log("Replication interface for legacy already configured.", show_output=True)
+        else:      
+            try:
+                legacy_iface_payload = {
+                    "address": rrc_site.get_pb1_replication_ip(),
+                    "services": ["replication"],
+                    "type": "vip"
+                }  
+                self.legacy.post_interface("replication-interface", legacy_iface_payload)
+            except ApiError as e:
+                e.check_details()
+
+        if "replication-interface" in s200_interfaces:
+            self.logger.write_log("Replication interface for s200 already configured.", show_output=True)
+        else:
+            try:
+                s200_iface_payload = {
+                    "address": rrc_site.get_pb2_replication_ip(),
+                    "services": ["replication"],
+                    "type": "vip"
+                }
+                self.s200.post_interface("replication-interface", s200_iface_payload)
+            except ApiError as e:
+                e.check_details()
 
     # Migrate export/import certificate from s200 to legacy
     def migrate_certificate(self):
