@@ -586,7 +586,7 @@ class FlashBladeAPI:
     
     # Get certificate group memebers
     def get_certificate_group_members(self, group, dumpjson=True):
-        url = self.baseurl + f"certificate-groups/certificate?certificate_group_names={group}"
+        url = self.baseurl + f"certificate-groups/certificates?certificate_group_names={group}"
         msg = "certificate group members"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
