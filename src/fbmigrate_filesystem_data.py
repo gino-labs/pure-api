@@ -66,7 +66,7 @@ class FileSystemMigrator:
                 if e.code == 22:
                     self.logger.write_log(f"Unable to replicate {fs['name']}. ERROR: {e.message}", show_output=True)
                 else:
-                    e.check_details(show_code=True)
+                    e.check_details()
 
     # Migrate file systems created and their configurations
     def migrate_filesystem_configs(self):
@@ -104,11 +104,10 @@ class FileSystemMigrator:
                 else: 
                     self.s200.post_filesystem(fs["name"], payload)
             except ApiError as e:
-                self.logger.write_log(e.message)
-                e.check_details(show_code=True)
+                e.check_details()
 
     # Migrate attached policies to file systems
-    def migrate_attached_snapshot_policies_to_filesystems(self):
+    def migrate_attached_snapshot_policies(self):
         policies = self.legacy.get_snapshot_policies()
         if isinstance(policies, dict):
             policies = [policies]
@@ -187,6 +186,6 @@ if __name__ == "__main__":
     # Filesystem migration operations in the following order
     fs_migrator.replicate_filesystems()       
     fs_migrator.migrate_filesystem_configs()
-    fs_migrator.migrate_attached_snapshot_policies_to_filesystems()
-    fs_migrator.pcopy_filesystems()
+    fs_migrator.migrate_attached_snapshot_policies()
+    fs_migrator.pcopy_filesystems(sparse_filesystems=[]) # Add file systems to sparse list if copying larger than expected data to destination
     fs_migrator.rsync_filesystems()
