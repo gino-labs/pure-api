@@ -86,8 +86,10 @@ class FileSystemMigrator:
                 
                 if fs["name"] in replication_filesystems:
                     writable = False
+                    multi_protocol = {"access_control_style": "shared","safeguard_acls": True}
                 else:
                     writable = True
+                    multi_protocol = fs["multi_protocol"]
 
                 payload = {
                     "default_group_quota": fs["default_group_quota"],
@@ -95,7 +97,7 @@ class FileSystemMigrator:
                     "fast_remove_directory_enabled": fs["fast_remove_directory_enabled"], 
                     "hard_limit_enabled": fs["hard_limit_enabled"], 
                     "http": fs["http"], 
-                    "multi_protocol": fs["multi_protocol"], 
+                    "multi_protocol": multi_protocol, 
                     "nfs": nfs, 
                     "provisioned": fs["provisioned"], 
                     "snapshot_directory_enabled": fs["snapshot_directory_enabled"],
