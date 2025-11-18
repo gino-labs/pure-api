@@ -155,7 +155,7 @@ class FileSystemMigrator:
 
         # Process each filesystem and add rules if necessary
         for fs in pcopy_list:
-            pcopier = PureSubprocessor(fs["name"], rrc_site.get_pb1_data_host(), rrc_site.get_pb2_data_host())
+            pcopier = PureSubprocessor(fs, rrc_site.get_pb1_data_host(), rrc_site.get_pb2_data_host())
             
             local_ip = rrc_site.get_local_ip()
             if f"{local_ip}(ro,no_root_squash)" not in fs["nfs"]["rules"]:
