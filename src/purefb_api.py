@@ -78,13 +78,13 @@ class SiteVars:
         return self.PB2_MGT
 
     # Get pb1 data ip
-    def get_pb1_data_host(self, ip_addr=True):
+    def get_pb1_data_host(self, ip_addr=False):
         if ip_addr and self.PB1:
             return socket.gethostbyname(self.PB1)
         return self.PB1
 
     # Get pb2 data ip
-    def get_pb2_data_host(self, ip_addr=True):
+    def get_pb2_data_host(self, ip_addr=False):
         if ip_addr and self.PB2:
             return socket.gethostbyname(self.PB2)
         return self.PB2

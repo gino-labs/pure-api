@@ -158,15 +158,14 @@ class FileSystemMigrator:
             pcopier = PureSubprocessor(fs, rrc_site.get_pb1_data_host(), rrc_site.get_pb2_data_host())
             
             local_ip = rrc_site.get_local_ip()
-            if f"{local_ip}(ro,no_root_squash)" not in fs["nfs"]["rules"]:
-                self.legacy.patch_nfs_rule(fs["name"], f"{local_ip}(ro,no_root_squash)")
-                self.s200.patch_nfs_rule(fs["name"], f"{local_ip}(rw,no_root_squash)")
+            self.legacy.patch_nfs_rule(fs, f"{local_ip}(ro,no_root_squash)")
+            self.s200.patch_nfs_rule(fs, f"{local_ip}(rw,no_root_squash)")
             
             pcopier.mkdir()
 
             pcopier.mount()
             
-            if fs["name"] in sparse_filesystems:
+            if fs in sparse_filesystems:
                 pcopier.pcopy(extra_args=["--sparse=always"])
             else:
                 pcopier.pcopy()
@@ -174,8 +173,8 @@ class FileSystemMigrator:
             pcopier.umount()
 
             self.refresh_api_session()
-            self.legacy.patch_nfs_rule(fs["name"], f"{local_ip}(ro,no_root_squash)", remove=True)
-            self.s200.patch_nfs_rule(fs["name"], f"{local_ip}(rw,no_root_squash)", remove=True)
+            self.legacy.patch_nfs_rule(fs, f"{local_ip}(ro,no_root_squash)", remove=True)
+            self.s200.patch_nfs_rule(fs, f"{local_ip}(rw,no_root_squash)", remove=True)
 
     # Run incremental rsyncs after pcopy
     def rsync_filesystems(self):
