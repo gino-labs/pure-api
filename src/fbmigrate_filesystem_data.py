@@ -118,14 +118,21 @@ class FileSystemMigrator:
             policies = [policies]
 
         for policy in policies:
+            if policy["name"] == "5_mins":
+                continue
+            
             members = self.legacy.get_snapshot_policy_members(policy["name"])
-            s200_members = [member["member"]["name"] for member in self.s200.get_snapshot_policy_members(policy["name"])]
-
             if isinstance(members, dict):
                 members = [members]
 
+            s200_members = self.s200.get_snapshot_policy_members(policy["name"])
             if isinstance(s200_members, dict):
-                s200_members = [s200_members]
+                s200_members = [s200_members["member"]["name"]]
+            else:
+                if s200_members:
+                    s200_members = [member["member"]["name"] for member in s200_members[:]]
+                else:
+                    self.logger.write_log(f"No members for policy {policy['name']}.", show_output=True)
 
             for member in members:
                 # Match scheduled snapshot policies from legacy to s200 file systems
