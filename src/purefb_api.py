@@ -263,7 +263,7 @@ class FlashBladeAPI:
                 sys.exit(1)
 
     # Parse json data or rest request items
-    def Parse_Data(self, data, dump=False):
+    def Parse_Data(self, data, dump=False, no_dict=False):
         if "errors" not in data:
             try:
                 if "items" not in data:
@@ -273,7 +273,10 @@ class FlashBladeAPI:
                 elif len(data["items"]) == 1:
                     if dump:
                         self.logger.write_log("Debug: See parsed data.", jsondata=data["items"][0], show_output=dump)
-                    return data["items"][0]
+                    if no_dict:
+                        return data["items"]
+                    else:
+                        return data["items"][0]
                 elif len(data["items"]) == 0:
                     self.logger.write_log("Zero items returned from parsed data list.", show_output=True)
                     return data["items"]
@@ -307,7 +310,7 @@ class FlashBladeAPI:
     #######################
 
     # General get request by passing endpoint
-    def get_endpoint(self, endpoint, params=None, dumpjson=False, raw=False):
+    def get_endpoint(self, endpoint, params=None, dumpjson=False, no_dict=False, raw=False):
         if params is not None:
             url = self.baseurl + endpoint + f"?{params}"
             msg = endpoint
@@ -321,7 +324,7 @@ class FlashBladeAPI:
                 print(json.dumps(data, indent=4), end="\n\n")
             return data
         else:
-            return self.Parse_Data(data, dump=dumpjson)
+            return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
 
     # Get api version used by blade
     def get_api_version(self, dumpjson=False):
@@ -335,7 +338,7 @@ class FlashBladeAPI:
             return data["versions"]
             
     # Get Filesystems
-    def get_filesystems(self, filesystems=None, dumpjson=False):
+    def get_filesystems(self, filesystems=None, dumpjson=False, no_dict=False):
         if filesystems is not None:
             fs_list = self.to_csv(filesystems)
             url = self.baseurl + f"file-systems?names={fs_list}"
@@ -345,10 +348,10 @@ class FlashBladeAPI:
             msg = "filesystems"
             
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get object store accounts
-    def get_object_store_accounts(self, accounts=None, dumpjson=False):
+    def get_object_store_accounts(self, accounts=None, dumpjson=False, no_dict=False):
         if accounts is not None:
             acct_list = self.to_csv(accounts)
             url = self.baseurl + f"object-store-accounts?names={acct_list}"
@@ -358,10 +361,10 @@ class FlashBladeAPI:
             msg = "object store accounts"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get buckets
-    def get_buckets(self, buckets=None, dumpjson=False):
+    def get_buckets(self, buckets=None, dumpjson=False, no_dict=False):
         if buckets is not None:
             buck_list = self.to_csv(buckets)
             url = self.baseurl + f"buckets?names={buck_list}"
@@ -371,10 +374,10 @@ class FlashBladeAPI:
             msg = "buckets"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get bucket replica links
-    def get_bucket_replia_links(self, buckets=None, dumpjson=False):
+    def get_bucket_replia_links(self, buckets=None, dumpjson=False, no_dict=False):
         if buckets is not None:
             buck_list = self.to_csv(buckets)
             url = self.baseurl + f"bucket-replica-links?local_bucket_names={buck_list}"
@@ -384,10 +387,10 @@ class FlashBladeAPI:
             msg = f"bucket replica links"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get object store users
-    def get_object_store_users(self, users=None, dumpjson=False):
+    def get_object_store_users(self, users=None, dumpjson=False, no_dict=False):
         if users is not None:
             user_list = self.to_csv(users)
             url = self.baseurl + f"object-store-users?names={user_list}"
@@ -397,10 +400,10 @@ class FlashBladeAPI:
             msg = f"object store users"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
 
     # Get object store access keys
-    def get_object_store_access_keys(self, keys=None, dumpjson=False):
+    def get_object_store_access_keys(self, keys=None, dumpjson=False, no_dict=False):
         if keys is not None:
             key_list = self.to_csv(keys)
             url = self.baseurl + f"object-store-access-keys?names={key_list}"
@@ -410,10 +413,10 @@ class FlashBladeAPI:
             msg = "object store access keys"
         
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get object store remote credentials
-    def get_object_store_remote_credentials(self, credentials=None, dumpjson=False):
+    def get_object_store_remote_credentials(self, credentials=None, dumpjson=False, no_dict=False):
         if credentials is not None:
             cred_list = self.to_csv(credentials)
             url = self.baseurl + f"object-store-remote-credentials?names={cred_list}"
@@ -423,10 +426,10 @@ class FlashBladeAPI:
             msg = f"object store remote credentials"
             
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
 
     # Get subnets
-    def get_subnets(self, subnets=None, dumpjson=False):
+    def get_subnets(self, subnets=None, dumpjson=False, no_dict=False):
         if subnets is not None:
             sub_list = self.to_csv(subnets)
             url = self.baseurl + f"subnets?names={sub_list}"
@@ -436,10 +439,10 @@ class FlashBladeAPI:
             msg = "subnets"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get network interfaces
-    def get_interfaces(self, interfaces=None, dumpjson=False):
+    def get_interfaces(self, interfaces=None, dumpjson=False, no_dict=False):
         if interfaces is not None:
             iface_list = self.to_csv(interfaces)
             url = self.baseurl + f"network-interfaces?names={iface_list}"
@@ -449,10 +452,10 @@ class FlashBladeAPI:
             msg = "network interfaces"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
 
     # Get filesystem replica links
-    def get_filesystem_replica_links(self, filesystems=None, dumpjson=False):
+    def get_filesystem_replica_links(self, filesystems=None, dumpjson=False, no_dict=False):
         if filesystems is not None:
             fs_list = self.to_csv(filesystems)
             url = self.baseurl + f"file-system-replica-links?local_file_system_names={fs_list}" 
@@ -462,10 +465,10 @@ class FlashBladeAPI:
             msg = "filesystem replica links"
         
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get filesystem snapshots
-    def get_filesystem_snapshots(self, snapshots=None, dumpjson=False):
+    def get_filesystem_snapshots(self, snapshots=None, dumpjson=False, no_dict=False):
         if snapshots is not None:
             snap_list = self.to_csv(snapshots)
             url = self.baseurl + f"file-system-snapshots?names_or_owner_names={snap_list}"
@@ -475,10 +478,10 @@ class FlashBladeAPI:
             msg = f"filesystem snapshots"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get snapshot polices
-    def get_snapshot_policies(self, policies=None, dumpjson=False):
+    def get_snapshot_policies(self, policies=None, dumpjson=False, no_dict=False):
         if policies is not None:
             pol_list = self.to_csv(policies)
             url = self.baseurl + f"policies?names={pol_list}"
@@ -488,10 +491,10 @@ class FlashBladeAPI:
             msg = "filesystem snapshot policies"
         
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
         
     # Get snapshot policies attached 
-    def get_snapshot_policy_members(self, policies=None, dumpjson=False):
+    def get_snapshot_policy_members(self, policies=None, dumpjson=False, no_dict=False):
         if policies is not None:
             pol_list = self.to_csv(policies)
             url = self.baseurl + f"file-systems/policies?policy_names={pol_list}"
@@ -501,31 +504,31 @@ class FlashBladeAPI:
             msg = f"attached snapshot policies"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
        
     # Get connected NFS clients
-    def get_nfs_clients(self, dumpjson=False):
+    def get_nfs_clients(self, dumpjson=False, no_dict=False):
         url = self.baseurl + "arrays/clients/performance"
         msg = "NFS clients"
         data = self.REST_Request("get", url, msg)
         return data
         
     # Get remote array connections
-    def get_array_connections(self, dumpjson=False):
+    def get_array_connections(self, dumpjson=False, no_dict=False):
         url = self.baseurl + "array-connections"
         msg = "array connections"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get directory services
-    def get_directory_services(self, dumpjson=False):
+    def get_directory_services(self, dumpjson=False, no_dict=False):
         url = self.baseurl + "directory-services"
         msg = "directory services"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get directory service roles
-    def get_directory_service_roles(self, role_names=None, dumpjson=False):
+    def get_directory_service_roles(self, role_names=None, dumpjson=False, no_dict=False):
         if role_names is not None:
             role_list = self.to_csv(role_names)
             url = self.baseurl + f"directory-services/roles?role_names={role_list}"
@@ -535,31 +538,31 @@ class FlashBladeAPI:
             msg = "directory service roles"
         
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get DNS configuration
-    def get_dns(self, dumpjson=False):
+    def get_dns(self, dumpjson=False, no_dict=False):
         url = self.baseurl + "dns"
         msg = "DNS"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get array configurations
-    def get_array_configurations(self, dumpjson=False):
+    def get_array_configurations(self, dumpjson=False, no_dict=False):
         url = self.baseurl + "arrays"
         msg = "array configurations"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get array connections
-    def get_array_connections(self, dumpjson=False):
+    def get_array_connections(self, dumpjson=False, no_dict=False):
         url = self.baseurl + "array-connections"
         msg = "array connections"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get certifcates
-    def get_certificates(self, certificates=None, dumpjson=False):
+    def get_certificates(self, certificates=None, dumpjson=False, no_dict=False):
         if certificates is not None:
             cert_list = self.to_csv(certificates)
             url = self.baseurl + f"certificates?names={cert_list}"
@@ -569,10 +572,10 @@ class FlashBladeAPI:
             msg = "certifcates"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get certificate groups
-    def get_certificate_groups(self, groups=None, dumpjson=False):
+    def get_certificate_groups(self, groups=None, dumpjson=False, no_dict=False):
         if groups is not None:
             group_list = self.to_csv(groups)
             url = self.baseurl + f"certificate-groups?names={group_list}"
@@ -582,17 +585,17 @@ class FlashBladeAPI:
             msg = "certificate groups"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get certificate group memebers
-    def get_certificate_group_members(self, group, dumpjson=True):
+    def get_certificate_group_members(self, group, dumpjson=False, no_dict=False):
         url = self.baseurl + f"certificate-groups/certificates?certificate_group_names={group}"
         msg = "certificate group members"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get NFS export policies
-    def get_nfs_export_policies(self, policies=None, dumpjson=False):
+    def get_nfs_export_policies(self, policies=None, dumpjson=False, no_dict=False):
         if policies is not None:
             pol_list = self.to_csv(policies)
             url = self.baseurl + f"nfs-export-policies?names={pol_list}"
@@ -602,10 +605,10 @@ class FlashBladeAPI:
             msg = "nfs export policies"
         
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get syslog servers
-    def get_syslog_servers(self, syslog_names=None, dumpjson=False):
+    def get_syslog_servers(self, syslog_names=None, dumpjson=False, no_dict=False):
         if syslog_names is not None:
             syslog_list = self.to_csv(syslog_names)
             url = self.baseurl + f"syslog-servers?names={syslog_list}"
@@ -615,24 +618,24 @@ class FlashBladeAPI:
             msg = f"syslog servers"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get connection key
-    def get_connection_key(self, dumpjson=False):
+    def get_connection_key(self, dumpjson=False, no_dict=False):
         url = self.baseurl + "array-connections/connection-key"
         msg = "connection key"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get users quotas per file system
-    def get_user_quotas(self, filesystem, dumpjson=False):
+    def get_user_quotas(self, filesystem, dumpjson=False, no_dict=False):
         url = self.baseurl + f"quotas/users?file_system_names={filesystem}"
         msg = f"{filesystem} user quotas"
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get users file system usage
-    def get_users_filesystem_usage(self, filesystem, uids=None, dumpjson=False):
+    def get_users_filesystem_usage(self, filesystem, uids=None, dumpjson=False, no_dict=False):
         if uids is not None:
             uid_list = self.to_csv(uids)
             url = self.baseurl + f"usage/users?file_system_names={filesystem}&uids={uid_list}"
@@ -642,7 +645,7 @@ class FlashBladeAPI:
             msg = f"{filesystem} usage by UIDs"
 
         data = self.REST_Request("get", url, msg)
-        return self.Parse_Data(data, dump=dumpjson)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
 
  
     ########################
