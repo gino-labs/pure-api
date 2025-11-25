@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+PB1=''
+PB2=''
+PB1_MGT=''
+PB2_MGT=''
+PB1_NAME=''
+PB2_NAME=''
+PB1_REPLICATION=''
+PB2_REPLICATION=''
+PB1_API_TOKEN=''
+PB2_API_TOKEN=''
+PB_DATA_VLAN=''
