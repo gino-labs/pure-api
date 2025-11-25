@@ -1,0 +1,9 @@
+[Unit]
+Description=Scheduled timer to run fb-rsync.service at {{ time }} daily
+
+[Timer]
+OnCalendar={{ time }}
+Unit=fb-rsync.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Rsync Pure Storage File Systems (Python Wrapper Script)
+
+[Service]
+Type=oneshot
+WorkingDirectory={{ working_directory }}
+EnvironmentFile={{ enviorment_file }}
+ExecStart={{ venv_python_exe }} {{ working_directory }}/fbmigrate_incremental_rsync.py
+
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,31 @@
+---
+- name: Set up systemd incremental rsync service on localhost for FB migration
+  hosts: localhost
+  become: True
+  connection: local
+  vars:
+    working_directory: /scratch/gxc-purestorage/src
+    environment_file: /scratch/gxc-purestorage/site_vars/systemd_az_pure_env
+    python_venv_exe: /scratch/gxc-purestorage/.pureenv/bin/python
+    time: "20:00"
+  tasks:
+    - name: Place fb-rsync service template in /etc/systemd/system/
+      template:
+        src: ./templates/fb-rsync.service.j2
+        dest: /etc/systemd/system/fb-rsync.service
+        mode: "0644"
+        setype: systemd_unit_file_t
+
+    - name: Place fb-rsync timer template in /etc/systemd/system/
+      template:
+        src: ./templates/fb-rsync.timer.j2
+        dest: /etc/systemd/system/fb-rsync.timer
+        mode: "0644"
+        setype: setype_unit_file_t
+
+    - name: Start fb rsync timer
+      systemd:
+      name: fbrsync.timer
+      state: started
+      enabled: True
+      daemon_reload: True    
