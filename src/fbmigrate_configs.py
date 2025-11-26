@@ -3,7 +3,6 @@ from purefb_api import *
 from purefb_log import *
 import ipaddress
 import os
-import re
 
 
 # Site environment variables sourced from shell
@@ -103,6 +102,8 @@ class ConfigMigrator:
         for pol in legacy_snapshot_polices:
             if pol["name"] in s200_snapshot_policies:
                 self.logger.write_log(f"Snapshot policy {pol['name']} already configured.", show_output=True)
+            elif pol["name"] == "5_mins":
+                continue
             else:
                 payload = {
                     "name": pol["name"],
