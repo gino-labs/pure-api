@@ -281,7 +281,7 @@ class ConfigMigrator:
                     # Post subnets to s200
                     try:
                         if sub["vlan"] == rrc_site.get_data_vlan() and not re.match(r"^pb.*data$", sub["name"]):
-                            self.s200.post_subnet(f"pb{rrc_site.get_site_initials()}-data")
+                            self.s200.post_subnet(f"pb{rrc_site.get_site_initials()}-data", payload)
                         else:
                             self.s200.post_subnet(sub["name"], payload)
                     except ApiError as e:
