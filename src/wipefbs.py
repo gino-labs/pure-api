@@ -104,7 +104,7 @@ class FBWiper:
     # Wipe object store accounts
     def wipe_object_store_accounts(self, auto_wipe=False):
         if self.proceed_to_wipe("object store accounts", auto_wipe=auto_wipe):
-            print("TODO: Wipe ")
+            print("TODO: Wipe object store accounts")
         else:
             return
 
