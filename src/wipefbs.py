@@ -144,7 +144,7 @@ class FBWiper:
             return
 
     # Wipe everything we can
-    def wipe_all(self, wipe_mgt_settings=False, auto_wipe=False):
+    def wipe_all(self, wipe_mgt_settings=True, auto_wipe=False):
         self.wipe_file_replication(auto_wipe=auto_wipe)
         self.wipe_object_replication(auto_wipe=auto_wipe)
         self.wipe_interfaces(auto_wipe=auto_wipe)
@@ -165,7 +165,7 @@ class FBWiper:
             self.wipe_dns(auto_wipe=auto_wipe)
             self.wipe_ntp(auto_wipe=auto_wipe)
 
-        self.logger(f"{self.fb_name}: configurations wiped.", show_output=True)
+        self.logger.write_log(f"{self.fb_name}: configurations wiped.", show_output=True)
 
 # Main
 if __name__ == "__main__":
@@ -180,7 +180,7 @@ if __name__ == "__main__":
 
     # Wipe AZ Legacy FlashBlade
     azwiper = FBWiper(az, azfb["name"])
-    azwiper.wipe_all()
+    azwiper.wipe_all(auto_wipe=True)
 
     # CO Legacy
     cofb = {
@@ -193,7 +193,7 @@ if __name__ == "__main__":
 
     # Wipe CO Legacy FlashBlade
     cowiper = FBWiper(co, cofb["name"])
-    cowiper.wipe_all()
+    cowiper.wipe_all(auto_wipe=True)
 
     # VA Legacy
     vafb = {
@@ -206,5 +206,5 @@ if __name__ == "__main__":
 
     # Wipe VA Legacy FlashBlade
     vawiper = FBWiper(va, vafb["name"])
-    vawiper.wipe_all()
+    vawiper.wipe_all(auto_wipe=True)
     
