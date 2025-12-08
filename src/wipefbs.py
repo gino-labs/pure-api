@@ -165,7 +165,8 @@ class FBWiper:
             self.wipe_dns(auto_wipe=auto_wipe)
             self.wipe_ntp(auto_wipe=auto_wipe)
 
-        self.logger.write_log(f"{self.fb_name}: configurations wiped.", show_output=True)
+        print("------------")
+        self.logger.write_log(f"{self.fb_name}: has been WIPED.", show_output=True)
 
 # Main
 if __name__ == "__main__":
