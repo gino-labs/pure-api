@@ -18,6 +18,7 @@
 **va_pure_env*
 **co_pure_env*
 **az_pure_env*
+**wipe_vars
 
 # Ignore logs directory
 **/logs/
