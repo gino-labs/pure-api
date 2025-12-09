@@ -171,17 +171,17 @@ class FBWiper:
 # Main
 if __name__ == "__main__":
     # Wipe AZ Legacy FlashBlade
-    az = [os.getenv("AZFB_NAME"),os.getenv("AZFB_MGT"),os.getenv("AZFB_DATA"),os.getenv("AZFB_TOKEN")]
+    az = [os.getenv("AZFB_NAME"),os.getenv("AZFB_DATA"),os.getenv("AZFB_MGT"),os.getenv("AZFB_TOKEN")]
     azwiper = FBWiper(*az)
     azwiper.wipe_all(auto_wipe=True)
 
     # Wipe CO Legacy FlashBlade
-    co = [os.getenv("COFB_NAME"),os.getenv("COFB_MGT"),os.getenv("COFB_DATA"),os.getenv("COFB_TOKEN")]
+    co = [os.getenv("COFB_NAME"),os.getenv("COFB_DATA"),os.getenv("COFB_MGT"),os.getenv("COFB_TOKEN")]
     cowiper = FBWiper(*co)
     cowiper.wipe_all(auto_wipe=True)
 
     # Wipe VA Legacy FlashBlade
-    va = [os.getenv("VAFB_NAME"),os.getenv("VAFB_MGT"),os.getenv("VAFB_DATA"),os.getenv("VAFB_TOKEN")]
+    va = [os.getenv("VAFB_NAME"),os.getenv("VAFB_DATA"),os.getenv("VAFB_MGT"),os.getenv("VAFB_TOKEN")]
     vawiper = FBWiper(*va)
     vawiper.wipe_all(auto_wipe=True)
     
