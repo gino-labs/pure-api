@@ -47,6 +47,18 @@ class FBWiper:
                 self.logger.write_log(f"{self.fb_name}: bucket replication links already wiped.", show_output=True)
         else:
             return
+        
+    # Wipe object store remote credentials
+    def wipe_object_store_remote_credentials(self, auto_wipe=False):
+        if self.proceed_to_wipe("object replication", auto_wipe=auto_wipe):
+            creds = self.fb.get_object_store_remote_credentials()
+            if creds:
+                for cred in creds:
+                    self.fb.delete_object_store_remote_credential(cred["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: bucket remote credentials already wiped.", show_output=True)
+        else:
+            return
 
     # Wipe data interfaces
     def wipe_interfaces(self, auto_wipe=False):
@@ -176,7 +188,7 @@ class FBWiper:
             self.wipe_ntp(auto_wipe=auto_wipe)
 
         print("------------")
-        self.logger.write_log(f"{self.fb_name}: has been WIPED.", show_output=True)
+        self.logger.write_log(f"{self.fb_name}: has been WIPED.\n------------", show_output=True)
 
 # Main
 if __name__ == "__main__":
