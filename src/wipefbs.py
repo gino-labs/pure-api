@@ -126,8 +126,6 @@ class FBWiper:
     def wipe_snapshot_policies(self, auto_wipe=False):
         if self.proceed_to_wipe("snapshot policies", auto_wipe=auto_wipe):
             pols = self.fb.get_snapshot_policies(dumpjson=True)
-            import sys
-            sys.exit(1)
             if pols:
                 for pol in pols:
                     self.fb.delete_snapshot_policy(pol["name"])
