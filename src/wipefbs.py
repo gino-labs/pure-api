@@ -229,6 +229,26 @@ class FBWiper:
                 self.logger.write_log(f"{self.fb_name}: external certificates already wiped.", show_output=True)
         else:
             return
+        
+    # Wipe directory services
+    def wipe_directory_services(self, auto_wipe=False):
+        if self.proceed_to_wipe("directory services", auto_wipe=auto_wipe):
+            dir_svcs = self.fb.get_directory_services(dumpjson=True)
+            import sys
+            sys.exit(1)
+            if dir_svcs:
+                for dir_svc in dir_svcs:
+                    payload = {
+                        "base_dn": "",
+                        "bind_password": "",
+                        "bind_user": "",
+                        "ca_certificate_group": {"name": ""}
+                    }
+                    self.fb.patch_directory_services(dir_svc["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: directory services already wiped.", show_output=True)
+        else:
+            return
 
     # Wipe DNS configuration
     def wipe_dns(self, auto_wipe=False):
