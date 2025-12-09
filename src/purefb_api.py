@@ -1034,12 +1034,12 @@ class FlashBladeAPI:
     def delete_array_connection(self, remote_name, dumpjson=False):
         url = self.baseurl + f"array-connections?remote_names={remote_name}"
         msg = f"array connection: {remote_name}"
-        data = self.REST_Request("deleete", url, msg)
+        data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     
     # Delete syslog server
     def delete_syslog_server(self, syslog_server, dumpjson=False):
         url = self.baseurl + f"syslog-servers?names={syslog_server}"
         msg = f"syslog server: {syslog_server}"
-        data = self.REST_Request("deleete", url, msg)
+        data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
