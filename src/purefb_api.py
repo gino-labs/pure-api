@@ -1043,3 +1043,10 @@ class FlashBladeAPI:
         msg = f"syslog server: {syslog_server}"
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete certificate
+    def delete_certifcate(self, certificate, dumpjson=False):
+        url = self.baseurl + f"certificates?names={certificate}"
+        msg = f"certificate: {certificate}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
