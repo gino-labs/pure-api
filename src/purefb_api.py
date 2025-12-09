@@ -607,6 +607,32 @@ class FlashBladeAPI:
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
+    # Get SMB client policies
+    def get_smb_client_policies(self, policies=None, dumpjson=False, no_dict=True):
+        if policies is not None:
+            pol_list = self.to_csv(policies)
+            url = self.baseurl + f"smb-client-policies?names={pol_list}"
+            msg = f"smb client policies: {pol_list}"
+        else:
+            url = self.baseurl + "smb-client-policies"
+            msg = "smb client policies"
+        
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
+    
+    # Get SMB share policies
+    def get_smb_share_policies(self, policies=None, dumpjson=False, no_dict=True):
+        if policies is not None:
+            pol_list = self.to_csv(policies)
+            url = self.baseurl + f"smb-share-policies?names={pol_list}"
+            msg = f"smb share policies: {pol_list}"
+        else:
+            url = self.baseurl + "smb-share-policies"
+            msg = "smb share policies"
+        
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
+    
     # Get syslog servers
     def get_syslog_servers(self, syslog_names=None, dumpjson=False, no_dict=True):
         if syslog_names is not None:
@@ -952,6 +978,20 @@ class FlashBladeAPI:
     def delete_nfs_export_policy(self, policy, dumpjson=False):
         url = self.baseurl + f"nfs-export-policies?names={policy}"
         msg = f"NFS export policy: {policy}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete a SMB client policy
+    def delete_smb_client_policy(self, policy, dumpjson=False):
+        url = self.baseurl + f"smb-client-policies?names={policy}"
+        msg = f"SMB client policy: {policy}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete a SMB client policy
+    def delete_smb_share_policy(self, policy, dumpjson=False):
+        url = self.baseurl + f"smb-share-policies?names={policy}"
+        msg = f"SMB share policy: {policy}"
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     
