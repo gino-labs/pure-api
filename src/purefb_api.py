@@ -950,7 +950,7 @@ class FlashBladeAPI:
     
     # Delete a NFS export policy
     def delete_nfs_export_policy(self, policy, dumpjson=False):
-        url = self.baseurl + f"nfs-export-policy?names={policy}"
+        url = self.baseurl + f"nfs-export-policies?names={policy}"
         msg = f"NFS export policy: {policy}"
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
