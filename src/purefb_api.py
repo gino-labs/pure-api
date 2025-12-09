@@ -974,6 +974,13 @@ class FlashBladeAPI:
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     
+    # Delete snapshot policies
+    def delete_snapshot_policy(self, policy, dumpjson=False):
+        url = self.baseurl + f"policies?names={policy}"
+        msg = f"snapshot policy: {policy}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
     # Delete a NFS export policy
     def delete_nfs_export_policy(self, policy, dumpjson=False):
         url = self.baseurl + f"nfs-export-policies?names={policy}"

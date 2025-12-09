@@ -105,8 +105,6 @@ class FBWiper:
             if pols:
                 for pol in pols:
                     self.fb.delete_smb_client_policy(pol["name"])
-                    import sys
-                    sys.exit(1)
             else:
                 self.logger.write_log(f"{self.fb_name}: SMB client policies already wiped.", show_output=True)
         else:
@@ -127,7 +125,14 @@ class FBWiper:
     # Wipe snapshot policies
     def wipe_snapshot_policies(self, auto_wipe=False):
         if self.proceed_to_wipe("snapshot policies", auto_wipe=auto_wipe):
-            print("TODO: Wipe snapshot policies")
+            pols = self.fb.get_snapshot_policies(dumpjson=True)
+            import sys
+            sys.exit(1)
+            if pols:
+                for pol in pols:
+                    self.fb.delete_snapshot_policy(pol["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: snapshot policies already wiped.", show_output=True)
         else:
             return
 
