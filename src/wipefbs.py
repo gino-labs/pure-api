@@ -185,6 +185,9 @@ class FBWiper:
             buckets = self.fb.get_buckets()
             if buckets:
                 for bucket in buckets:
+                    # Step 1. Patch
+                    self.fb.patch_bucket(bucket["name"], {"destroyed": True})
+                    # Step 2. Delete
                     self.fb.delete_bucket(bucket["name"])
             else:
                 self.logger.write_log(f"{self.fb_name}: object store buckets already wiped.", show_output=True)
