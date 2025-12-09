@@ -28,7 +28,11 @@ class FBWiper:
     def wipe_file_replication(self, auto_wipe=False):
         if self.proceed_to_wipe("file replication", auto_wipe=auto_wipe):
             links = self.fb.get_filesystem_replica_links()
-            print(links)
+            if links:
+                for link in links:
+                    self.fb.delete_filesystem_replica_link(link["local_file_system"]["name"], link["remote"]["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: replication links already wiped.")
         else:
             return
 
