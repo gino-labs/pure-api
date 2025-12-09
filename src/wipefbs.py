@@ -101,7 +101,7 @@ class FBWiper:
     # Wipe SMB client policies
     def wipe_smb_client_policies(self, auto_wipe=False):
         if self.proceed_to_wipe("smb client policies", auto_wipe=auto_wipe):
-            pols = self.fb.get_smb_client_policies(dumpjson=True)
+            pols = [pol for pol in self.fb.get_smb_client_policies() if "allow_everyone" not in pol["name"]]
             if pols:
                 for pol in pols:
                     self.fb.delete_smb_client_policy(pol["name"])
@@ -115,7 +115,7 @@ class FBWiper:
     # Wipe SMB share policies
     def wipe_smb_share_policies(self, auto_wipe=False):
         if self.proceed_to_wipe("smb share policies", auto_wipe=auto_wipe):
-            pols = self.fb.get_smb_share_policies()
+            pols = [pol for pol in self.fb.get_smb_share_policies() if "allow_everyone" not in pol["name"]]
             if pols:
                 for pol in pols:
                     self.fb.delete_smb_share_policy(pol["name"])
