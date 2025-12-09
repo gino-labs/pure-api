@@ -969,7 +969,7 @@ class FlashBladeAPI:
     
     # Patch array configurations
     def patch_array_configurations(self, payload, dumpjson=False):
-        url = self.baseurl + f"array configurations"
+        url = self.baseurl + f"arrays"
         msg = "array configurations"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
