@@ -932,6 +932,13 @@ class FlashBladeAPI:
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
 
+    # Delete a bucket
+    def delete_bucket(self, bucket, dumpjson=False):
+        url = self.baseurl + f"buckets?names={bucket}"
+        msg = f"bucket: {bucket}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Delete an object store user
     def delete_object_store_user(self, object_user, dumpjson=False):
         url = self.baseurl + f"object-store-users?names={object_user}"

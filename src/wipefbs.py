@@ -182,7 +182,12 @@ class FBWiper:
     # CAUTION: Wipe object store buckets
     def wipe_object_store_buckets(self, auto_wipe=False):
         if self.proceed_to_wipe("object store buckets", auto_wipe=auto_wipe):
-            print("TODO: Wipe object store buckets")
+            buckets = self.fb.get_buckets()
+            if buckets:
+                for bucket in buckets:
+                    self.fb.delete_bucket(bucket["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: object store buckets already wiped.", show_output=True)
         else:
             return
 
