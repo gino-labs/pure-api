@@ -918,7 +918,14 @@ class FlashBladeAPI:
         msg = f"directory service role: {role_name}"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
-        
+    
+    # Patch DNS
+    def patch_dns(self, dns, payload, dumpjson=False):
+        url = self.baseurl + f"dns?names={dns}"
+        msg = f"DNS: {dns}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
+
 
     ##########################
     ### DELETE API Section ###
