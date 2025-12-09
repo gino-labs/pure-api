@@ -672,6 +672,32 @@ class FlashBladeAPI:
 
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
+    
+    # Get alert watchers
+    def get_alert_watchers(self, watchers=None, dumpjson=False, no_dict=True):
+        if watchers is not None:
+            watcher_list = self.to_csv(watchers)
+            url = self.baseurl + f"alert-watchers?names={watcher_list}"
+            msg = f"alert watchers: {watcher_list}"
+        else:
+            url = self.baseurl + "alert-watchers"
+            msg = f"alert watchers"
+
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
+    
+    # Get smtp servers
+    def get_smtp_servers(self, smtp_servers=None, dumpjson=False, no_dict=True):
+        if smtp_servers is not None:
+            smtp_list = self.to_csv(smtp_servers)
+            url = self.baseurl + f"smtp-servers?names={smtp_list}"
+            msg = f"smtp servers: {smtp_list}"
+        else:
+            url = self.baseurl + "smtp-servers"
+            msg = f"smtp servers"
+
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
 
  
     ########################
@@ -925,6 +951,13 @@ class FlashBladeAPI:
         msg = f"DNS: {dns}"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Patch SMTP
+    def patch_smtp(self, payload, dumpjson=False):
+        url = self.baseurl + f"smtp-servers"
+        msg = "SMTP"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
 
 
     ##########################
@@ -1055,5 +1088,12 @@ class FlashBladeAPI:
     def delete_certifcate(self, certificate, dumpjson=False):
         url = self.baseurl + f"certificates?names={certificate}"
         msg = f"certificate: {certificate}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete alert watcher
+    def delete_alert_watcher(self, watcher, dumpjson=False):
+        url = self.baseurl + f"alert-watchers?names={watcher}"
+        msg = f"watcher: {watcher}"
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
