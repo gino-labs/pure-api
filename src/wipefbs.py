@@ -197,7 +197,12 @@ class FBWiper:
     # Wipe object store accounts
     def wipe_object_store_accounts(self, auto_wipe=False):
         if self.proceed_to_wipe("object store accounts", auto_wipe=auto_wipe):
-            print("TODO: Wipe object store accounts")
+            accts = self.fb.get_object_store_accounts()
+            if accts:
+                for acct in accts:
+                    self.fb.delete_object_store_account(acct["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: object store accounts already wiped.", show_output=True)
         else:
             return
 

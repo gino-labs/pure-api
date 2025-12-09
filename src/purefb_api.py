@@ -960,6 +960,13 @@ class FlashBladeAPI:
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
     
+    # Delete an object store account
+    def delete_object_store_account(self, account, dumpjson=False):
+        url = self.baseurl + f"object-store-accounts?names={account}"
+        msg = f"object store account: {account}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+    
     # Delete a bucket replica link
     def delete_bucket_replica_link(self, bucket, remote_name, dumpjson=False):
         url = self.baseurl + f"bucket-replica-links?local_bucket_names={bucket}&remote_bucket_names={bucket}&remote_names={remote_name}"
