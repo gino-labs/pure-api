@@ -104,7 +104,9 @@ class FBWiper:
             pols = self.fb.get_smb_client_policies()
             if pols:
                 for pol in pols:
-                    self.fb.delete_smb_client_policy(pol["name"])
+                    self.fb.delete_smb_client_policy(pol["name"], dumpjson=True)
+                    import sys
+                    sys.exit(1)
             else:
                 self.logger.write_log(f"{self.fb_name}: SMB client policies already wiped.", show_output=True)
         else:
