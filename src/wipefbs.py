@@ -213,22 +213,20 @@ class FBWiper:
             if log_srvs:
                 for srv in log_srvs:
                     self.fb.delete_syslog_server(srv["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: syslog servers already wiped.", show_output=True)
         else:
             return
-
+    
     # Wipe external certificates
     def wipe_external_certificates(self, auto_wipe=False):
         if self.proceed_to_wipe("external certificates", auto_wipe=auto_wipe):
-            ext_certs = self.fb.get_certificates()
-            print("TODO: Wipe external certificates")
-        else:
-            return
-
-    # Wipe directory services
-    def wipe_directory_services(self, auto_wipe=False):
-        if self.proceed_to_wipe("directory services", auto_wipe=auto_wipe):
-            dir_svcs = self.fb.get_directory_services()
-            print("TODO: Wipe directory services")
+            ext_certs = [cert for cert in self.fb.get_certificates() if "external" == cert["certificate_type"]]
+            if ext_certs:
+                for cert in ext_certs:
+                    self.fb.delete_certifcate(cert["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: external certificates already wiped.", show_output=True)
         else:
             return
 
