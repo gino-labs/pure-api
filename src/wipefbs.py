@@ -230,6 +230,30 @@ class FBWiper:
         else:
             return
 
+    # Wipe alert watchers
+    def wipe_alert_watchers(self, auto_wipe=False):
+        if self.proceed_to_wipe("alert watchers", auto_wipe=auto_wipe):
+            watchers = self.fb.get_alert_watchers()
+            if watchers:
+                for watcher in watchers:
+                    self.fb.delete_alert_watcher(watcher["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: alert watchers already wiped.", show_output=True)
+        else:
+            return
+        
+    # Wipe quotas settings
+    def wipe_quotas_settings(self, auto_wipe=False):
+        if self.proceed_to_wipe("quotas settings", auto_wipe=auto_wipe):
+            qsets = [qset for qset in self.fb.get_quotas_settings() if qset["contact"] or qset["direct_notifications_enabled"]]
+            if qsets:
+                payload = {"contact": "", "direct_notifications_enabled": False}
+                self.fb.patch_quotas_settings(payload)
+            else:
+                self.logger.write_log(f"{self.fb_name}: quotas settings already wiped.", show_output=True)
+        else:
+            return
+
     # Wipe directory service roles
     def wipe_directory_service_roles(self, auto_wipe=False):
         if self.proceed_to_wipe("directory service roles", auto_wipe=auto_wipe):
@@ -283,17 +307,16 @@ class FBWiper:
         else:
             return
         
-    # Wipe alert watchers
-    def wipe_alert_watchers(self, auto_wipe=False):
-        if self.proceed_to_wipe("alert watchers", auto_wipe=auto_wipe):
-            print("TODO: Wipe alert watchers")
-        else:
-            return
-        
     # Wipe smtp servers
     def wipe_smtp_servers(self, auto_wipe=False):
         if self.proceed_to_wipe("smtp servers", auto_wipe=auto_wipe):
-            print("TODO: Wipe smtp servers")
+            smtp_srvs = [srv for srv in self.fb.get_smtp_servers() if srv["sender_domain"] != "local.arpa" or srv["relay_host"]]
+            if smtp_srvs:
+                payload = {
+                    "sender_domain": "local.arpa",
+                    "relay_host": ""
+                }
+                self.fb.patch_smtp(payload)
         else:
             return
 
@@ -325,9 +348,12 @@ class FBWiper:
         if wipe_mgt_settings:
             self.wipe_syslog_servers(auto_wipe=auto_wipe)
             self.wipe_external_certificates(auto_wipe=auto_wipe)
+            self.wipe_alert_watchers(auto_wipe=auto_wipe)
+            self.wipe_quotas_settings(auto_wipe=auto_wipe)
             self.wipe_directory_service_roles(auto_wipe=auto_wipe)
             self.wipe_directory_services(auto_wipe=auto_wipe)
             self.wipe_dns(auto_wipe=auto_wipe)
+            self.wipe_smtp_servers(auto_wipe=auto_wipe)
             self.wipe_array_configurations(auto_wipe=auto_wipe)
 
         print("------------")
