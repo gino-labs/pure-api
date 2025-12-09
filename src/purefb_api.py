@@ -961,6 +961,13 @@ class FlashBladeAPI:
         msg = f"network interface: {interface}"
         data = self.REST_Request("delete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete a subnet
+    def delete_subnet(self, subnet, dumpjson=False):
+        url = self.baseurl + f"subnets?names={subnet}"
+        msg = f"subnet: {subnet}"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
         
     # Delete an array connection
     def delete_array_connection(self, remote_name, dumpjson=False):
