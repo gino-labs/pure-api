@@ -282,6 +282,20 @@ class FBWiper:
                 self.logger.write_log(f"{self.fb_name}: DNS configurations already wiped.", show_output=True)
         else:
             return
+        
+    # Wipe alert watchers
+    def wipe_alert_watchers(self, auto_wipe=False):
+        if self.proceed_to_wipe("alert watchers", auto_wipe=auto_wipe):
+            print("TODO: Wipe alert watchers")
+        else:
+            return
+        
+    # Wipe smtp servers
+    def wipe_smtp_servers(self, auto_wipe=False):
+        if self.proceed_to_wipe("smtp servers", auto_wipe=auto_wipe):
+            print("TODO: Wipe smtp servers")
+        else:
+            return
 
     # Wipe general array configurations
     def wipe_array_configurations(self, auto_wipe=False):
