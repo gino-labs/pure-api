@@ -266,7 +266,7 @@ class FBWiper:
         self.wipe_object_store_accounts(auto_wipe=auto_wipe)
         
         if wipe_mgt_settings:
-            self.wipe_syslog_connections(auto_wipe=auto_wipe)
+            self.wipe_syslog_servers(auto_wipe=auto_wipe)
             self.wipe_external_certificates(auto_wipe=auto_wipe)
             self.wipe_directory_services(auto_wipe=auto_wipe)
             self.wipe_dns(auto_wipe=auto_wipe)
