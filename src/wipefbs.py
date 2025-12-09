@@ -50,7 +50,7 @@ class FBWiper:
         
     # Wipe object store remote credentials
     def wipe_object_store_remote_credentials(self, auto_wipe=False):
-        if self.proceed_to_wipe("object replication", auto_wipe=auto_wipe):
+        if self.proceed_to_wipe("object remote credentials", auto_wipe=auto_wipe):
             creds = self.fb.get_object_store_remote_credentials()
             if creds:
                 for cred in creds:
@@ -63,7 +63,13 @@ class FBWiper:
     # Wipe data interfaces
     def wipe_interfaces(self, auto_wipe=False):
         if self.proceed_to_wipe("interfaces", auto_wipe=auto_wipe):
-            print("TODO: Wipe interfaces")
+            # Only data / replication interfaces
+            ifaces = [iface for iface in self.fb.get_interfaces() if "data" in iface["services"] or "replication" in iface["services"]]
+            if ifaces:
+                for iface in ifaces:
+                    self.fb.delete_interface(iface["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: data/replication interfaces already wiped.", show_output=True)
         else:
             return
 
