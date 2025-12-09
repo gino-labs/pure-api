@@ -209,6 +209,7 @@ class FBWiper:
     # Wipe syslog connections
     def wipe_syslog_connections(self, auto_wipe=False):
         if self.proceed_to_wipe("syslog server connections", auto_wipe=auto_wipe):
+            log_srvs = self.fb.get_syslog_servers()
             print("TODO: Wipe syslog server connections")
         else:
             return
@@ -216,6 +217,7 @@ class FBWiper:
     # Wipe external certificates
     def wipe_external_certificates(self, auto_wipe=False):
         if self.proceed_to_wipe("external certificates", auto_wipe=auto_wipe):
+            ext_certs = self.fb.get_certificates()
             print("TODO: Wipe external certificates")
         else:
             return
@@ -223,6 +225,7 @@ class FBWiper:
     # Wipe directory services
     def wipe_directory_services(self, auto_wipe=False):
         if self.proceed_to_wipe("directory services", auto_wipe=auto_wipe):
+            dir_svcs = self.fb.get_directory_services()
             print("TODO: Wipe directory services")
         else:
             return
@@ -230,14 +233,16 @@ class FBWiper:
     # Wipe DNS configuration
     def wipe_dns(self, auto_wipe=False):
         if self.proceed_to_wipe("DNS", auto_wipe=auto_wipe):
+            dns_srvs = self.fb.get_dns()
             print("TODO: Wipe DNS")
         else:
             return
 
-    # Wipe NTP configuration
-    def wipe_ntp(self, auto_wipe=False):
-        if self.proceed_to_wipe("NTP", auto_wipe=auto_wipe):
-            print("TODO: Wipe NTP")
+    # Wipe general array configurations
+    def wipe_array_configurations(self, auto_wipe=False):
+        if self.proceed_to_wipe("array configurations", auto_wipe=auto_wipe):
+            array_cfgs = self.fb.get_array_configurations()
+            print("TODO: Wipe array configurations")
         else:
             return
 
@@ -263,7 +268,7 @@ class FBWiper:
             self.wipe_external_certificates(auto_wipe=auto_wipe)
             self.wipe_directory_services(auto_wipe=auto_wipe)
             self.wipe_dns(auto_wipe=auto_wipe)
-            self.wipe_ntp(auto_wipe=auto_wipe)
+            self.wipe_array_configurations(auto_wipe=auto_wipe)
 
         print("------------")
         self.logger.write_log(f"{self.fb_name}: has been WIPED.\n------------", show_output=True)
