@@ -317,6 +317,8 @@ class FBWiper:
                     "relay_host": ""
                 }
                 self.fb.patch_smtp(payload)
+            else:
+                self.logger.write_log(f"{self.fb_name}: SMTP configurations already wiped.", show_output=True)
         else:
             return
 
