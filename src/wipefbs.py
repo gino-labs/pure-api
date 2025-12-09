@@ -32,14 +32,19 @@ class FBWiper:
                 for link in links:
                     self.fb.delete_filesystem_replica_link(link["local_file_system"]["name"], link["remote"]["name"])
             else:
-                self.logger.write_log(f"{self.fb_name}: replication links already wiped.", show_output=True)
+                self.logger.write_log(f"{self.fb_name}: file replication links already wiped.", show_output=True)
         else:
             return
 
     # Wipe object replication links
     def wipe_object_replication(self, auto_wipe=False):
         if self.proceed_to_wipe("object replication", auto_wipe=auto_wipe):
-            print("TODO: Wipe object replication")
+            links = self.fb.get_bucket_replia_links()
+            if links:
+                for link in links:
+                    self.fb.delete_bucket_replica_link(link["local_bucket"]["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: bucket replication links already wiped.", show_output=True)
         else:
             return
 
