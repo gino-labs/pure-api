@@ -344,6 +344,25 @@ class FBWiper:
                 self.logger.write_log(f"{self.fb_name}: array configurations already wiped.", show_output=True)
         else:
             return
+        
+    # Generate a factory reset token
+    def generate_factory_reset_token(self):
+        tokens = self.fb.get_factory_reset_tokens()
+
+        if tokens:
+            self.logger.write_log("Factory reset token already generated.", show_output=True)
+            return
+        else:
+            choice = input("Would you like to generate a factory reset token? (y/n): ").lower()
+            while choice not in ("y", "n"):
+                choice = input("Please enter 'y' or 'n' for a factory reset token: ").lower()
+            if choice == 'y':
+                token_info = self.fb.post_factory_reset_token()
+                self.logger.write_log("Writing token to .secrets/factory_reset_token.json", show_output=True)
+                with open(".secrets/factory_reset_token.json", "w") as f:
+                    json.dump(token_info, f, indent=4)
+            else:
+                return
 
     # Wipe everything we can
     def wipe_all(self, wipe_mgt_settings=True, auto_wipe=False):
@@ -382,14 +401,17 @@ if __name__ == "__main__":
     az = [os.getenv("AZFB_NAME"),os.getenv("AZFB_DATA"),os.getenv("AZFB_MGT"),os.getenv("AZFB_TOKEN")]
     azwiper = FBWiper(*az)
     azwiper.wipe_all(auto_wipe=True)
+    azwiper.generate_factory_reset_token()
 
     # Wipe CO Legacy FlashBlade
     co = [os.getenv("COFB_NAME"),os.getenv("COFB_DATA"),os.getenv("COFB_MGT"),os.getenv("COFB_TOKEN")]
     cowiper = FBWiper(*co)
     cowiper.wipe_all(auto_wipe=True)
+    cowiper.generate_factory_reset_token()
 
     # Wipe VA Legacy FlashBlade
     va = [os.getenv("VAFB_NAME"),os.getenv("VAFB_DATA"),os.getenv("VAFB_MGT"),os.getenv("VAFB_TOKEN")]
     vawiper = FBWiper(*va)
     vawiper.wipe_all(auto_wipe=True)
+    vawiper.generate_factory_reset_token()
     

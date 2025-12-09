@@ -339,7 +339,7 @@ class FlashBladeAPI:
             return data["versions"]
         
     # Get factory reset token
-    def get_factory_reset_token(self, dumpjson=False, no_dict=True):
+    def get_factory_reset_tokens(self, dumpjson=False, no_dict=True):
         url = self.baseurl + "arrays/factory-reset-token"
         msg = "FACTORY RESET TOKEN"
         data = self.REST_Request("get", url, msg)
@@ -715,7 +715,7 @@ class FlashBladeAPI:
 
 
     # Post factory reset token
-    def post_factory_reset_token(self, dumpjson=True):
+    def post_factory_reset_token(self, dumpjson=False):
         url = self.baseurl + "arrays/factory-reset-token"
         msg = "FACTORY RESET TOKEN"
         data = self.REST_Request("post", url, msg)
