@@ -137,7 +137,15 @@ class FBWiper:
     # CAUTION: Wipe file system data
     def wipe_filesystems(self, auto_wipe=False):
         if self.proceed_to_wipe("filesystems", auto_wipe=auto_wipe):
-            print("TODO: Wipe filesystems")
+            filesystems = self.fb.get_filesystems()
+            if filesystems:
+                for fs in filesystems:
+                    # Step 1. Patch
+                    self.fb.patch_filesystem(fs["name"], {"destroyed": True})
+                    # Step 2. Delete
+                    self.fb.delete_filesystem(fs["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: filesystems already wiped.", show_output=True)
         else:
             return
 
