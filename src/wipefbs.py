@@ -98,10 +98,27 @@ class FBWiper:
         else:
             return
 
-    # Wipe SMB Policies
-    def wipe_smb_policies(self, auto_wipe=False):
-        if self.proceed_to_wipe("smb policies", auto_wipe=auto_wipe):
-            print("TODO: Wipe SMB policies")
+    # Wipe SMB client policies
+    def wipe_smb_client_policies(self, auto_wipe=False):
+        if self.proceed_to_wipe("smb client policies", auto_wipe=auto_wipe):
+            pols = self.fb.get_smb_client_policies()
+            if pols:
+                for pol in pols:
+                    self.fb.delete_smb_client_policy(pol["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: SMB client policies already wiped.", show_output=True)
+        else:
+            return
+        
+    # Wipe SMB share policies
+    def wipe_smb_share_policies(self, auto_wipe=False):
+        if self.proceed_to_wipe("smb share policies", auto_wipe=auto_wipe):
+            pols = self.fb.get_smb_share_policies()
+            if pols:
+                for pol in pols:
+                    self.fb.delete_smb_share_policy(pol["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: SMB share policies already wiped.", show_output=True)
         else:
             return
 
