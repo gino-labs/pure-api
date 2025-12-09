@@ -243,7 +243,7 @@ class FBWiper:
                         "ca_certificate": {"name": None, "id": None},
                         "ca_certificate_group": {"name": None, "id": None},
                         "enabled": False,
-                        "management": {"uuser_login_attribute": None, "user_object_class": None},
+                        "management": {"user_login_attribute": None, "user_object_class": None},
                         "nfs": {"nis_domains": [], "nis_servers": []},
                         "smb": {"join_ou": None},
                         "uris": []
