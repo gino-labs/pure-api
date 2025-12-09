@@ -325,8 +325,23 @@ class FBWiper:
     # Wipe general array configurations
     def wipe_array_configurations(self, auto_wipe=False):
         if self.proceed_to_wipe("array configurations", auto_wipe=auto_wipe):
-            array_cfgs = self.fb.get_array_configurations()
-            print("TODO: Wipe array configurations")
+            array_cfg = [cfg for cfg in self.fb.get_array_configurations() if "flashblade" not in cfg["name"] or "Decommissioned: Legacy FlashBlade (DO NOT USE)" != cfg["banner"] or cfg["ntp_servers"] != [] or cfg["time_zone"] != "UTC"]
+            if array_cfg:
+                if "az" in self.fb_name:
+                    num = "01"
+                elif "co" in self.fb_name:
+                    num = "02"
+                else:
+                    num = "03"
+                payload = {
+                    "name": "flashblade" + num,
+                    "banner": "Decommissioned: Legacy FlashBlade (DO NOT USE)",
+                    "ntp_servers": [],
+                    "time_zone": "UTC"
+                }
+                self.fb.patch_array_configurations(payload)
+            else:
+                self.logger.write_log(f"{self.fb_name}: array configurations already wiped.", show_output=True)
         else:
             return
 

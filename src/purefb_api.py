@@ -966,6 +966,13 @@ class FlashBladeAPI:
         msg = "quotas settings"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Patch array configurations
+    def patch_array_configurations(self, payload, dumpjson=False):
+        url = self.baseurl + f"array configurations"
+        msg = "array configurations"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
 
 
     ##########################
