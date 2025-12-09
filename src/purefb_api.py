@@ -263,7 +263,7 @@ class FlashBladeAPI:
                 sys.exit(1)
 
     # Parse json data or rest request items
-    def Parse_Data(self, data, dump=False, no_dict=False):
+    def Parse_Data(self, data, dump=False, no_dict=True):
         if "errors" not in data:
             try:
                 if "items" not in data:
