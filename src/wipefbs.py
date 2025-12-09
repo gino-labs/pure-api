@@ -169,6 +169,7 @@ class FBWiper:
     def wipe_all(self, wipe_mgt_settings=True, auto_wipe=False):
         self.wipe_file_replication(auto_wipe=auto_wipe)
         self.wipe_object_replication(auto_wipe=auto_wipe)
+        self.wipe_object_store_remote_credentials(auto_wipe=auto_wipe)
         self.wipe_interfaces(auto_wipe=auto_wipe)
         self.wipe_subnets(auto_wipe=auto_wipe)
         self.wipe_nfs_policies(auto_wipe=auto_wipe)
