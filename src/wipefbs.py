@@ -233,34 +233,53 @@ class FBWiper:
     # Wipe directory services
     def wipe_directory_services(self, auto_wipe=False):
         if self.proceed_to_wipe("directory services", auto_wipe=auto_wipe):
-            dir_svcs = self.fb.get_directory_services()
+            dir_svcs = [svc for svc in self.fb.get_directory_services() if svc["base_dn"] or svc["bind_user"] or svc["bind_password"] or svc["enabled"]]
             if dir_svcs:
+                payload = {
+                    "base_dn": "",
+                    "bind_password": "",
+                    "bind_user": "",
+                    "ca_certificate": {"name": None, "id": None},
+                    "ca_certificate_group": {"name": None, "id": None},
+                    "enabled": False,
+                    "management": {"user_login_attribute": None, "user_object_class": None},
+                    "nfs": {"nis_domains": [], "nis_servers": []},
+                    "smb": {"join_ou": None},
+                    "uris": []
+                }
                 for dir_svc in dir_svcs:
-                    payload = {
-                        "base_dn": None,
-                        "bind_password": None,
-                        "bind_user": None,
-                        "ca_certificate": {"name": None, "id": None},
-                        "ca_certificate_group": {"name": None, "id": None},
-                        "enabled": False,
-                        "management": {"user_login_attribute": None, "user_object_class": None},
-                        "nfs": {"nis_domains": [], "nis_servers": []},
-                        "smb": {"join_ou": None},
-                        "uris": []
-                    }
                     self.fb.patch_directory_services(dir_svc["name"], payload)
             else:
                 self.logger.write_log(f"{self.fb_name}: directory services already wiped.", show_output=True)
         else:
             return
 
+    # Wipe directory service roles
+    def wipe_directory_service_roles(self, auto_wipe=False):
+        if self.proceed_to_wipe("directory service roles", auto_wipe=auto_wipe):
+            roles = [role for role in self.fb.get_directory_service_roles() if role["group"] or role["group_base"]]
+            if roles:
+                payload = {"group": "", "group_base": ""}
+                for role in roles:
+                    self.fb.patch_directory_service_role(role["role"]["name"], payload)
+            else:
+                    self.logger.write_log(f"{self.fb_name}: directory service roles already wiped.", show_output=True)
+        else:
+            return
+
     # Wipe DNS configuration
     def wipe_dns(self, auto_wipe=False):
-        if self.proceed_to_wipe("DNS", auto_wipe=auto_wipe):
-            dns_srvs = self.fb.get_dns(dumpjson=True)
-            import sys
-            sys.exit(1)
-            print("TODO: Wipe DNS")
+        if self.proceed_to_wipe("DNS configurations", auto_wipe=auto_wipe):
+            dns_cfgs = [cfg for cfg in self.fb.get_dns() if cfg["domain"] != "local.arpa" or cfg["nameservers"] != []]
+            if dns_cfgs:
+                payload = {
+                    "domain": "local.arpa",
+                    "nameservers": []
+                }
+                for dns_cfg in dns_cfgs:
+                    self.fb.patch_dns(dns_cfg["name"], payload)
+            else:
+                self.logger.write_log(f"{self.fb_name}: DNS configurations already wiped.", show_output=True)
         else:
             return
 
