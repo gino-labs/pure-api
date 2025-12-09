@@ -140,8 +140,14 @@ class FBWiper:
             filesystems = self.fb.get_filesystems()
             if filesystems:
                 for fs in filesystems:
+                    payload = {
+                        "destroyed": True,
+                        "http": { "enabled": False },
+                        "nfs": { "v3_enabled": False, "v4_1_enabled": False},
+                        "smb": { "enabled": False }
+                    }
                     # Step 1. Patch
-                    self.fb.patch_filesystem(fs["name"], {"destroyed": True})
+                    self.fb.patch_filesystem(fs["name"], payload)
                     # Step 2. Delete
                     self.fb.delete_filesystem(fs["name"])
             else:
