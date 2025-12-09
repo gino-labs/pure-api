@@ -1036,3 +1036,10 @@ class FlashBladeAPI:
         msg = f"array connection: {remote_name}"
         data = self.REST_Request("deleete", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Delete syslog server
+    def delete_syslog_server(self, syslog_server, dumpjson=False):
+        url = self.baseurl + f"syslog-servers?names={syslog_server}"
+        msg = f"syslog server: {syslog_server}"
+        data = self.REST_Request("deleete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
