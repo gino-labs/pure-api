@@ -687,15 +687,16 @@ class FlashBladeAPI:
         return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
     
     # Get smtp servers
-    def get_smtp_servers(self, smtp_servers=None, dumpjson=False, no_dict=True):
-        if smtp_servers is not None:
-            smtp_list = self.to_csv(smtp_servers)
-            url = self.baseurl + f"smtp-servers?names={smtp_list}"
-            msg = f"smtp servers: {smtp_list}"
-        else:
-            url = self.baseurl + "smtp-servers"
-            msg = f"smtp servers"
-
+    def get_smtp_servers(self, dumpjson=False, no_dict=True):
+        url = self.baseurl + "smtp-servers"
+        msg = f"smtp servers"
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
+    
+    # Get quotas settings
+    def get_quotas_settings(self, dumpjson=False, no_dict=True):
+        url = self.baseurl + "quotas/settings"
+        msg = f"quotas settings"
         data = self.REST_Request("get", url, msg)
         return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
 
@@ -956,6 +957,13 @@ class FlashBladeAPI:
     def patch_smtp(self, payload, dumpjson=False):
         url = self.baseurl + f"smtp-servers"
         msg = "SMTP"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
+    
+    # Patch quota settings
+    def patch_quotas_settings(self, payload, dumpjson=False):
+        url = self.baseurl + f"quotas/settings"
+        msg = "quotas settings"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
 
