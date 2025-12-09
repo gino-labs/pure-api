@@ -229,7 +229,20 @@ class FBWiper:
                 self.logger.write_log(f"{self.fb_name}: external certificates already wiped.", show_output=True)
         else:
             return
-        
+
+    # Wipe directory service roles
+    def wipe_directory_service_roles(self, auto_wipe=False):
+        if self.proceed_to_wipe("directory service roles", auto_wipe=auto_wipe):
+            roles = [role for role in self.fb.get_directory_service_roles() if role["group"] or role["group_base"]]
+            if roles:
+                payload = {"group": "", "group_base": ""}
+                for role in roles:
+                    self.fb.patch_directory_service_role(role["role"]["name"], payload)
+            else:
+                    self.logger.write_log(f"{self.fb_name}: directory service roles already wiped.", show_output=True)
+        else:
+            return
+              
     # Wipe directory services
     def wipe_directory_services(self, auto_wipe=False):
         if self.proceed_to_wipe("directory services", auto_wipe=auto_wipe):
@@ -251,19 +264,6 @@ class FBWiper:
                     self.fb.patch_directory_services(dir_svc["name"], payload)
             else:
                 self.logger.write_log(f"{self.fb_name}: directory services already wiped.", show_output=True)
-        else:
-            return
-
-    # Wipe directory service roles
-    def wipe_directory_service_roles(self, auto_wipe=False):
-        if self.proceed_to_wipe("directory service roles", auto_wipe=auto_wipe):
-            roles = [role for role in self.fb.get_directory_service_roles() if role["group"] or role["group_base"]]
-            if roles:
-                payload = {"group": "", "group_base": ""}
-                for role in roles:
-                    self.fb.patch_directory_service_role(role["role"]["name"], payload)
-            else:
-                    self.logger.write_log(f"{self.fb_name}: directory service roles already wiped.", show_output=True)
         else:
             return
 
@@ -311,6 +311,7 @@ class FBWiper:
         if wipe_mgt_settings:
             self.wipe_syslog_servers(auto_wipe=auto_wipe)
             self.wipe_external_certificates(auto_wipe=auto_wipe)
+            self.wipe_directory_service_roles(auto_wipe=auto_wipe)
             self.wipe_directory_services(auto_wipe=auto_wipe)
             self.wipe_dns(auto_wipe=auto_wipe)
             self.wipe_array_configurations(auto_wipe=auto_wipe)
