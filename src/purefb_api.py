@@ -997,7 +997,7 @@ class FlashBladeAPI:
     
 
     # Delete factory reset token
-    def delete_factory_reset_token(self, dumpjson=False):
+    def delete_factory_reset_tokens(self, dumpjson=False):
         url = self.baseurl + "arrays/factory-reset-token"
         msg = "FACTORY RESET TOKEN"
         data = self.REST_Request("delete", url, msg)
