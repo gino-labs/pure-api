@@ -207,10 +207,12 @@ class FBWiper:
             return
 
     # Wipe syslog connections
-    def wipe_syslog_connections(self, auto_wipe=False):
-        if self.proceed_to_wipe("syslog server connections", auto_wipe=auto_wipe):
+    def wipe_syslog_servers(self, auto_wipe=False):
+        if self.proceed_to_wipe("syslog servers", auto_wipe=auto_wipe):
             log_srvs = self.fb.get_syslog_servers()
-            print("TODO: Wipe syslog server connections")
+            if log_srvs:
+                for srv in log_srvs:
+                    self.fb.delete_syslog_server(srv["name"])
         else:
             return
 
