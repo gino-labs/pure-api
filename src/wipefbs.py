@@ -234,17 +234,21 @@ class FBWiper:
     def wipe_directory_services(self, auto_wipe=False):
         if self.proceed_to_wipe("directory services", auto_wipe=auto_wipe):
             dir_svcs = self.fb.get_directory_services(dumpjson=True)
-            import sys
-            sys.exit(1)
             if dir_svcs:
                 for dir_svc in dir_svcs:
                     payload = {
-                        "base_dn": "",
-                        "bind_password": "",
-                        "bind_user": "",
-                        "ca_certificate_group": {"name": ""}
+                        "base_dn": None,
+                        "bind_password": None,
+                        "bind_user": None,
+                        "ca_certificate": {"name": None, "id": None},
+                        "ca_certificate_group": {"name": None, "id": None},
+                        "enabled": False,
+                        "management": {"uuser_login_attribute": None, "user_object_class": None},
+                        "nfs": {"nis_domains": [], "nis_servers": []},
+                        "smb": {"join_ou": None},
+                        "uris": []
                     }
-                    self.fb.patch_directory_services(dir_svc["name"])
+                    self.fb.patch_directory_services(dir_svc["name"], payload)
             else:
                 self.logger.write_log(f"{self.fb_name}: directory services already wiped.", show_output=True)
         else:
