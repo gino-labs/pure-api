@@ -32,7 +32,7 @@ class FBWiper:
                 for link in links:
                     self.fb.delete_filesystem_replica_link(link["local_file_system"]["name"], link["remote"]["name"])
             else:
-                self.logger.write_log(f"{self.fb_name}: replication links already wiped.")
+                self.logger.write_log(f"{self.fb_name}: replication links already wiped.", show_output=True)
         else:
             return
 
