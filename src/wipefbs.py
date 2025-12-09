@@ -87,8 +87,13 @@ class FBWiper:
 
     # Wipe NFS policies
     def wipe_nfs_policies(self, auto_wipe=False):
-        if self.proceed_to_wipe("nfs policies", auto_wipe=auto_wipe):
-            print("TODO: Wipe NFS policies")
+        if self.proceed_to_wipe("NFS export policies", auto_wipe=auto_wipe):
+            pols = self.fb.get_nfs_export_policies()
+            if pols:
+                for pol in pols:
+                    self.fb.delete_nfs_export_policy(pol["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: NFS export policies already wiped.", show_output=True)
         else:
             return
 
