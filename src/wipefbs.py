@@ -233,7 +233,7 @@ class FBWiper:
     # Wipe directory services
     def wipe_directory_services(self, auto_wipe=False):
         if self.proceed_to_wipe("directory services", auto_wipe=auto_wipe):
-            dir_svcs = self.fb.get_directory_services(dumpjson=True)
+            dir_svcs = self.fb.get_directory_services()
             if dir_svcs:
                 for dir_svc in dir_svcs:
                     payload = {
@@ -257,7 +257,9 @@ class FBWiper:
     # Wipe DNS configuration
     def wipe_dns(self, auto_wipe=False):
         if self.proceed_to_wipe("DNS", auto_wipe=auto_wipe):
-            dns_srvs = self.fb.get_dns()
+            dns_srvs = self.fb.get_dns(dumpjson=True)
+            import sys
+            sys.exit(1)
             print("TODO: Wipe DNS")
         else:
             return
