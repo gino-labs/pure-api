@@ -158,14 +158,24 @@ class FBWiper:
     # Wipe object store access keys
     def wipe_object_store_keys(self, auto_wipe=False):
         if self.proceed_to_wipe("object store access keys", auto_wipe=auto_wipe):
-            print("TODO: Wipe object store access keys")
+            keys = self.fb.get_object_store_access_keys()
+            if keys:
+                for key in keys:
+                    self.fb.delete_object_store_access_key(key["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: object store access keys already wiped.", show_output=True)
         else:
             return
 
     # Wipe object store users
     def wipe_object_store_users(self, auto_wipe=False):
         if self.proceed_to_wipe("object sotre users", auto_wipe=auto_wipe):
-            print("TODO: Wipe object store users")
+            users = self.fb.get_object_store_users()
+            if users:
+                for user in users:
+                    self.fb.delete_object_store_user(user["name"])
+            else:
+                self.logger.write_log(f"{self.fb_name}: object store users already wiped.", show_output=True)
         else:
             return
 
