@@ -76,14 +76,7 @@ class FBWiper:
     # Wipe subnets
     def wipe_subnets(self, auto_wipe=False):
         if self.proceed_to_wipe("subnets", auto_wipe=auto_wipe):
-            subnets = self.fb.get_subnets(dumpjson=True)
-            import sys
-            sys.exit(1) 
-            if subnets:
-                subs = [sub for sub in subnets if "management" not in sub["services"] and "support" not in sub["services"]]
-            else:
-                subs = subnets
-
+            subs = [sub for sub in self.fb.get_subnets() if "management" not in sub["services"] and "support" not in sub["services"]]
             if subs:
                 for sub in subs:
                     self.fb.delete_subnet(sub["name"])
