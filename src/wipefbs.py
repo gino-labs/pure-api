@@ -5,8 +5,8 @@ import os
 
 # FlashBlade Wiper Class
 class FBWiper:
-    def __init__(self, fb_inst, fb_name="FlashBlade"):
-        self.fb = fb_inst
+    def __init__(self, fb_name, fb_data, fb_mgt, fb_token):
+        self.fb = FlashBladeAPI(fb_data, fb_mgt, fb_token)
         self.fb_name = fb_name
         self.logger = PureLog()
 
@@ -27,7 +27,7 @@ class FBWiper:
     # Wipe file replication links
     def wipe_file_replication(self, auto_wipe=False):
         if self.proceed_to_wipe("file replication", auto_wipe=auto_wipe):
-            print("TODO: Wipe file replication")
+            links = self.fb.get_filesystem_replica_links(dumpjson=True)
         else:
             return
 
@@ -170,42 +170,18 @@ class FBWiper:
 
 # Main
 if __name__ == "__main__":
-    # AZ Legacy
-    azfb = {
-        "name": os.getenv("AZFB_NAME"),
-        "mgt": os.getenv("AZFB_MGT"),
-        "data": os.getenv("AZFB_DATA"),
-        "token": os.getenv("AZFB_TOKEN")
-    }
-    az = FlashBladeAPI(azfb["data"], azfb["mgt"], azfb["token"])
-
     # Wipe AZ Legacy FlashBlade
-    azwiper = FBWiper(az, azfb["name"])
+    az = [os.getenv("AZFB_NAME"),os.getenv("AZFB_MGT"),os.getenv("AZFB_DATA"),os.getenv("AZFB_TOKEN")]
+    azwiper = FBWiper(*az)
     azwiper.wipe_all(auto_wipe=True)
 
-    # CO Legacy
-    cofb = {
-        "name": os.getenv("COFB_NAME"),
-        "mgt": os.getenv("COFB_MGT"),
-        "data": os.getenv("COFB_DATA"),
-        "token": os.getenv("COFB_TOKEN")
-    }
-    co = FlashBladeAPI(cofb["data"], cofb["mgt"], cofb["token"])
-
     # Wipe CO Legacy FlashBlade
-    cowiper = FBWiper(co, cofb["name"])
+    co = [os.getenv("COFB_NAME"),os.getenv("COFB_MGT"),os.getenv("COFB_DATA"),os.getenv("COFB_TOKEN")]
+    cowiper = FBWiper(*co)
     cowiper.wipe_all(auto_wipe=True)
 
-    # VA Legacy
-    vafb = {
-        "name": os.getenv("VAFB_NAME"),
-        "mgt": os.getenv("VAFB_MGT"),
-        "data": os.getenv("VAFB_DATA"),
-        "token": os.getenv("VAFB_TOKEN")
-    }
-    va = FlashBladeAPI(vafb["data"], vafb["mgt"], vafb["token"])
-
     # Wipe VA Legacy FlashBlade
-    vawiper = FBWiper(va, vafb["name"])
+    va = [os.getenv("VAFB_NAME"),os.getenv("VAFB_MGT"),os.getenv("VAFB_DATA"),os.getenv("VAFB_TOKEN")]
+    vawiper = FBWiper(*va)
     vawiper.wipe_all(auto_wipe=True)
     
