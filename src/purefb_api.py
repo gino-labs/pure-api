@@ -309,6 +309,7 @@ class FlashBladeAPI:
     ### GET API Section ###
     #######################
 
+
     # General get request by passing endpoint
     def get_endpoint(self, endpoint, params=None, dumpjson=False, no_dict=True, raw=False):
         if params is not None:
@@ -336,6 +337,13 @@ class FlashBladeAPI:
             if dumpjson:
                 print(json.dumps(data, indent=4))
             return data["versions"]
+        
+    # Get factory reset token
+    def get_factory_reset_token(self, dumpjson=False, no_dict=True):
+        url = self.baseurl + "arrays/factory-reset-token"
+        msg = "FACTORY RESET TOKEN"
+        data = self.REST_Request("get", url, msg)
+        return self.Parse_Data(data, dump=dumpjson, no_dict=no_dict)
             
     # Get Filesystems
     def get_filesystems(self, filesystems=None, dumpjson=False, no_dict=True):
@@ -706,6 +714,13 @@ class FlashBladeAPI:
     ########################
 
 
+    # Post factory reset token
+    def post_factory_reset_token(self, dumpjson=True):
+        url = self.baseurl + "arrays/factory-reset-token"
+        msg = "FACTORY RESET TOKEN"
+        data = self.REST_Request("post", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
+
     # Post a filesystem (default NFS)
     def post_filesystem(self, filesystem, payload, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}&default_exports=nfs"
@@ -841,6 +856,7 @@ class FlashBladeAPI:
         msg = f"group/certificate: {group}/{certificate}"
         data = self.REST_Request("post", url, msg)
         return self.Parse_Data(data, dump=dumpjson)
+    
 
     #########################
     ### PATCH API Section ###
@@ -979,6 +995,13 @@ class FlashBladeAPI:
     ### DELETE API Section ###
     ##########################
     
+
+    # Delete factory reset token
+    def delete_factory_reset_token(self, dumpjson=False):
+        url = self.baseurl + "arrays/factory-reset-token"
+        msg = "FACTORY RESET TOKEN"
+        data = self.REST_Request("delete", url, msg)
+        return self.Parse_Data(data, dump=dumpjson)
 
     # Delete a filesytem
     def delete_filesystem(self, filesystem, dumpjson=False):
