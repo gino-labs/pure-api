@@ -63,7 +63,7 @@ class FBWiper:
     # Wipe data interfaces
     def wipe_interfaces(self, auto_wipe=False):
         if self.proceed_to_wipe("interfaces", auto_wipe=auto_wipe):
-            # Only data / replication interfaces
+            # Only non management and support interfaces
             ifaces = [iface for iface in self.fb.get_interfaces() if "management" not in iface["services"] and "support" not in iface["services"]]
             if ifaces:
                 for iface in ifaces:
@@ -76,7 +76,14 @@ class FBWiper:
     # Wipe subnets
     def wipe_subnets(self, auto_wipe=False):
         if self.proceed_to_wipe("subnets", auto_wipe=auto_wipe):
-            subs = [sub for sub in self.fb.get_subnets() if "management" not in sub["services"] and "support" not in sub["services"]]
+            subnets = self.fb.get_subnets(dumpjson=True)
+            import sys
+            sys.exit(1) 
+            if subnets:
+                subs = [sub for sub in subnets if "management" not in sub["services"] and "support" not in sub["services"]]
+            else:
+                subs = subnets
+
             if subs:
                 for sub in subs:
                     self.fb.delete_subnet(sub["name"])
