@@ -222,6 +222,15 @@ class ConfigMigrator:
                     "connection_key": conn_key
                 }
                 self.legacy.post_array_connection(payload)
+                
+                s200_array_conns = self.s200.get_array_connections()
+
+                if s200_array_conns and s200_array_conns["replication_address"] != rrc_site.get_pb1_replication_ip():
+                    remote_name = rrc_site.get_pb1_name()
+                    replica_patch = {"replication_address": rrc_site.get_pb1_replication_ip()}
+                    self.s200.patch_array_connection(remote_name, replica_patch)
+                else:
+                    self.logger.write_log(f"Remote replication address to {rrc_site.get_pb1_name()} already configured.", show_output=True)
             except ApiError as e:
                 e.check_details()
 

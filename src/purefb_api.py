@@ -989,6 +989,13 @@ class FlashBladeAPI:
         msg = "array configurations"
         data = self.REST_Request("patch", url, msg, payload=payload)
         return self.Parse_Data(data, dump=dumpjson)
+    
+    # Patch array connection
+    def patch_array_connection(self, remote_name, payload, dumpjson=False):
+        url = self.baseurl + f"array-connections?remote_names={remote_name}"
+        msg = f"array connection: {remote_name}"
+        data = self.REST_Request("patch", url, msg, payload=payload)
+        return self.Parse_Data(data, dump=dumpjson)
 
 
     ##########################
