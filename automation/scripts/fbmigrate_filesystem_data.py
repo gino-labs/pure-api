@@ -2,7 +2,7 @@
 from purefb_api import *
 from purefb_log import *
 from purefb_subprocess import PureSubprocessor
-from fbmigrate_incremental_rsync import PureRsyncer
+from scripts.fbmigrate_incremental_rsync import PureRsyncer
 
 
 # Site environment variables sourced from shell

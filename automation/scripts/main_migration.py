@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 from purefb_api import *
 from purefb_log import *
-from fbmigrate_configs import *
-from fbmigrate_object_data import *
-from fbmigrate_filesystem_data import *
-from fbmigrate_incremental_rsync import *
+from scripts.fbmigrate_configs import *
+from scripts.fbmigrate_object_data import *
+from scripts.fbmigrate_filesystem_data import *
+from scripts.fbmigrate_incremental_rsync import *
 
 # Main
 if __name__ == "__main__":

@@ -3,7 +3,7 @@ import json
 import time
 from purefb_log import *
 from purefb_api import *
-from fbmigrate_configs import ConfigMigrator
+from scripts.fbmigrate_configs import ConfigMigrator
 
 
 if __name__ == "__main__":

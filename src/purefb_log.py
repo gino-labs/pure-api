@@ -1,138 +1,85 @@
-import os
 import sys
 import time
-import json
-from datetime import datetime
+import logging
+from pathlib import Path
 
-class PureLog:
-    def __init__(self):
-        self.logfile = f"{datetime.now().strftime('%d%b%Y')}-pure-python.log"
-        self.logdir = "logs"
+class PureLogger:
+    def __init__(self, name="FlashBlade"):
+        self.logger = logging.getLogger(name)
+        self.formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%d%b%Y %H:%M:%S")
+ 
+    def setup_logging(self, logpath: str, console=True, level="DEBUG"):
+        if isinstance(level, str) and (level not in logging._nameToLevel):
+            sys.exit(f"Failed to set up logging, level {level} is invalid")
+        elif isinstance(level, int) and (level not in logging._levelToName):
+            sys.exit(f"Failed to set up logging, level {level} is invalid")
+        elif Path(logpath).is_dir():
+            sys.exit(f"Log path should be a file not a directory: {logpath}")
+        elif not Path(logpath).parent.exists():
+            sys.exit(f"Log path does not exist: {Path(logpath).parent}")
+            
+        if self.logger.handlers:
+            return self.logger
+        
+        if isinstance(level, str):
+            level = logging._nameToLevel[level]
 
-    def timestamp(self):
-        now = datetime.now()
-        formatted_timestamp = f"{now.strftime('%d%b%Y-%H:%M:%S')}"
-        return formatted_timestamp
-    
-    def set_logfile(self, logfile, no_date=False):
-        if no_date:
-            self.logfile = f"{logfile}.log"
-        else:
-            self.logfile = f"{logfile}-{datetime.now().strftime('%d%b%Y')}.log"
+        self.logger.setLevel(level)
+        self.logger.propagate = False
+        
+        fh = logging.FileHandler(logpath)
+        fh.setLevel(level)
+        fh.setFormatter(self.formatter)
+        self.logger.addHandler(fh)
 
-    def set_logdir(self, logdir):
-        self.logdir = f"logs/{logdir}"
+        if console:
+            ch = logging.StreamHandler(sys.stdout)
+            ch.setLevel(level)
+            ch.setFormatter(self.formatter)
+            self.logger.addHandler(ch)
 
-    def get_logfile_path(self):
-        return f"{self.logdir}/{self.logfile}"
-    
-    def get_logdir_path(self):
-        return self.logdir
+    def toggle_console(self, enabled: bool):
+        for h in self.logger.handlers:
+            if isinstance(h, logging.StreamHandler):
+                h.setLevel(logging.INFO if enabled else logging.CRITICAL + 1)
 
-    def write_log(self, message, jsondata=None, show_output=False, end_print="\n\n"):
-        os.makedirs(self.logdir, exist_ok=True)
-        todays_log = os.path.join(self.logdir, self.logfile)
-        stamp = self.timestamp()
-
-        with open(todays_log, 'a') as log:
-            log.write(f"[{stamp}] {message}\n")
-
-        if show_output:
-            print(message, end=end_print)
-
-        if jsondata:
-            with open(todays_log, 'a') as log:
-                json.dump(jsondata, log, indent=4)
-                log.write("\n")
-            if show_output:
-                print(json.dumps(jsondata, indent=4))
-                print()
-
-    # Dump a json config into logs/pure_configs/<name>.json
-    def dump_config(self, json_input, filename):
-        os.makedirs("logs/pure_configs", exist_ok=True)
-        with open(f"logs/pure_configs/{filename}.json", "w") as cfg:
-            json.dump(json_input, cfg, indent=4)
-            cfg.write("\n")
-
-    # Load a json config into logs/pure_configs/<name>.json
-    def load_config(self, filename):
-        if not filename.endswith(".json"):
-            filename += ".json"
-        with open(f"logs/pure_configs/{filename}", "r") as cfg:
-            data = json.load(cfg)
-        return data
 
 class Stopwatch:
     def __init__(self):
         self.start_time = None
         self.end_time = None
-        self.todays_log = PureLog()
 
-    def set_log(self, logger_instance):
-        self.todays_log = logger_instance
-
-    def start_stopwatch(self, show_start_time=True):
+    def start_stopwatch(self):
         self.start_time = time.time()
-        if show_start_time:
-            formatted = time.strftime("%H:%M:%S", time.localtime(self.start_time))
-            self.todays_log.write_log(f"Stopwatch started: {formatted}", show_output=True)
         
-    def end_stopwatch(self, showtime=True):
+    def end_stopwatch(self):
         self.end_time = time.time()
-        if showtime:
-            self.show_time_elapsed()
 
-    def get_time_elapsed(self, time_string=False, dictionary=False):
+    def get_time_elapsed(self, formatted=True):
         if not self.start_time or not self.end_time:
             return 0
-        
-        elapsed_time_dict = {
-            "hours": int((self.end_time - self.start_time) // 3600),
-            "minutes": int(((self.end_time - self.start_time) % 3600) // 60),
-            "seconds": round((self.end_time - self.start_time) % 60, 2)
-        }
-
-        time_elapsed_string = "Time elapsed: "
-        
-        if time_string:
-            if elapsed_time_dict.get("hours") > 0:
-                time_elapsed_string += f"{elapsed_time_dict.get('hours')} hours, "
-            
-            if elapsed_time_dict.get("minutes"):
-                time_elapsed_string += f"{elapsed_time_dict.get('minutes')} minutes, "
-            
-            time_elapsed_string += f"{elapsed_time_dict.get('seconds')} seconds"
-            return time_elapsed_string
-        elif dictionary:
-            return elapsed_time_dict
+        elif formatted:
+            hrs = int(self.end_time - self.start_time // 3600)
+            mins = int(self.end_time - self.start_time % 3600 // 60)
+            secs = round(self.end_time - self.start_time % 60, 2)
+            return f"{hrs} hours, {mins} minutes, {secs} seconds"
         else:
-            return self.end_time - self.start_time
+            return int(self.end_time - self.start_time)
         
-    def countdown(self, seconds):
+    def countdown(self, seconds: int):
         for i in range(seconds, -1, -1):
             sys.stdout.write(f"\rCountdown: {i:02d}")
             sys.stdout.flush()
             time.sleep(1)
-        print("\nTime Elapsed. Continuing...")
-        print()
 
     def pause(self):
-        input = ("Press enter to continue...")
-        return
-        
-    def show_time_elapsed(self, show_output=True):
-        time_elapsed = self.get_time_elapsed(dictionary=True)
-        time_string = "Time elapsed: "
-        
-        if time_elapsed.get("hours") > 0:
-            time_string += f"{time_elapsed.get('hours')} hours, "
-        
-        if time_elapsed.get("minutes"):
-            time_string += f"{time_elapsed.get('minutes')} minutes, "
-        
-        time_string += f"{time_elapsed.get('seconds')} seconds"
-        self.todays_log.write_log(time_string, show_output=show_output)
+        return input("Press enter to continue...")
+
+    def show_time_elapsed(self):
+        hrs = int(self.end_time - self.start_time // 3600)
+        mins = int(self.end_time - self.start_time % 3600 // 60)
+        secs = round(self.end_time - self.start_time % 60, 2)
+        print(f"Time Elapsed: {hrs} hours, {mins} minutes, {secs} seconds")
 
 
 
