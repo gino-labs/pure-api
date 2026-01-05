@@ -98,7 +98,7 @@ class PureRsyncer:
     # Define file systems that need to be migrated (Non-replication)
     def get_filesystems_to_rsync(self):
 
-        legacy_replica_links = self.legacy.get_filesytem_replica_links()
+        legacy_replica_links = self.legacy.get_filesystem_replica_links()
         legacy_filesystems = self.legacy.get_filesystems()
 
         legacy_fs_list = [fs["name"] for fs in legacy_filesystems]

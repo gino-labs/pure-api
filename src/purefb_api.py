@@ -882,7 +882,7 @@ class FlashBladeAPI:
     def patch_nfs_rule(self, filesystem, rule, remove=False, dumpjson=False):
         url = self.baseurl + f"file-systems?names={filesystem}"
         msg = f"filesystem ({filesystem}) NFS rule: {rule}"
-        target_fs = self.get_filesystems(filesystems=filesystem)
+        target_fs = self.get_filesystems(filesystems=filesystem)[0]
         if not remove and rule in target_fs["nfs"]["rules"]:
             self.logger.write_log(f"Rule {rule} for filesystem {filesystem} already exists.", show_output=True)
             return
