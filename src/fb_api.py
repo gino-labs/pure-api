@@ -7,118 +7,71 @@ import requests
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
-class EnvVars:
-    def __init__(self):
-        self.pb1_name = self.getenv_required("PB1_NAME")
-        self.pb2_name = self.getenv_required("PB2_NAME")
-        self.pb1_mgt_ip = self.getenv_required("PB1_MGT")
-        self.pb2_mgt_ip = self.getenv_required("PB2_MGT")
-        self.pb1_data_ip = self.getenv_required("PB1_DATA")
-        self.pb2_data_ip = self.getenv_required("PB2_DATA")
-        self.data_vlan = self.getenv_required("PB_DATA_VLAN")
-        self.pb1_replication_ip = self.getenv_required("PB1_REPLICATION")
-        self.pb2_replication_ip = self.getenv_required("PB2_REPLICATION")
-        self.pb1_api_token = self.getenv_required("PB1_API_TOKEN")
-        self.pb2_api_token = self.getenv_required("PB2_API_TOKEN")
-
-    def getenv_required(self, name):
-        val = os.getenv(name)
-        if not val or not val.strip():
-            raise RuntimeError(f"Missing environment variable: {name}")
-        return val.strip()
-
-
-# Custom exception class 
 class ApiError(Exception):
-    def __init__(self, message, code, context, logger):
+    def __init__(self, message: str, code: int, context: str):
         self.code = code
         self.context = context
         self.message = message
-        self.logger = logger
-        super().__init__(f"[Code: {code}, Context: {context}] {message}")
-
-    def check_details(self):
-        self.logger.error("API error code: %d", self.code)
-        self.logger.error("API error context: %s", self.context)
-        self.logger.error("API error message: %s", self.message)
-
+        super().__init__(f"API Error:\n\tCode: {code} \n\tContext: {context} \n\t{message}")
 
 class FlashBladeAPI:
-    def __init__(self, data_ip, mgt_ip, api_token, logger):
-        self.data_ip = data_ip
+    def __init__(self, mgt_ip: str, api_token: str):
         self.mgt_ip = mgt_ip
         self.api_token = api_token
         self.baseurl = f"https://{mgt_ip}/api/2.latest/"
-        self.logger = logger
-    
-    def get_authentication_token(self):
+        self.session = requests.Session()
+        self.name = ""
+
+    def configure(self):
+        """Configure instance attributes after successful api login"""
+
         url = f"https://{self.mgt_ip}/api/login"
 
-        headers = {
-        "api-token": self.api_token,
-        "Content-Type": "application/json"
-        }
-        response = requests.post(url, headers=headers, verify=False)
+        login_response = requests.post(url, headers={"api-token": self.api_token}, verify=False)
+        login_response.raise_for_status()
 
-        if response.status_code == 200:
-            return response.headers.get("x-auth-token")
+        self.session.verify = False
+        self.session.headers.update({
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "x-auth-token": login_response.headers.get("x-auth-token")
+        })
+
+        array_response = self.session.get(self.baseurl + "arrays")
+        array_response.raise_for_status()
+
+        data = array_response.json()
+        array = data["items"][0]
+        self.name = array["name"]
+
+    def api_request(self, method: str, url: str, **kwargs):
+        """Generic base api request for all methods"""
+
+        method = str(method).upper()
+        if method not in ("GET", "POST", "PATCH", "DELETE"):
+            raise ValueError(f"Invalid method: {method}")
+        
+        if method in ("POST", "PATCH"):
+            response = self.session.request(method, url, json=kwargs["payload"])
         else:
-            self.logger.error("Status Code: %d", response.status_code)
-            self.logger.error("Response body: %s", response.text)
-            sys.exit(1)
-    
-    def set_headers(self):
-        headers = {
-            "x-auth-token": self.get_authentication_token(),
-            "Content-Type": "application/json"
-        }
-        return headers
+            response = self.session.request(method, url)
+        
+        response.raise_for_status()
+        data = response.json() if response.content else None
 
-    def api_request(self, method: str, url: str, requested_resource: str, payload=None):
-        method = str(method).lower()
-        if method == "get":
-            response = requests.get(url, headers=self.set_headers(), verify=False)
-        elif method == "post":
-            response = requests.post(url, headers=self.set_headers(), json=payload, verify=False)
-        elif method == "patch":
-            response = requests.patch(url, headers=self.set_headers(), json=payload, verify=False)
-        elif method == "delete":
-            response = requests.delete(url, headers=self.set_headers(), verify=False)
-        else:
-            self.logger.error("Invalid method: %s", method)
-            sys.exit(1)
-    
-        if 200 <= response.status_code < 300:
-            self.logger.toggle_console(False)
-            self.logger.info("%s success for %s", method.upper(), requested_resource)
-            if method == "delete":
-                return {"status_code": response.status_code, "text": response.text}
-            else:
-                return response.json()
-        else:
-            self.logger.toggle_console(True)
-            self.logger.error("%s success for %s", method.upper(), requested_resource)
-            self.logger.error("HTTP status code: %s", response.status_code)
-            self.logger.error("Response body: %s", response.text)
-            sys.exit(1)
-
-    # Parse json data or rest request items
-    def parse_data(self, data, show_all_data=False, dumpjson=False):
-        if dumpjson:
-            print(json.dumps(data, indent=4))
-
+        if data is None:
+            return
+        
         if "errors" in data:
-            self.logger.toggle_console(True)
             err_code = data["errors"][0]["code"]
             err_context = data["errors"][0]["context"]
             err_msg = data["errors"][0]["message"]
             raise ApiError(err_code, err_context, err_msg)
-        elif "items" not in data or show_all_data:
-            return data
-        else:
+        
+        if "items" in data:
             return data["items"]
-
+        else:
+            return data
 
     # Helper function to return a csv string or single string
     def to_csv(self, value):
