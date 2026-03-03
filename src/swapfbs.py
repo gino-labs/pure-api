@@ -38,9 +38,6 @@ for fs in legacy_filesystems:
             "v4_1_enabled": fs["nfs"]["v4_1_enabled"],
             "rules": fs["nfs"]["rules"]
         },
-        "http": {
-            "enabled": fs["http"]["enabled"]
-        },
         "writable": True,
         "requested_promotion_state": "promoted" 
     }
