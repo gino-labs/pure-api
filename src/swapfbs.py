@@ -87,7 +87,7 @@ for iface200 in s200_interfaces:
 logger.write_log("Interfaces that are using the same subnets.", jsondata=interfaces_matching_subnets, show_output=True)
 
 # Get file system replica links on Legacy
-replication_filesystems = [link["local_file_system"]["name"] for link in legacy.get_filesytem_replica_links()]
+replication_filesystems = [link["local_file_system"]["name"] for link in legacy.get_filesystem_replica_links()]
 
 # Get bucket replica links on legacy
 replication_buckets = [link["local_bucket"]["name"] for link in legacy.get_bucket_replia_links()]
