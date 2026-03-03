@@ -113,6 +113,7 @@ logger.write_log(f"Inventory created: ansible/inventory/{inventory_filename}", s
 
 # Create final snapshots on Legacy and wait 30 seconds for them to settle #
 for fs in legacy_filesystems:
+    # TODO Evaluate error/handling
     try:
         if fs["promotion_status"] == "promoted":
             legacy.post_filesystem_snapshot(fs["name"], "pre-swap")
@@ -131,6 +132,7 @@ timer.countdown(30)
 
 # Demote / Disable each file system on Legacy (Handle exception: non-replication snapshot error, skip demotion)
 for fs in legacy_filesystems:
+    # TODO Evaluate error/handling
     try:
         demote_payload = {
             "writable": False,
@@ -204,6 +206,8 @@ for fs in s200_filesystems:
 
 # Run ansible playbook with nfs client inventory and production IP variable
 print("Enter root password for ansible playbook.")
+
+# FIXME Hard-Coded inventory
 subprocess.run(["ansible-playbook", "-i", f"inventory/az_inventory.json", "-e", f"pure_ips={production_ips}", "-k", "remount-pure.yml"], cwd="ansible")
 
 # End stopwatch for script run time
