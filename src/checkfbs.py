@@ -205,8 +205,8 @@ def check_directory_services(show_only_diffs=True):
 def check_dns(show_only_diffs=True):
     logger.write_log("Check if DNS configurations are valid for s200.")
 
-    legacy_dns = legacy.get_dns()
-    s200_dns = s200.get_dns()
+    legacy_dns = legacy.get_dns()[0]
+    s200_dns = s200.get_dns()[0]
 
     final_dict = {
         "legacy_dns": {
@@ -237,8 +237,8 @@ def check_dns(show_only_diffs=True):
 def check_arrays(show_only_diffs=True):
     logger.write_log("Check if array configurations are valid for s200.")
 
-    legacy_array = legacy.get_array_configurations()
-    s200_array = s200.get_array_configurations()
+    legacy_array = legacy.get_array_configurations()[0]
+    s200_array = s200.get_array_configurations()[0]
 
     final_dict = {
         legacy_array["name"]: {
@@ -271,6 +271,41 @@ def check_arrays(show_only_diffs=True):
     else:
         logger.write_log("Array configurations match for both legacy and s200.", show_output=True)
 
+# Check file systems match, if not show differences
+def check_file_system_sizes():
+    def h_readable_size(bytes):
+        units = ["B", "KB", "MB", "GB", "TB"]
+        size = float(bytes)
+        for unit in units:
+            if size < 1024:
+                return f"{size:.1f}{unit}"
+            size /= 1024
+        return f"{size:.1f}PB"
+    
+    logger.write_log("Checking if file system names match between FBs.", show_output=True)
+
+    legacy_filesystems = legacy.get_filesystems()
+    s200_filesystems = s200.get_filesystems()
+    
+    size_data = []
+
+    for lfs in legacy_filesystems:
+        for sfs in s200_filesystems:
+            if lfs["name"] == sfs["name"]:
+                lfs_size = lfs["space"]["total_physical"]
+                sfs_size = sfs["space"]["total_physical"]
+                dif_size = abs(lfs_size - sfs_size)
+                data = {
+                    "filesystem": lfs["name"],
+                    "size_on_legacy": h_readable_size(lfs_size),
+                    "size_on_s200": h_readable_size(sfs_size),
+                    "size_diff": h_readable_size(dif_size)
+                }
+                size_data.append(data)
+                break
+    logger.write_log(f"File System Size Differences.", jsondata=size_data, show_output=True)
+
+
 if __name__ == "__main__":
     check_file_systems()
     check_snapshot_policies()
@@ -282,3 +317,4 @@ if __name__ == "__main__":
     check_directory_services()
     check_dns()
     check_arrays()
+    check_file_system_sizes()
