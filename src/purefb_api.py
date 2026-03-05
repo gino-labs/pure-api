@@ -233,7 +233,7 @@ class FlashBladeAPI:
             return True
 
     # Make a api request
-    def REST_Request(self, method, url, message, payload=None, show_output=True):
+    def REST_Request(self, method, url, message, payload=None, show_output=False):
         method = str(method).lower()
         if method == "get":
             response = requests.get(url, headers=self.auth_headers, verify=False)
