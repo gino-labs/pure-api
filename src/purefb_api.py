@@ -262,7 +262,7 @@ class FlashBladeAPI:
                 print(f"Exception occurred: {type(e).__name__} -> {e}")
                 sys.exit(1)
 
-    # Parse json data or rest request items
+    # Parse json data or rest request items #NOTE no_dict returns LIST even if single item by default
     def Parse_Data(self, data, dump=False, no_dict=True):
         if "errors" not in data:
             try:
