@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 import subprocess
-from purefb_log import *
+from util.pure_logging import *
 
 class PureSubprocessor:
     def __init__(self, filesystem, src_ip, dest_ip):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json
 import time
-from purefb_log import *
+from util.pure_logging import *
 from purefb_api import *
 from scripts.fbmigrate_configs import ConfigMigrator
 

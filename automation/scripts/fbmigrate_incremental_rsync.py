@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from purefb_api import *
-from purefb_log import *
-from purefb_subprocess import PureSubprocessor
+from util.pure_logging import *
+from util.pure_subprocess import PureSubprocessor
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Initialize objects

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import subprocess
 from purefb_api import *
-from purefb_log import *
+from util.pure_logging import *
 
 # PureLog Instance
 logger = PureLog()
