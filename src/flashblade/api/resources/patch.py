@@ -1,4 +1,4 @@
-from flashblade.api.core import ApiSession
+from flashblade.api.core import ApiSession, ApiError
 
 class FBPatch:
     def __init__(self, session: ApiSession, verify=False):
@@ -9,10 +9,18 @@ class FBPatch:
         url = f"{self.session.baseurl}/{endpoint}"
         response = self.session.patch(url, params=params)
         response.raise_for_status()
+        data = response.json()
+
+        if "errors" in data:
+            err_code = data["errors"][0]["code"]
+            err_context = data["errors"][0]["context"]
+            err_message = data["errors"][0]["message"]
+            raise ApiError(err_message, err_code, err_context)
+        
         if only_items:
-            return response.json()["items"]
+            return data["items"]
         else:
-            return response.json()
+            return data
         
     def patch_array_connections(self, remote_names: str, json=None, **params):
         params["remote_names"] = remote_names

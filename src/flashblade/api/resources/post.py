@@ -1,4 +1,4 @@
-from flashblade.api.core import ApiSession
+from flashblade.api.core import ApiSession, ApiError
 
 class FBPost:
     def __init__(self, session: ApiSession, verify=False):
@@ -9,10 +9,18 @@ class FBPost:
         url = f"{self.session.baseurl}/{endpoint}"
         response = self.session.post(url, params=params, json=json)
         response.raise_for_status()
+        data = response.json()
+
+        if "errors" in data:
+            err_code = data["errors"][0]["code"]
+            err_context = data["errors"][0]["context"]
+            err_message = data["errors"][0]["message"]
+            raise ApiError(err_message, err_code, err_context)
+        
         if only_items:
-            return response.json()["items"]
+            return data["items"]
         else:
-            return response.json()
+            return data
     
     def post_array_connections(self, json=None, **params):
         return self._post_request("array-connections", json=json, params=params)

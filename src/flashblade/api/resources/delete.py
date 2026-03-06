@@ -1,4 +1,4 @@
-from flashblade.api.core import ApiSession
+from flashblade.api.core import ApiSession, ApiError
 
 class FBDelete:
     def __init__(self, session: ApiSession, verify=False):
@@ -9,7 +9,17 @@ class FBDelete:
         url = f"{self.session.baseurl}/{endpoint}"
         response = self.session.delete(url, params=params)
         response.raise_for_status()
-        return response
+        try:
+            data = response.json()
+            if "errors" in data:
+                err_code = data["errors"][0]["code"]
+                err_context = data["errors"][0]["context"]
+                err_message = data["errors"][0]["message"]
+                raise ApiError(err_message, err_code, err_context)
+            else:
+                return data
+        except ValueError:
+            return response
 
     def delete_alert_watchers(self, names: str, **params):
         params["names"] = names
