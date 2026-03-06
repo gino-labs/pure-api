@@ -11,8 +11,8 @@ class ApiSession(requests.Session):
     def __init__(self, mgt_ip: str, api_token: str):
         super().__init__()
         self.mgt_ip = mgt_ip
-        self.baseurl = f"https//{mgt_ip}/api/2.latest"
         self.api_token = api_token
+        self.baseurl = f"https//{mgt_ip}/api/2.latest"
         self.headers.update({
             "Accept": "application/json",
             "Content-Type": "application/json",

@@ -1,4 +1,4 @@
-from _common import ApiSession
+from flashblade.api.core import ApiSession
 
 class FBGet:
     def __init__(self, session: ApiSession, verify=False):
