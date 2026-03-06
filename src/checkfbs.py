@@ -292,8 +292,8 @@ def check_file_system_sizes():
     for lfs in legacy_filesystems:
         for sfs in s200_filesystems:
             if lfs["name"] == sfs["name"]:
-                lfs_size = lfs["space"]["total_physical"]
-                sfs_size = sfs["space"]["total_physical"]
+                lfs_size = lfs["space"]["virtual"]
+                sfs_size = sfs["space"]["virtual"]
                 dif_size = abs(lfs_size - sfs_size)
                 data = {
                     "filesystem": lfs["name"],
