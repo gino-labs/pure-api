@@ -51,6 +51,7 @@ class FBPost:
         return self.post_request("file-system-replica-links", json=json, params=params)
           
     def post_filesystem_snapshots(self, names: str, replication=True, json=None, **params):
+        # Default to replication for most cases
         if replication:
             params["source_names"] = names
             params["send"] = "true"
