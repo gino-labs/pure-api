@@ -1,6 +1,6 @@
 import os
 
-class EnvironmentVariables:
+class EnvironmentReader:
     def __init__(self, *args):
         self.set_attrs(args)
 
