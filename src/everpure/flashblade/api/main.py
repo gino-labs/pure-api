@@ -1,6 +1,4 @@
-#!/usr/bin/env python3
-from flashblade.api.resources.common import ApiSession
-from flashblade.api.resources import *
+from everpure.flashblade.api.resources import *
 
 class FlashBladeAPI(FBGet, FBPatch, FBPost, FBDelete):
     def __init__(self, name: str, mgt_ip: str, api_token: str, data_ip=None):
