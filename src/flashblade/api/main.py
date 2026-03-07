@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-from flashblade.api.core import ApiSession
+from flashblade.api.resources.common import ApiSession
 from flashblade.api.resources import *
 
 class FlashBladeAPI(FBGet, FBPatch, FBPost, FBDelete):

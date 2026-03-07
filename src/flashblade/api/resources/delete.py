@@ -1,4 +1,4 @@
-from flashblade.api.core import ApiSession, ApiError
+from flashblade.api.resources.common import ApiSession, ApiError
 
 class FBDelete:
     def __init__(self, session: ApiSession, verify=False):
