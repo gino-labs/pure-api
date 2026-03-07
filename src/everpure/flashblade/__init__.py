@@ -1,3 +1,3 @@
-from flashblade.api.main import FlashBladeAPI
+from everpure.flashblade.api.main import FlashBladeAPI
 
 __all__ = ["FlashBladeAPI"]
