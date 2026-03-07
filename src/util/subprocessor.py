@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 import os
 import subprocess
-from util.logging import *
 
-class PureSubprocessor:
+class Subprocessor:
     def __init__(self, filesystem, src_ip, dest_ip):
         self.filesystem = filesystem
         self.src_ip = src_ip
@@ -12,17 +11,13 @@ class PureSubprocessor:
         self.dest_ip = dest_ip
         self.dest_export = f"{dest_ip}:/{filesystem}"
         self.dest_mount = f"/mnt/pure_migration/{filesystem}_dest/"
-        self.logger = PureLog()
-        self.watch = Stopwatch()
 
-    # Make directories for mount points
     def mkdir(self, src=True, dest=True):
         if src:
             os.makedirs(self.src_mount, exist_ok=True)
         if dest:
             os.makedirs(self.dest_mount, exist_ok=True)
 
-    # Mount NFS filesystems onto mount points
     def mount(self, src=True, dest=True):
         if src:
             if subprocess.run(["mountpoint", "-q", self.src_mount]).returncode == 0:
@@ -37,7 +32,6 @@ class PureSubprocessor:
             else:
                 subprocess.run(["mount", "-t", "nfs", self.dest_export, self.dest_mount])
 
-    # Unmount NFS filesystems
     def umount(self, src=True, dest=True):
         if src:
             if subprocess.run(["mountpoint", "-q", self.src_mount]).returncode == 0:
@@ -52,14 +46,12 @@ class PureSubprocessor:
                 print(f"Error: {self.dest_mount} Not Mounted")
                 print()
 
-    # Remove directory mount points
     def rmdir(self, src=True, dest=True):
         if src and os.path.isdir(self.src_mount):
             os.rmdir(self.src_mount)
         if dest and os.path.isdir(self.dest_mount):
             os.rmdir(self.dest_mount)
 
-    # Rsync subprocess operation
     def rsync(self, extra_args=None):
         src_rc = subprocess.run(["mountpoint", "-q", self.src_mount]).returncode
         dest_rc = subprocess.run(["mountpoint", "-q", self.dest_mount]).returncode
@@ -78,7 +70,6 @@ class PureSubprocessor:
                 print(f"Error: {self.dest_mount} Not Mounted")
             print()
             
-    # Pcopy subprocess operation
     def pcopy(self, extra_args=None):
         src_rc = subprocess.run(["mountpoint", "-q", self.src_mount]).returncode
         dest_rc = subprocess.run(["mountpoint", "-q", self.dest_mount]).returncode
