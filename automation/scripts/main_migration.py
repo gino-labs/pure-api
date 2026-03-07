@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from purefb_api import *
-from util.pure_logging import *
+from util.logging import *
 from scripts.fbmigrate_configs import *
 from scripts.fbmigrate_object_data import *
 from scripts.fbmigrate_filesystem_data import *

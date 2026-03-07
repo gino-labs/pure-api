@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from jinja2 import Environment, FileSystemLoader
 from purefb_api import *
-from util.pure_logging import *
+from util.logging import *
 import subprocess
 import json
 import os

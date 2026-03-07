@@ -1,4 +1,4 @@
-from util.pure_logging import *
+from util.logging import *
 from purefb_api import *
 
 # Logger object for logs
