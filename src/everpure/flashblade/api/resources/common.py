@@ -1,11 +1,16 @@
 import requests
 
 class ApiError(Exception):
-    def __init__(self, message: str, code: int, context: str):
-        self.code = code
-        self.context = context
-        self.message = message
-        super().__init__(f"API Error:\n\tCode: {code} \n\tContext: {context} \n\t{message}")
+    def __init__(self, response: requests.Response):
+        json = response.json()
+        if "errors" in json:
+            self.err_code = json["errors"][0]["code"]
+            self.err_context = json["errors"][0]["context"]
+            self.err_message = json["errors"][0]["message"]
+            super().__init__(f"API Error:\n\tCode: {self.err_code} \n\tContext: {self.err_context} \n\t{self.err_message}")
+        else:
+            super().__init__()
+
 
 class ApiSession(requests.Session):
     def __init__(self, mgt: str, token: str):
