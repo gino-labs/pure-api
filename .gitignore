@@ -12,7 +12,11 @@
 **.api_tokens
 
 # Ignore .secrets
-**.secrets
+**secret*
+
+# Ignore egg info
+**egg-info
+
 
 # Ignore site vars containing API tokens
 **va_pure_env*
