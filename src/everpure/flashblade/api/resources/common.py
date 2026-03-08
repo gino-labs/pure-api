@@ -12,7 +12,7 @@ class ApiSession(requests.Session):
         super().__init__()
         self.mgt = mgt
         self.token = token
-        self.baseurl = f"https//{mgt}/api/2.latest"
+        self.baseurl = f"https://{mgt}/api/2.latest"
         self.headers.update({
             "Accept": "application/json",
             "Content-Type": "application/json",
