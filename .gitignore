@@ -13,7 +13,7 @@
 
 # Ignore special
 **api_tokens
-**secret
+**secret*
 **_pure_env*
 **wipe_vars
 
