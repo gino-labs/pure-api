@@ -1,4 +1,4 @@
-# Ignore python stuff
+# Ignore pycache
 **__pycache__/
 
 # Ignore virtual env
@@ -8,16 +8,13 @@
 # Ignore .vscode
 **.vscode
 
-# Ignore api tokens
-**.api_tokens
+# Ignore egg info
+**.egg-info
 
-# Ignore .secrets
-**.secrets
-
-# Ignore site vars containing API tokens
-**va_pure_env*
-**co_pure_env*
-**az_pure_env*
+# Ignore special
+**api_tokens
+**secret
+**_pure_env*
 **wipe_vars
 
 # Ignore logs directory
