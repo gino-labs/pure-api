@@ -14,9 +14,3 @@ class EnvironmentReader:
     def get_var(self, var: str):
         var = var.upper()
         return self.var_names[var]
-
-    def get_vars(self, *args):
-        vlist = []
-        for arg in args:
-            vlist.append(getattr(self, arg))
-        return vlist
