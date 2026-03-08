@@ -5,9 +5,9 @@ class FBPatch:
         self.session = session
         self.session.verify = verify
 
-    def patch_request(self, endpoint, params=None):
+    def patch_request(self, endpoint, json=None, params=None):
         url = f"{self.session.baseurl}/{endpoint}"
-        response = self.session.patch(url, params=params)
+        response = self.session.patch(url, json=json, params=params)
         response.raise_for_status()
         return response
     
