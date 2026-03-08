@@ -16,4 +16,7 @@ def test_flashblade_api_instance():
     assert fbenv.azfb_token
     fbvars = [fbenv.azfb_name, fbenv.azfb_mgt, fbenv.azfb_token]
     fb = FlashBladeAPI(*fbvars)
+    assert fb.name == fbenv.azfb_name
+    assert fb.session.mgt == fbenv.azfb_mgt
+    assert fb.session.token == fbenv.azfb_token
 
