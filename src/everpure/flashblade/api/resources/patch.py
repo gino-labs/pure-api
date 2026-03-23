@@ -1,4 +1,5 @@
 from everpure.flashblade.api.resources.common import ApiSession, ApiError
+from requests.exceptions import HTTPError
 
 class FBPatch:
     def __init__(self, session: ApiSession, verify=False):
@@ -7,19 +8,15 @@ class FBPatch:
 
     def patch_request(self, endpoint, json=None, params=None):
         url = f"{self.session.baseurl}/{endpoint}"
-        response = self.session.patch(url, json=json, params=params)
-        response.raise_for_status()
-        return response
-    
+        try:
+            response = self.session.patch(url, json=json, params=params)
+            response.raise_for_status()
+            return response
+        except HTTPError:
+            raise ApiError(response)
+        
     def parsed_response(self, response, only_items=True):
         data = response.json()
-
-        if "errors" in data:
-            err_code = data["errors"][0]["code"]
-            err_context = data["errors"][0]["context"]
-            err_message = data["errors"][0]["message"]
-            raise ApiError(err_message, err_code, err_context)
-        
         if only_items:
             return data["items"]
         else:

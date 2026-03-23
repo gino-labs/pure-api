@@ -1,4 +1,5 @@
 from everpure.flashblade.api.resources.common import ApiSession, ApiError
+from requests.exceptions import HTTPError
 
 class FBDelete:
     def __init__(self, session: ApiSession, verify=False):
@@ -7,9 +8,15 @@ class FBDelete:
 
     def delete_request(self, endpoint, params=None):
         url = f"{self.session.baseurl}/{endpoint}"
-        response = self.session.delete(url, params=params)
-        response.raise_for_status()
-        return response
+        try:
+            response = self.session.delete(url, params=params)
+            response.raise_for_status()
+            return response
+        except HTTPError:
+            if "errors" in response.json():
+                raise ApiError(response)
+            else:
+                raise
 
     def delete_alert_watchers(self, names: str, **params):
         params["names"] = names
