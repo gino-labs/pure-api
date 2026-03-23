@@ -4,7 +4,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def test_env_reader_instance():
-    ev_list = ["FB_NAME", "MGT_IP", "API_TOKEN"]
+    ev_list = ["AZFB_NAME", "AZFB_MGT", "AZFB_TOKEN"]
     fbenv = EnvironmentReader(*ev_list)
     for v in ev_list:
         assert v.lower() == fbenv.get_var(v)

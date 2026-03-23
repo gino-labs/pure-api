@@ -38,3 +38,5 @@ class TestFileSystem:
             self.fb.delete_filesystems(self.testfs)
         except requests.exceptions.HTTPError as e:
             pass # FIXME
+        except ApiError as e:
+            assert e.err_code == 20 # Error code with Safemode On
