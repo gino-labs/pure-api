@@ -1,13 +1,14 @@
 from everpure import FlashBladeAPI
 from everpure import EnvironmentReader
 
+# Setup #
+gen1_vars = EnvironmentReader("FB1_NAME", "FB1_MGT", "FB1_TOKEN")
+s200_vars = EnvironmentReader("FB2_NAME", "FB2_MGT", "FB2_TOKEN")
 
-gen1_env = EnvironmentReader()
-s200_env = EnvironmentReader()
+gen1 = FlashBladeAPI(*gen1_vars)
+s200 = FlashBladeAPI(*s200_vars)
 
-gen1 = FlashBladeAPI() # Todo
-s200 = FlashBladeAPI() # Todo
-
+# Fact gathering
 gen1_filesystems = gen1.get_filesystems()
 s200_filesystems = s200.get_filesystems()
 

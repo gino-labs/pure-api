@@ -5,7 +5,11 @@ class EnvironmentReader:
         self.name = os.environ[name]
         self.mgt = os.environ[mgt]
         self.token = os.environ[token]
+        self.vars = [name, mgt, token]
         if args:
             for arg in args:
                 setattr(self, arg.lower(), arg)
+
+        def __iter__(self):
+            return iter(self.vars)
 
