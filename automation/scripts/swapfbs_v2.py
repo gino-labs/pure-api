@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import yaml
 import argparse
@@ -21,6 +22,7 @@ s200 = FlashBladeAPI(*s200_vars)
 # File systems
 g1_filesystems = gen1.get_filesystems()
 s2_filesystems = s200.get_filesystems()
+replication_links = gen1.get_filesystem_replica_links()
 
 # Network interfaces
 g1_interfaces = gen1.get_network_interfaces()
@@ -42,8 +44,16 @@ second_ifaces_yaml = f"{migration_dir}/secondary_interfaces.yml"
 
 ### Functions ###
 
-def take_snapshots():
-    pass # TODO
+def take_snapshots(suffix: str):
+    filesystems = [fs["name"] for fs in g1_filesystems]
+    replica_filesystems = [link["local_file_system"]["name"] for link in replication_links]
+    
+    for fs in filesystems:
+        json = {"suffix": suffix}
+        if fs in replica_filesystems:
+            gen1.post_filesystem_snapshots(fs, json=json, send=True)
+        else:
+            gen1.post_filesystem_snapshots(fs, json=json)
 
 def create_client_inventory():
     nfs_clients = gen1.get_clients()
@@ -136,7 +146,7 @@ def demote_gen1_filesystems():
             gen1.patch_filesystems(fs["name"], json={"writable": False})
 
 def delete_replication_links():
-    for link in gen1.get_filesystem_replica_links():
+    for link in replication_links:
         fs = link["local_file_system"]["name"]
         remote = link["remote"]["name"]
         gen1.delete_filesystem_replica_links(fs, remote)
@@ -167,5 +177,18 @@ def remount_nfs_clients():
 ### Main ###
 
 if __name__ == "__main__":
-    pass # TODO
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--snapshot", type=str)
+    args = parser.parse_args()
+    
+    if args.snapshot:
+       take_snapshots("pre-migration")
+    else:
+        create_client_inventory()
+        dump_production_vars()
+        dump_secondary_vars()
+        swap_production_vars_to_s200()
+        demote_gen1_filesystems()
+        delete_replication_links()
+        promote_s200_flashblade()
+        remount_nfs_clients()
