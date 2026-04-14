@@ -76,6 +76,11 @@ def create_5min_replication_policy():
     }
     s200.post_policies("replication_policy", json=data)
 
+
+# Create Remote Array Connection / Key
+def create_remote_array_connection():
+    pass # To Do
+
 # Create file system replication links and use 5 min policy (If possible)
 def create_replication_links():
     g1_filesystems = gen1.get_filesystems()
