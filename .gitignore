@@ -16,6 +16,7 @@
 **api_tokens
 **secret*
 **_pure_env*
+
 **wipe_vars
 
 # Ignore logs directory

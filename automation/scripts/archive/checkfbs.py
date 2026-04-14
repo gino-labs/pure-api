@@ -46,66 +46,6 @@ def check_file_systems():
     if not diffs["unique_to_s200"] and not diffs["unique_to_legacy"]:
         logger.write_log("File system names match for both legacy and s200.")
 
-# Check NFS Rules match Legacy
-def check_filesystem_nfs_rules(fs_only_list=True):
-    logger.write_log("Check if NFS rules match per file system between FBs.", show_output=True)
-
-    legacy_filesystem_names_rules = {fs["name"]: fs["nfs"]["rules"] for fs in legacy.get_filesystems()}
-    s200_filesystems = s200.get_filesystems()
-
-    non_matches = {}
-    for fs in s200_filesystems:
-        if fs["name"] in legacy_filesystem_names_rules:
-            if fs["nfs"]["rules"] not in legacy_filesystem_names_rules[fs["name"]]:
-                temp_dict = {
-                        "s200_rules": fs["nfs"]["rules"],
-                        "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
-                    }
-                non_matches[fs["name"]] = temp_dict
-            elif fs["nfs"]["export_policy"]["name"]:
-                temp_dict = {
-                    
-                    "s200_export_policy": fs["nfs"]["export_policy"]["name"],
-                    "legacy_rules": legacy_filesystem_names_rules[fs["name"]]
-                }
-                non_matches[fs["name"]] = temp_dict
-
-    if fs_only_list:
-        non_matches = [fs for fs in non_matches.keys()]
-    if non_matches:
-        logger.write_log(f"File systems that don't have matching NFS rules between FBs: {len(non_matches)}", jsondata=non_matches, show_output=True)
-    else:
-        logger.write_log(f"All file systems have matching NFS rules between FBs", show_output=True)
-
-# Check if replica links are present for each file system on Legacy
-def check_filesystems_replica_links(show_fs_data=False):
-    logger.write_log("Check if legacy file systems have replication links.", show_output=True)
-
-    legacy_filesystems = legacy.get_filesystems()
-    legacy_replica_links = legacy.get_filesystem_replica_links()
-    
-    legacy_fs_list = [fs["name"] for fs in legacy_filesystems]
-    legacy_replica_fs_list = [link["local_file_system"]["name"] for link in legacy_replica_links]
-
-    non_replica_fs_list = compare_lists(legacy_fs_list, legacy_replica_fs_list, check_one=True)
-
-    if len(non_replica_fs_list) == 0:
-        logger.write_log("All legacy file have replication links.", show_output=True)
-    else:
-        logger.write_log(f"Legacy Filesystems with no replication links: {len(non_replica_fs_list)}", jsondata=non_replica_fs_list, show_output=True)
-
-    if show_fs_data:
-        fs_data = []
-        filesystems = legacy.get_filesystems(filesystems=non_replica_fs_list)
-        for fs in filesystems:
-            temp_dict = {
-                "name": fs["name"],
-                "space": fs["space"]["total_physical"],
-                "writable": fs["writable"]
-            }
-            fs_data.append(temp_dict)
-        logger.write_log("Logging additional data for non replication file systems.", jsondata=fs_data)
-
 # Check for non replication snapshot policies from legacy on s200 
 def check_snapshot_policies():
     logger.write_log("Check if snapshot policies match between FBs.", show_output=True)
@@ -176,22 +116,6 @@ def check_subnets():
     if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
         logger.write_log("Subnet names match for both legacy and s200.", show_output=True)
 
-# Verify network interfaces (data matches, mgmt present)
-def check_interfaces():
-    logger.write_log("Check if network interfaces match between FBs. NOTE: Can't create matching interface without different IP address.", show_output=True)
-
-    legacy_ifaces = [iface["name"] for iface in legacy.get_interfaces()]
-    s200_ifaces = [iface["name"] for iface in s200.get_interfaces()]
-
-    diffs = compare_lists(legacy_ifaces, s200_ifaces)
-
-    if diffs["unique_to_legacy"]:
-        logger.write_log(f"Unique network interfaces found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
-    if diffs["unique_to_s200"]:
-        logger.write_log(f"Unique network interfacess found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
-    if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
-        logger.write_log("Subnet names match for both legacy and s200.", show_output=True)
-
 # Check object store accounts
 def check_object_store_accounts():
     logger.write_log("Check if object store accounts match between FBs.", show_output=True)
@@ -240,19 +164,6 @@ def check_buckets():
     if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
         logger.write_log("Bucket names match for both legacy and s200.", show_output=True)
 
-# Check if object replication in place per bucket
-def check_bucket_replica_links():
-    logger.write_log("Check if legacy buckets have replication links.", show_output=True)
-
-    legacy_replica_buckets = [link["local_bucket"]["name"] for link in legacy.get_bucket_replia_links()]
-    legacy_buckets = [buck["name"] for buck in legacy.get_buckets()]
-
-    buckets_no_replicas = compare_lists(legacy_buckets, legacy_replica_buckets, check_one=True)
-    if len(buckets_no_replicas) == 0:
-        logger.write_log("Legacy buckets all have replication links.", show_output=True)
-    else:
-        logger.write_log(f"Legacy buckets with no replication links: {len(buckets_no_replicas)}", jsondata=buckets_no_replicas, show_output=True)
-
 # Check Directory Services point to valid LDAPS server on S200
 def check_directory_services(show_only_diffs=True):
     logger.write_log("Check if directory services configured are valid for s200.")
@@ -294,8 +205,8 @@ def check_directory_services(show_only_diffs=True):
 def check_dns(show_only_diffs=True):
     logger.write_log("Check if DNS configurations are valid for s200.")
 
-    legacy_dns = legacy.get_dns()
-    s200_dns = s200.get_dns()
+    legacy_dns = legacy.get_dns()[0]
+    s200_dns = s200.get_dns()[0]
 
     final_dict = {
         "legacy_dns": {
@@ -326,8 +237,8 @@ def check_dns(show_only_diffs=True):
 def check_arrays(show_only_diffs=True):
     logger.write_log("Check if array configurations are valid for s200.")
 
-    legacy_array = legacy.get_array_configurations()
-    s200_array = s200.get_array_configurations()
+    legacy_array = legacy.get_array_configurations()[0]
+    s200_array = s200.get_array_configurations()[0]
 
     final_dict = {
         legacy_array["name"]: {
@@ -360,72 +271,50 @@ def check_arrays(show_only_diffs=True):
     else:
         logger.write_log("Array configurations match for both legacy and s200.", show_output=True)
 
-# Check certificates are valid on S200 (1 global, 2 external)
-def check_certificates(show_only_diffs=True):
-    logger.write_log("Check if certificates are valid for s200.", show_output=True)
+# Check file systems match, if not show differences
+def check_file_system_sizes():
+    def h_readable_size(bytes):
+        units = ["B", "KB", "MB", "GB", "TB"]
+        size = float(bytes)
+        for unit in units:
+            if size < 1024:
+                return f"{size:.1f}{unit}"
+            size /= 1024
+        return f"{size:.1f}PB"
+    
+    logger.write_log("Checking if file system names match between FBs.", show_output=True)
 
-    legacy_certs = legacy.get_certificates()
-    s200_certs = s200.get_certificates()
+    legacy_filesystems = legacy.get_filesystems()
+    s200_filesystems = s200.get_filesystems()
+    
+    size_data = []
 
-    final_dict = {
-        "legacy_certs": {
-            "array": [],
-            "external": [],
-        },
-        "s200_certs": {
-            "array": [],
-            "external": [],
-        }
-    }
+    for lfs in legacy_filesystems:
+        for sfs in s200_filesystems:
+            if lfs["name"] == sfs["name"]:
+                lfs_size = lfs["space"]["virtual"]
+                sfs_size = sfs["space"]["virtual"]
+                dif_size = abs(lfs_size - sfs_size)
+                data = {
+                    "filesystem": lfs["name"],
+                    "size_on_legacy": h_readable_size(lfs_size),
+                    "size_on_s200": h_readable_size(sfs_size),
+                    "size_diff": h_readable_size(dif_size)
+                }
+                size_data.append(data)
+                break
+    logger.write_log(f"File System Size Differences.", jsondata=size_data, show_output=True)
 
-    for cert in legacy_certs:
-        if cert["certificate_type"] == "array":
-            final_dict["legacy_certs"]["array"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
-        elif cert["certificate_type"] == "external":
-            final_dict["legacy_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
-
-    for cert in s200_certs:
-        if cert["certificate_type"] == "array":
-            final_dict["s200_certs"]["array"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
-        elif cert["certificate_type"] == "external":
-            final_dict["s200_certs"]["external"].append({"name": cert["name"], "issued_by": cert["issued_by"]})
-
-        legacy_array_certs = [cert["name"] for cert in final_dict["legacy_certs"]["array"]]
-        legacy_external_certs = [cert["name"] for cert in final_dict["legacy_certs"]["external"]]
-        s200_array_certs = [cert["name"] for cert in final_dict["s200_certs"]["array"]]
-        s200_external_certs = [cert["name"] for cert in final_dict["s200_certs"]["external"]]
-
-        legacy_list = legacy_array_certs + legacy_external_certs
-        s200_list = s200_array_certs + s200_external_certs
-
-        diffs = compare_lists(legacy_list, s200_list)
-
-    if show_only_diffs:
-        if diffs["unique_to_legacy"]:
-            logger.write_log(f"Unique certificate names found on legacy: {len(diffs['unique_to_legacy'])}", jsondata=list(diffs["unique_to_legacy"]), show_output=True)
-        if diffs["unique_to_s200"]:
-            logger.write_log(f"Unique certificate names found on s200: {len(diffs['unique_to_s200'])}", jsondata=list(diffs["unique_to_s200"]), show_output=True)
-        if not diffs['unique_to_s200'] and not diffs['unique_to_legacy']:
-            logger.write_log("Certificate names match for both legacy and s200.", show_output=True)
-    else:
-        if (diffs["unique_to_legacy"] or diffs["unique_to_s200"]):
-            logger.write_log("Some certificates don't match between FBs.", jsondata=final_dict, show_output=True)
-        else:
-            logger.write_log("Certificates match for both legacy and s200.", show_output=True)
 
 if __name__ == "__main__":
     check_file_systems()
-    check_filesystem_nfs_rules()
-    check_filesystems_replica_links()
     check_snapshot_policies()
     check_matching_attached_snapshot_policies()
     check_subnets()
-    check_interfaces()
     check_object_store_accounts()
     check_object_store_users()
     check_buckets()
-    check_bucket_replica_links()
     check_directory_services()
     check_dns()
     check_arrays()
-    check_certificates()
+    check_file_system_sizes()

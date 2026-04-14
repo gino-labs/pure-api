@@ -3,10 +3,16 @@
   hosts: all
   become: yes
   gather_facts: no
+  vars_files:
+    - vars/swap_vars.yml
   tasks:
+    - name: Build Regex Alternation String
+      set_fact:
+        production_ips: "{{ production | map(attribute='address') | join('|') }}"
+
     - name: Get list of mounts using PureStorage
       shell: |
-        findmnt -n -t nfs,nfs4 -o target,options | awk '/{{ pure_ips }}/ { print $1 }'
+        findmnt -n -t nfs,nfs4 -o target,options | awk '/{{ production_ips }}/ { print $1 }'
       register: pure_mounts
       changed_when: False
 
