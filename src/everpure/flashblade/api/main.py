@@ -1,4 +1,5 @@
 from everpure.flashblade.api.resources import *
+from everpure.util.logger import PureLogger
 
 class FlashBladeAPI(FBGet, FBPatch, FBPost, FBDelete):
     def __init__(self, mgt_ip: str, api_token: str, data_ip=None):
