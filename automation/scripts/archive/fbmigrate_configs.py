@@ -397,20 +397,3 @@ class ConfigMigrator:
             for syslog in legacy_syslog:
                 self.s200.post_syslog_server(syslog["name"], syslog["uri"])
 
-
-# Main
-if __name__ == "__main__":
-    # Configuration Migrator instance
-    cfg_migrator = ConfigMigrator()
-
-    # Congifuration migration operations
-    cfg_migrator.migrate_certificate()
-    cfg_migrator.migrate_directory_service()
-    cfg_migrator.migrate_directory_service_roles()
-    cfg_migrator.migrate_snapshot_polices()
-    cfg_migrator.configure_replication_snapshot_policy()
-    cfg_migrator.configure_replication_net()
-    cfg_migrator.configure_array_connection()
-    cfg_migrator.migrate_subnets()
-    cfg_migrator.configure_data_interface()
-    

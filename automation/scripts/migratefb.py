@@ -3,10 +3,11 @@ from everpure import FlashBladeAPI
 from everpure import EnvironmentReader
 from everpure import ApiError
 
-azfb_vars = EnvironmentReader()
+gen1_env = EnvironmentReader()
+s200_env = EnvironmentReader()
 
-gen1 = FlashBladeAPI('', '', '')
-s200 = FlashBladeAPI(*azfb_vars)
+gen1 = FlashBladeAPI('','','')
+s200 = FlashBladeAPI('','','')
 
 # Migrate existing subnets and VLANs
 def migrate_subnets():
@@ -79,8 +80,12 @@ def create_5min_replication_policy():
 
 # Create Remote Array Connection / Key
 def create_remote_array_connection():
-    pass # To Do
-
+    remote_arrays = s200.get_array_connections()
+    if remote_arrays != []:
+        for array in remote_arrays:
+                if array["remote"]["name"] == gen1.name:
+                    #TODO Logging
+                    return 
 # Create file system replication links and use 5 min policy (If possible)
 def create_replication_links():
     g1_filesystems = gen1.get_filesystems()
