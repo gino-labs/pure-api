@@ -4,10 +4,17 @@ from everpure import EnvironmentReader
 from everpure import ApiError
 from everpure import PureLogger
 
+import os 
+
 logger = PureLogger("migration")
 
-gen1_env = EnvironmentReader()
-s200_env = EnvironmentReader()
+# Source additional env variables
+gen1_mgt_ip = os.environ["GEN1_MGT_IP"]
+gen1_rep_ip = os.environ["GEN1_REP_IP"]
+s200_mgt_ip = os.environ["S200_MGT_IP"]
+s200_rep_ip = os.environ["S200_REP_IP"]
+gen1_env = EnvironmentReader('', '', '', mgt_ip=gen1_mgt_ip, rep_ip=gen1_rep_ip)
+s200_env = EnvironmentReader('', '', '', mgt_ip=s200_mgt_ip, rep_ip=s200_rep_ip)
 
 gen1 = FlashBladeAPI('','','')
 s200 = FlashBladeAPI('','','')
@@ -30,7 +37,7 @@ def migrate_subnets():
         s200.post_subnets(names=sub["name"], json=data)
         s200.log(f"Post success - subnet {sub['name']}")
 
-# Create data servie interface on new FlashBlade
+# Create data interface on S200
 def create_data_interface(interface_ip, interface_vlan):
     g1_interfaces = gen1.get_network_interfaces()
     gen1.log("Get success - network interfaces")
@@ -53,7 +60,14 @@ def create_data_interface(interface_ip, interface_vlan):
     else:
         s200.log(f"NO matching VLAN {interface_vlan}")
         s200.log(f"Post skip network interface with {interface_ip}")
-    
+
+# Create replication subnet on Gen1 and S200
+def create_replication_subnets():
+    pass
+
+# Create replication interface on Gen1 and S200
+def create_replication_interfaces():
+    pass
 
 # Migrate existing snapshot policies
 def migrate_snapshot_policies():
@@ -97,11 +111,15 @@ def create_remote_array_connection():
     remote_arrays = s200.get_array_connections()
     s200.log("Get success - array connections")
     
-    if remote_arrays != []:
-        for array in remote_arrays:
-                if array["remote"]["name"] == gen1.name:
-                    #TODO Logging
-                    return
+    if remote_arrays == []:
+        return
+    
+    key = s200.post_connection_key()[0]["connection_key"]
+    s200.log(f"Post success - connection key {key}")
+    with open(".secrets", "a") as f:
+        f.write(f"\nS200 Key: {key}\n")
+
+    
 
 # Create file system replication links and use 5 min policy (If possible)
 def create_replication_links():
