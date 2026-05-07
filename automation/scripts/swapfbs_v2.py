@@ -12,7 +12,7 @@ from everpure import ApiError
 
 ### Setup ###
 
-scriptlogger = PureLogger("script")
+mainlogger = PureLogger("script")
 
 # Environment variables
 gen1_vars = EnvironmentReader("FB1_NAME", "FB1_MGT", "FB1_TOKEN")
@@ -21,7 +21,7 @@ s200_vars = EnvironmentReader("FB2_NAME", "FB2_MGT", "FB2_TOKEN")
 # FlashBlade API instances
 gen1 = FlashBladeAPI(*gen1_vars)
 s200 = FlashBladeAPI(*s200_vars)
-scriptlogger.log("FB instances created")
+mainlogger.log("FB instances created")
 
 # File systems
 g1_filesystems = gen1.get_filesystems()
@@ -43,15 +43,15 @@ os.makedirs(f"{ansible_dir}/inventory", exist_ok=True)
 os.makedirs(f"{ansible_dir}/vars", exist_ok=True)
 ansible_inv = f"{ansible_dir}/inventory/nfs_clients.yml"
 ansible_pb = f"{ansible_dir}/remount-pure.yml"
-scriptlogger.log(f"Target ansible inventory for NFS clients: {ansible_inv}")
-scriptlogger.log(f"Target ansible playbook to run: {ansible_pb}")
+mainlogger.log(f"Target ansible inventory for NFS clients: {ansible_inv}")
+mainlogger.log(f"Target ansible playbook to run: {ansible_pb}")
 
 # Migration details
 migration_dir = f"{s200.name}_migration"
-os.makedirs(migration_dir)
+os.makedirs(migration_dir, exist_ok=True)
 prod_ifaces_yaml = f"{migration_dir}/production_interfaces.yml"
 second_ifaces_yaml = f"{migration_dir}/secondary_interfaces.yml"
-logger.info(f"Migration details dumped to {migration_dir}")
+mainlogger.log(f"Migration details dumped to {migration_dir}")
 
 
 ### Functions ###
@@ -64,10 +64,10 @@ def take_snapshots(suffix: str):
         json = {"suffix": suffix}
         if fs in replica_filesystems:
             gen1.post_filesystem_snapshots(fs, json=json, send=True)
-            logger.info(f"{suffix} replication snapshot created for {fs}")
+            gen1.log(f"{suffix} replication snapshot created for {fs}")
         else:
             gen1.post_filesystem_snapshots(fs, json=json)
-            logger.info(f"{suffix} snapshot created for {fs}")
+            gen1.log(f"{suffix} snapshot created for {fs}")
 
 
 def create_client_inventory():
@@ -89,7 +89,7 @@ def create_client_inventory():
     else:
         with open(ansible_inv, "w") as f:
             yaml.safe_dump(inventory, f, indent=2)
-        logger.info(f"NFS client inventory dumped to {ansible_inv}")
+        mainlogger.log(f"NFS client inventory dumped to {ansible_inv}")
 
 def dump_production_vars():
     prod_ifaces = []
@@ -108,7 +108,7 @@ def dump_production_vars():
     else:
         with open(prod_ifaces_yaml, "w") as f:
             yaml.safe_dump(prod_ifaces, f, indent=2)
-        logger.info(f"Production variables dumped to {prod_ifaces_yaml}")
+        mainlogger.log(f"Production variables dumped to {prod_ifaces_yaml}")
 
 def dump_secondary_vars():
     second_ifaces = []
@@ -127,23 +127,23 @@ def dump_secondary_vars():
     else:
         with open(second_ifaces_yaml, "w") as f:
             yaml.safe_dump(second_ifaces, f, indent=2)
-        logger.info(f"Secondary variables dumped to {prod_ifaces_yaml}")
+        mainlogger.log(f"Secondary variables dumped to {second_ifaces_yaml}")
 
 def demote_gen1_filesystems():
     for fs in g1_filesystems:
         try:
             gen1.patch_filesystems(fs["name"], json={"writable": False,"requested_promotion_state": "demoted"})
-            logger.info(f"Gen1 file system {fs['name']} set to demoted and unwritable")
+            gen1.log(f"File system {fs['name']} set to demoted and unwritable")
         except ApiError:
             gen1.patch_filesystems(fs["name"], json={"writable": False})
-            logger.info(f"Gen1 file system {fs['name']} set to unwritable")
+            gen1.log(f"File system {fs['name']} set to unwritable")
 
 def delete_replication_links():
     for link in replication_links:
         fs = link["local_file_system"]["name"]
         remote = link["remote"]["name"]
         gen1.delete_filesystem_replica_links(fs, remote)
-        logger.info(f"Replication link deleted for {fs}")
+        gen1.log(f"Replication link deleted for {fs}")
 
 def swap_production_vars_to_s200():
     with open(prod_ifaces_yaml, "r") as f:
@@ -155,26 +155,23 @@ def swap_production_vars_to_s200():
         raise ValueError(f"Empty production variables loaded from {prod_ifaces_yaml}")
 
     # Compare interfaces for matching vlans
-    iface_patched = False
     for iface in prod_ifaces:
-        if "data" not in iface["services"]:
-            continue
-        
+        iface_patched = False
         for iface2 in second_ifaces:
             # Patch if two interfaces have same vlan
             if iface["vlan"] == iface2["vlan"]:
-                s200.patch_network_interfaces(iface2["name"], json={"address": iface["address"], "services": iface["services"]})
-                logger.info(f"S200 patched network interface: {iface['address']} -> {iface2['name']}")
-                gen1.patch_network_interfaces(iface["name"], json={"address": iface2["address"], "services": iface2["services"]})
-                logger.info(f"Gen1 patched network interface: {iface2['address']} -> {iface['name']}")
+                s200.patch_network_interfaces(iface2["name"], json={"address": iface["address"]})
+                s200.log(f"Patched network interface: {iface['address']} -> {iface2['name']}")
+                gen1.patch_network_interfaces(iface["name"], json={"address": iface2["address"]})
+                gen1.log(f"Patched network interface: {iface2['address']} -> {iface['name']}")
                 iface_patched = True
+                break
                 
         if not iface_patched:
-            s200.post_network_interfaces(iface["name"], json={"address": iface["address"], "services": iface["services"], "type": "vip" })
-            logger.info(f"S200 created network interface: {iface['name']} | {iface['address']}")
+            s200.post_network_interfaces(iface["name"], json={"address": iface["address"], "services": ["data"], "type": "vip" })
+            s200.log(f"Created network interface: {iface['name']} | {iface['address']}")
             gen1.delete_network_interfaces(iface["name"])
-            logger.info(f"Gen1 deleted network interface: {iface['name']}")
-            iface_patched = False
+            gen1.log(f"Deleted network interface: {iface['name']}")
 
 def promote_s200_flashblade():
     for fs in s2_filesystems:
@@ -188,14 +185,14 @@ def promote_s200_flashblade():
             "requested_promotion_state": "promoted"
         }
         s200.patch_filesystems(fs["name"], json=promo_payload)
-        logger.info(f"S200 file system promoted: {fs['name']}")
+        s200.log(f"File system promoted: {fs['name']}")
 
 def remount_nfs_clients():
     with open(prod_ifaces_yaml, "r") as f:
         prod_ifaces = yaml.safe_load(f)
     pure_ips = "|".join([iface["address"] for iface in prod_ifaces])
 
-    logger.info(f"Run ansible playbook to umount nfs shares using {pure_ips} ... This clears stale handles and allows automounts.")
+    mainlogger.log(f"Run ansible playbook to umount nfs shares using {pure_ips} ... This clears stale handles and allows automounts.")
     playbook = ["ansible-playbook", "-i", ansible_inv, "-e", f"pure_ips={pure_ips}", ansible_pb]
     print(f"Enter root password to run ansible playbook: {ansible_pb}")
     subprocess.run(playbook)
@@ -219,3 +216,4 @@ if __name__ == "__main__":
         swap_production_vars_to_s200()
         promote_s200_flashblade()
         remount_nfs_clients()
+    mainlogger.log("Swap complete.")
