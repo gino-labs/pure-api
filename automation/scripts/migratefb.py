@@ -2,6 +2,9 @@
 from everpure import FlashBladeAPI
 from everpure import EnvironmentReader
 from everpure import ApiError
+from everpure import PureLogger
+
+logger = PureLogger("migration")
 
 gen1_env = EnvironmentReader()
 s200_env = EnvironmentReader()
@@ -12,6 +15,7 @@ s200 = FlashBladeAPI('','','')
 # Migrate existing subnets and VLANs
 def migrate_subnets():
     g1_subnets = gen1.get_subnets()
+    gen1.log("Get success - subnets")
     
     for sub in g1_subnets:
         data = {
@@ -24,28 +28,37 @@ def migrate_subnets():
             "vlan": sub["vlan"]
         }
         s200.post_subnets(names=sub["name"], json=data)
+        s200.log(f"Post success - subnet {sub['name']}")
 
 # Create data servie interface on new FlashBlade
 def create_data_interface(interface_ip, interface_vlan):
     g1_interfaces = gen1.get_network_interfaces()
+    gen1.log("Get success - network interfaces")
     
-    for face in g1_interfaces:
-        if face["vlan"] == interface_vlan:
-            prod_interface = face
+    prod_interface = None
+    for iface in g1_interfaces:
+        if iface["vlan"] == interface_vlan:
+            prod_interface = iface
             break
+    
+    if prod_interface is not None:
+        data = {
+            "address": interface_ip,
+            "services": ["data"],
+            "type": "vip"
+        }
 
-    data = {
-        "address": interface_ip,
-        "services": ["data"],
-        "type": "vip"
-    }
-
-    s200.post_network_interfaces(prod_interface["name"], json=data)
+        s200.post_network_interfaces(prod_interface["name"], json=data)
+        s200.log(f"Post success network interface - {interface_ip} - VLAN {interface_vlan}")
+    else:
+        s200.log(f"NO matching VLAN {interface_vlan}")
+        s200.log(f"Post skip network interface with {interface_ip}")
     
 
 # Migrate existing snapshot policies
 def migrate_snapshot_policies():
     g1_snapshot_polices = gen1.get_snapshot_policies()
+    gen1.log("Get success - snapshot policies")
     
     for pol in g1_snapshot_polices:
         data = {
@@ -61,12 +74,13 @@ def migrate_snapshot_policies():
             ]
         }
         s200.post_policies(pol["name"], json=data)
+        s200.log(f"Post success - snapshot policy {pol['name']}")
 
 # Create 5 minute replication poliycy
-
 def create_5min_replication_policy():
+    policy_name = "replication_policy"
     data = {
-        "name": "replication_policy",
+        "name": policy_name,
         "enabled": True,
         "rules": [
             {
@@ -75,17 +89,20 @@ def create_5min_replication_policy():
             }
         ],
     }
-    s200.post_policies("replication_policy", json=data)
-
+    s200.post_policies(policy_name, json=data)
+    s200.log(f"Post success - snapshot policy {policy_name}")
 
 # Create Remote Array Connection / Key
 def create_remote_array_connection():
     remote_arrays = s200.get_array_connections()
+    s200.log("Get success - array connections")
+    
     if remote_arrays != []:
         for array in remote_arrays:
                 if array["remote"]["name"] == gen1.name:
                     #TODO Logging
-                    return 
+                    return
+
 # Create file system replication links and use 5 min policy (If possible)
 def create_replication_links():
     g1_filesystems = gen1.get_filesystems()
