@@ -5,6 +5,7 @@ import requests
 import urllib3
 from urllib3.exceptions import InsecureRequestWarning
 
+# Important Environement Variables
 fb_token = os.environ["FB_TOKEN"]
 fb_mgmt = os.environ["FB_MGMT"]
 base = f"https://{fb_mgmt}/api/2.latest/"
@@ -39,6 +40,7 @@ def _delete(ep: str):
     url = base + ep
     # TODO
 
+# TODO make parser more dynamic and robust
 def build_parser():
     parser = argparse.ArgumentParser(prog="fb")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -60,7 +62,7 @@ def build_parser():
 def main():
     parser = build_parser()
     args = parser.parse_args()
-
+    # TODO Make insecure requests optional
     urllib3.disable_warnings(InsecureRequestWarning)
 
     if args.command == "get":
