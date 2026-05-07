@@ -7,3 +7,7 @@ class FlashBladeAPI(FBGet, FBPatch, FBPost, FBDelete):
         self.array = self.get_arrays()[0]
         self.name = self.array["name"]
         self.data_ip = data_ip
+        self.logger = PureLogger(self.name)
+
+    def log(self, msg: str):
+        self.logger.log(msg)
