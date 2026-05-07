@@ -2,9 +2,9 @@
 import os
 import yaml
 import argparse
-import logging
 import subprocess
 
+from everpure import PureLogger
 from everpure import FlashBladeAPI
 from everpure import EnvironmentReader
 from everpure import ApiError
@@ -12,9 +12,7 @@ from everpure import ApiError
 
 ### Setup ###
 
-# Logger
-logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s]: %(message)s", datefmt="%m.%d-%H:%M:%S")
-logger = logging.getLogger(__name__)
+scriptlogger = PureLogger("script")
 
 # Environment variables
 gen1_vars = EnvironmentReader("FB1_NAME", "FB1_MGT", "FB1_TOKEN")
@@ -23,18 +21,21 @@ s200_vars = EnvironmentReader("FB2_NAME", "FB2_MGT", "FB2_TOKEN")
 # FlashBlade API instances
 gen1 = FlashBladeAPI(*gen1_vars)
 s200 = FlashBladeAPI(*s200_vars)
-logger.info(f"FlashBladeAPI instances created for {gen1_vars.name} & {s200_vars.name}")
+scriptlogger.log("FB instances created")
 
 # File systems
 g1_filesystems = gen1.get_filesystems()
+gen1.log("Get filesystems")
 s2_filesystems = s200.get_filesystems()
+s200.log("Get filesystems")
 replication_links = gen1.get_filesystem_replica_links()
-logger.info("File system data retrieved")
+gen1.log("Get replication links")
 
 # Network interfaces
 g1_interfaces = gen1.get_network_interfaces()
+gen1.log("Get network interfaces")
 s2_interfaces = s200.get_network_interfaces()
-logger.info("Network interfaces data retrieved")
+s200.log("Get network interfaces")
 
 # Ansible
 ansible_dir = '../ansible/'
@@ -42,8 +43,8 @@ os.makedirs(f"{ansible_dir}/inventory", exist_ok=True)
 os.makedirs(f"{ansible_dir}/vars", exist_ok=True)
 ansible_inv = f"{ansible_dir}/inventory/nfs_clients.yml"
 ansible_pb = f"{ansible_dir}/remount-pure.yml"
-logger.info(f"Target ansible inventory for NFS clients: {ansible_inv}")
-logger.info(f"Target ansible playbook to run: {ansible_pb}")
+scriptlogger.log(f"Target ansible inventory for NFS clients: {ansible_inv}")
+scriptlogger.log(f"Target ansible playbook to run: {ansible_pb}")
 
 # Migration details
 migration_dir = f"{s200.name}_migration"
