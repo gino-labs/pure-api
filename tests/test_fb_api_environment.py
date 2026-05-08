@@ -4,7 +4,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def test_flashblade_api_instance():
-    fbenv = EnvironmentReader("AZFB_NAME", "AZFB_MGT", "AZFB_TOKEN")
+    fbenv = PureEnvironment("AZFB_NAME", "AZFB_MGT", "AZFB_TOKEN")
     assert fbenv.name
     assert fbenv.mgt
     assert fbenv.token

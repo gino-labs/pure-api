@@ -1,6 +1,6 @@
 import os
 
-class EnvironmentReader:
+class PureEnvironment:
     def __init__(self, name: str, mgt: str, token: str, **kwargs):
         self.name = os.environ[name]
         self.mgt = os.environ[mgt]

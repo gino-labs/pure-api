@@ -6,7 +6,7 @@ import subprocess
 
 from everpure import PureLogger
 from everpure import FlashBladeAPI
-from everpure import EnvironmentReader
+from everpure import PureEnvironment
 from everpure import ApiError
 
 
@@ -15,8 +15,8 @@ from everpure import ApiError
 mainlogger = PureLogger("script")
 
 # Environment variables
-gen1_vars = EnvironmentReader("FB1_NAME", "FB1_MGT", "FB1_TOKEN")
-s200_vars = EnvironmentReader("FB2_NAME", "FB2_MGT", "FB2_TOKEN") 
+gen1_vars = PureEnvironment("FB1_NAME", "FB1_MGT", "FB1_TOKEN")
+s200_vars = PureEnvironment("FB2_NAME", "FB2_MGT", "FB2_TOKEN") 
 
 # FlashBlade API instances
 gen1 = FlashBladeAPI(*gen1_vars)

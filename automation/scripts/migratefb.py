@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from everpure import FlashBladeAPI
-from everpure import EnvironmentReader
+from everpure import PureEnvironment
 from everpure import ApiError
 from everpure import PureLogger
 
@@ -13,8 +13,8 @@ gen1_mgt_ip = os.environ["GEN1_MGT_IP"]
 gen1_rep_ip = os.environ["GEN1_REP_IP"]
 s200_mgt_ip = os.environ["S200_MGT_IP"]
 s200_rep_ip = os.environ["S200_REP_IP"]
-gen1_env = EnvironmentReader('', '', '', mgt_ip=gen1_mgt_ip, rep_ip=gen1_rep_ip)
-s200_env = EnvironmentReader('', '', '', mgt_ip=s200_mgt_ip, rep_ip=s200_rep_ip)
+gen1_env = PureEnvironment('', '', '', mgt_ip=gen1_mgt_ip, rep_ip=gen1_rep_ip)
+s200_env = PureEnvironment('', '', '', mgt_ip=s200_mgt_ip, rep_ip=s200_rep_ip)
 
 gen1 = FlashBladeAPI('','','')
 s200 = FlashBladeAPI('','','')
